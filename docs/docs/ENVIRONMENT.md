@@ -31,7 +31,7 @@ ASP.NET Core maps `__` to nested configuration keys. Secrets belong in .NET user
 | Gmail/email | `PasswordReset__*`, `TaskEmailNotifications__FrontendBaseUrl`, `GmailIntegration__*` | Secret only for reset-mail credentials and Gmail token protection |
 | Cloudinary | `Cloudinary__CloudName`, `Cloudinary__ApiKey`, `Cloudinary__ApiSecret` | ApiKey/ApiSecret |
 | Storage | `Storage__MaxFileSizeMb` | No |
-| Bank transfer | `Payment__BankTransfer__BankName`, `AccountName`, `AccountNumber`, `Branch`, `PaymentReferencePrefix`, `SePayWebhookApiKey` | Account/webhook key |
+| Bank transfer | `Payment__BankTransfer__BankName`, `VietQrBankId`, `AccountName`, `AccountNumber`, `Branch`, `PaymentReferencePrefix`, `SePayWebhookApiKey` | Account/webhook key |
 | Database startup | `Database__ApplyMigrationsOnStartup` | No |
 | CORS | `Cors__AllowedOrigins__0`, `Cors__AllowedOrigins__1`, ... | No |
 
@@ -44,6 +44,12 @@ TaskEmailNotifications__FrontendBaseUrl=https://<user-web-domain>
 ```
 
 `TaskEmailNotifications__FrontendBaseUrl` is only used to build the task link inside Gmail messages. No SMTP variables are used for task-assignment email. Password reset SMTP settings remain under the separate `PasswordReset__*` group.
+
+For bank transfer QR, set the receiving bank's VietQR BIN so every new QR contains the exact amount and transfer content. For ACB use:
+
+```text
+Payment__BankTransfer__VietQrBankId=970416
+```
 
 ## Render
 

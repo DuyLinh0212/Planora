@@ -200,7 +200,7 @@
               <div class="setting-icon"><svg lucideBell></svg></div>
               <div class="setting-text">
                 <h4>Thông báo Email</h4>
-                <p>Nhận thông báo trong ứng dụng; email giao task chỉ gửi khi người giao đã liên kết Gmail.</p>
+                <p>Nhận email khi được giao việc. Bạn vẫn luôn nhận thông báo trong ứng dụng.</p>
               </div>
             </div>
             <div class="setting-item__right">
@@ -218,7 +218,37 @@
             </div>
           </div>
 
-          <!-- 3. Ngôn ngữ -->
+          <!-- 3. Gmail gửi email -->
+          <div class="setting-item-card">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideMail></svg></div>
+              <div class="setting-text">
+                <h4>Gmail gửi email</h4>
+                @if (gmailLink().isLinked) {
+                  <p>Đang gửi email giao việc từ {{ gmailLink().gmailAddress }}.</p>
+                } @else if (gmailLink().isServerConfigured) {
+                  <p>Liên kết Gmail của bạn để gửi email khi bạn giao việc cho thành viên khác.</p>
+                } @else {
+                  <p>Máy chủ chưa cấu hình dịch vụ gửi Gmail.</p>
+                }
+                @if (gmailLink().lastSendFailureReason) {
+                  <p class="setting-text__warning">Lỗi gửi gần nhất: {{ gmailLink().lastSendFailureReason }}</p>
+                }
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <button
+                class="btn-primary btn-sm"
+                type="button"
+                (click)="linkGmail()"
+                [disabled]="gmailBusy() || !gmailLink().isServerConfigured"
+              >
+                {{ gmailBusy() ? 'Đang liên kết…' : gmailLink().isLinked ? 'Liên kết lại' : 'Liên kết Gmail' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. Ngôn ngữ -->
           <div class="setting-item-card">
             <div class="setting-item__left">
               <div class="setting-icon"><svg lucideGlobe></svg></div>

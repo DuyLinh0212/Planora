@@ -309,6 +309,16 @@
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
 }
 
+.info-input[type="date"] {
+  color-scheme: light;
+  cursor: pointer;
+}
+
+:host-context([data-theme="dark"]) .info-input[type="date"],
+:host-context([data-theme="calm"]) .info-input[type="date"] {
+  color-scheme: dark;
+}
+
 .info-select {
   height: 24px;
   padding: 0 6px;
@@ -518,6 +528,10 @@
   margin: 0;
   font-size: 11px;
   color: var(--muted, #64748b);
+}
+
+.setting-text .setting-text__warning {
+  color: var(--danger, #dc2626);
 }
 
 .setting-item__right {

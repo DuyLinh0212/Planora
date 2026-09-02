@@ -113,8 +113,8 @@ export class AccountPage {
     return this.emailTaskNotificationsValue;
   }
   set emailTaskNotifications(enabled: boolean) {
-    // Email delivery uses the shared Planora SMTP mailbox by default. Linking
-    // Gmail is optional and only changes the sender used by the dispatcher.
+    // The recipient controls this preference. The person assigning a task must
+    // separately link Gmail so Planora can send the message from their mailbox.
     this.emailTaskNotificationsValue = enabled;
   }
 
