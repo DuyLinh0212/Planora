@@ -17,9 +17,8 @@ declare global {
             cancel_on_tap_outside?: boolean;
             use_fedcm_for_prompt?: boolean;
           }) => void;
+          prompt: (callback?: (notification: GooglePromptMoment) => void) => void;
         };
-        prompt: (callback?: (notification: GooglePromptMoment) => void) => void;
-      };
         oauth2: {
           initCodeClient: (options: {
             client_id: string;
