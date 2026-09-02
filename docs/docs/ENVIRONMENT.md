@@ -28,7 +28,7 @@ ASP.NET Core maps `__` to nested configuration keys. Secrets belong in .NET user
 | Database | `ConnectionStrings__DefaultConnection` | Yes |
 | JWT | `Jwt__Issuer`, `Jwt__Audience`, `Jwt__Secret`, token lifetimes | Secret |
 | External auth | `Authentication__Google__*`, `Authentication__Facebook__*` | Client secret only |
-| Gmail/email | `PasswordReset__*`, `TaskEmailNotifications__*`, `GmailIntegration__*` | Yes, except public ClientId |
+| Gmail/email | `PasswordReset__*`, `TaskEmailNotifications__FrontendBaseUrl`, `GmailIntegration__*` | Secret only for reset-mail credentials and Gmail token protection |
 | Cloudinary | `Cloudinary__CloudName`, `Cloudinary__ApiKey`, `Cloudinary__ApiSecret` | ApiKey/ApiSecret |
 | Storage | `Storage__MaxFileSizeMb` | No |
 | Bank transfer | `Payment__BankTransfer__BankName`, `AccountName`, `AccountNumber`, `Branch`, `PaymentReferencePrefix`, `SePayWebhookApiKey` | Account/webhook key |
@@ -37,20 +37,13 @@ ASP.NET Core maps `__` to nested configuration keys. Secrets belong in .NET user
 
 Production payment activation is automatic through the SePay bank-transfer webhook. The webhook is verified server-side; do not activate a subscription from a browser redirect. Callback retries are idempotent.
 
-Task-assignment emails are sent only to active assignees who enable `EmailTaskNotificationsEnabled` in their account settings. Gmail linking is optional. When the acting user has linked Gmail, Planora can send through that account; otherwise the shared SMTP mailbox is used. Configure these Render variables for the shared mailbox (Gmail SMTP requires a Google App Password, not the normal account password):
+Task-assignment emails are sent only to active assignees who enable `EmailTaskNotificationsEnabled` in their account settings. The acting user must link Gmail to authorize sending; the recipient does not need to link Gmail. If the acting user has no usable Gmail link, the assignment still creates an in-app notification and no email is sent.
 
 ```text
 TaskEmailNotifications__FrontendBaseUrl=https://<user-web-domain>
-TaskEmailNotifications__SmtpHost=smtp.gmail.com
-TaskEmailNotifications__SmtpPort=587
-TaskEmailNotifications__EnableSsl=true
-TaskEmailNotifications__Username=<Planora sender mailbox>
-TaskEmailNotifications__Password=<Google App Password>
-TaskEmailNotifications__FromAddress=<Planora sender mailbox>
-TaskEmailNotifications__FromNameSuffix=via Planora
 ```
 
-`Username` and `FromAddress` normally use the same mailbox. If these SMTP variables are empty, the in-app notification still appears but no email can be delivered.
+`TaskEmailNotifications__FrontendBaseUrl` is only used to build the task link inside Gmail messages. No SMTP variables are used for task-assignment email. Password reset SMTP settings remain under the separate `PasswordReset__*` group.
 
 ## Render
 

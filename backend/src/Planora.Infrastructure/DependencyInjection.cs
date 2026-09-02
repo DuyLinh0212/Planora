@@ -62,7 +62,6 @@ public static class DependencyInjection
         services.AddHttpClient<IGmailMessageSender, GmailMessageSender>(httpClient => httpClient.Timeout = TimeSpan.FromSeconds(20));
         services.AddHttpClient<IMomoPaymentGateway, MomoPaymentGateway>(httpClient => httpClient.Timeout = TimeSpan.FromSeconds(30));
         services.AddSingleton<IBankTransferPaymentDetailsProvider, BankTransferPaymentDetailsProvider>();
-        services.AddScoped<SmtpTaskEmailNotificationSender>();
         services.AddScoped<ITaskEmailNotificationSender, TaskEmailNotificationDispatcher>();
         services.AddScoped<CloudinaryFileStorage>();
         services.AddScoped<LocalFileStorage>();

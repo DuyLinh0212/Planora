@@ -41,20 +41,6 @@ services:
         sync: false
       - key: TaskEmailNotifications__FrontendBaseUrl
         sync: false
-      - key: TaskEmailNotifications__SmtpHost
-        sync: false
-      - key: TaskEmailNotifications__SmtpPort
-        value: "587"
-      - key: TaskEmailNotifications__EnableSsl
-        value: "true"
-      - key: TaskEmailNotifications__Username
-        sync: false
-      - key: TaskEmailNotifications__Password
-        sync: false
-      - key: TaskEmailNotifications__FromAddress
-        sync: false
-      - key: TaskEmailNotifications__FromNameSuffix
-        value: via Planora
       - key: GmailIntegration__ClientId
         sync: false
       - key: GmailIntegration__ClientSecret

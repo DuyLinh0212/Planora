@@ -90,7 +90,7 @@ public sealed class GmailLinkService(
         if (link is not null)
             dbContext.UserGmailLinks.Remove(link);
         // Gmail is an optional sender. Unlinking it must not opt the user out of
-        // task emails because the shared SMTP mailbox remains available.
+        // in-app task notifications.
         await dbContext.SaveChangesAsync(cancellationToken);
         return ApplicationResult.Success();
     }

@@ -6,25 +6,23 @@ using Planora.Infrastructure.Persistence;
 namespace Planora.Infrastructure.Notifications;
 
 /// <summary>
-/// Chooses how a task email leaves Planora. If the acting user linked their Gmail account the
-/// mail is sent as them through the Gmail API, so the recipient sees their real address. Users
-/// who have not linked fall back to the shared Planora mailbox with Reply-To pointing at them,
-/// which keeps notifications working instead of silently dropping them.
+/// Sends a task email only when the acting user has explicitly linked their Gmail account.
+/// Without that consent, the in-app notification remains the delivery channel. The recipient's
+/// Gmail link is not required because the message is sent to their registered email address.
 /// </summary>
 public sealed class TaskEmailNotificationDispatcher(
     PlanoraDbContext dbContext,
     IGmailOAuthClient gmailOAuthClient,
     IGmailMessageSender gmailMessageSender,
     ISecretProtector secretProtector,
-    SmtpTaskEmailNotificationSender smtpSender,
     TimeProvider timeProvider,
     ILogger<TaskEmailNotificationDispatcher> logger) : ITaskEmailNotificationSender
 {
     public async Task SendTaskNotificationAsync(TaskEmailNotification notification, CancellationToken cancellationToken)
     {
-        if (await TrySendThroughLinkedGmailAsync(notification, cancellationToken))
-            return;
-        await smtpSender.SendTaskNotificationAsync(notification, cancellationToken);
+        if (!await TrySendThroughLinkedGmailAsync(notification, cancellationToken))
+            logger.LogInformation(
+                "Task email was not sent because the acting user has no usable linked Gmail account. The in-app notification remains available.");
     }
 
     private async Task<bool> TrySendThroughLinkedGmailAsync(TaskEmailNotification notification, CancellationToken cancellationToken)
@@ -43,7 +41,7 @@ public sealed class TaskEmailNotificationDispatcher(
         }
         catch (Exception exception) when (exception is FormatException or System.Security.Cryptography.CryptographicException or InvalidOperationException)
         {
-            logger.LogError(exception, "Stored Gmail authorization could not be read; falling back to the Planora mailbox.");
+            logger.LogError(exception, "Stored Gmail authorization could not be read; task email was not sent.");
             await RecordFailureAsync(gmailLink, "Không đọc được liên kết Gmail đã lưu. Hãy liên kết lại.", cancellationToken);
             return false;
         }
@@ -58,7 +56,7 @@ public sealed class TaskEmailNotificationDispatcher(
         var sendResult = await gmailMessageSender.SendGmailMessageAsync(accessToken.Value, notification, cancellationToken);
         if (sendResult.IsFailure)
         {
-            logger.LogWarning("Gmail send failed for user {UserId}; falling back to the Planora mailbox.", notification.ActorUserId);
+            logger.LogWarning("Gmail send failed for user {UserId}; task email was not sent.", notification.ActorUserId);
             await RecordFailureAsync(gmailLink, sendResult.Errors.FirstOrDefault()?.Message ?? "Gmail từ chối gửi thư.", cancellationToken);
             return false;
         }

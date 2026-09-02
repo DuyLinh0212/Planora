@@ -42,13 +42,13 @@ public sealed class GmailMessageSender(HttpClient httpClient, IOptions<TaskEmail
         {
             return ApplicationResult.Failure(ApplicationErrors.External(
                 "gmail.send_unavailable",
-                "Could not reach Gmail. The notification will use the fallback mailbox."));
+                "Could not reach Gmail. The task email was not sent."));
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
             return ApplicationResult.Failure(ApplicationErrors.External(
                 "gmail.send_timeout",
-                "Gmail took too long to respond. The notification will use the fallback mailbox."));
+                "Gmail took too long to respond. The task email was not sent."));
         }
     }
 

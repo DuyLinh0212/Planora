@@ -3,21 +3,19 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 
 namespace Planora.IntegrationTests;
 
 /// <summary>
 /// Walks the real assignment path — register leader and member, share a project, create a
-/// task, assign it — and asserts the member receives an email authored by the leader.
+/// task, assign it — and verifies email delivery requires the acting user's Gmail consent.
 /// </summary>
 public sealed class TaskAssignmentEmailFlowTests
 {
     [Fact]
-    public async Task AssignTask_ToMemberWhoWantsEmails_DeliversMailAuthoredByTheAssigner()
+    public async Task AssignTask_WhenAssignerHasNoLinkedGmail_KeepsDeliveryInAppOnly()
     {
-        await using var smtpSink = SmtpMessageSink.Start();
-        await using var factory = CreateFactory(smtpSink.Port);
+        await using var factory = CreateFactory();
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
         var leader = await RegisterAccountAsync(client, "leader");
@@ -33,18 +31,16 @@ public sealed class TaskAssignmentEmailFlowTests
         var taskId = await CreateTaskAsync(client, leader, projectId);
         await AssignAsync(client, leader, taskId, membershipId);
 
-        var payload = await smtpSink.WaitForMessageAsync(TimeSpan.FromSeconds(15));
-        Assert.Contains("no-reply@planora.test", payload, StringComparison.Ordinal);
-        Assert.Contains("via Planora", payload, StringComparison.Ordinal);
-        Assert.Contains(leader.Email, payload, StringComparison.Ordinal);
-        Assert.Contains(member.Email, payload, StringComparison.Ordinal);
+        using var notificationsRequest = Authorized(HttpMethod.Get, "/api/notifications?unreadOnly=true", member);
+        var notificationsResponse = await client.SendAsync(notificationsRequest);
+        Assert.Equal(HttpStatusCode.OK, notificationsResponse.StatusCode);
+        Assert.Contains("task.assigned", await notificationsResponse.Content.ReadAsStringAsync(), StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
-    public async Task AssignTask_ToMemberWhoDisabledEmails_SendsNothing()
+    public async Task AssignTask_ToMemberWhoDisabledEmails_KeepsInAppNotification()
     {
-        await using var smtpSink = SmtpMessageSink.Start();
-        await using var factory = CreateFactory(smtpSink.Port);
+        await using var factory = CreateFactory();
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
         var leader = await RegisterAccountAsync(client, "leader");
@@ -60,22 +56,16 @@ public sealed class TaskAssignmentEmailFlowTests
         var taskId = await CreateTaskAsync(client, leader, projectId);
         await AssignAsync(client, leader, taskId, membershipId);
 
-        await Assert.ThrowsAnyAsync<Exception>(() => smtpSink.WaitForMessageAsync(TimeSpan.FromSeconds(3)));
+        using var notificationsRequest = Authorized(HttpMethod.Get, "/api/notifications?unreadOnly=true", member);
+        var notificationsResponse = await client.SendAsync(notificationsRequest);
+        Assert.Equal(HttpStatusCode.OK, notificationsResponse.StatusCode);
+        Assert.Contains("task.assigned", await notificationsResponse.Content.ReadAsStringAsync(), StringComparison.OrdinalIgnoreCase);
     }
 
-    private static WebApplicationFactory<Program> CreateFactory(int smtpPort) =>
+    private static WebApplicationFactory<Program> CreateFactory() =>
         new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
             builder.UseEnvironment("Development");
-            builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["TaskEmailNotifications:SmtpHost"] = "127.0.0.1",
-                ["TaskEmailNotifications:SmtpPort"] = smtpPort.ToString(),
-                ["TaskEmailNotifications:EnableSsl"] = "false",
-                ["TaskEmailNotifications:FromAddress"] = "no-reply@planora.test",
-                ["TaskEmailNotifications:FromNameSuffix"] = "via Planora",
-                ["TaskEmailNotifications:FrontendBaseUrl"] = "http://localhost:4200"
-            }));
         });
 
     private static async Task<Account> RegisterAccountAsync(HttpClient client, string prefix)
