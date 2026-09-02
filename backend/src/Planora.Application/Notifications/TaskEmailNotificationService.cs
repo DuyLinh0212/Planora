@@ -7,6 +7,8 @@ namespace Planora.Application.Notifications;
 /// <summary>
 /// Turns a task event into one email per assignee that asked for them. Recipients who
 /// disabled the option, the actor themselves, and inactive accounts are skipped.
+/// Gmail linking is not required: the dispatcher can use the shared SMTP mailbox when
+/// the recipient has not linked a personal Gmail account.
 /// </summary>
 public sealed class TaskEmailNotificationService(
     IPlanoraDbContext dbContext,
@@ -33,7 +35,6 @@ public sealed class TaskEmailNotificationService(
         var recipients = await dbContext.Users
             .Where(user => targetUserIds.Contains(user.Id)
                 && user.EmailTaskNotificationsEnabled
-                && dbContext.UserGmailLinks.Any(link => link.UserId == user.Id)
                 && user.Status == Domain.Users.UserStatus.Active
                 && user.Email != string.Empty)
             .Select(user => new { user.Email, user.DisplayName })

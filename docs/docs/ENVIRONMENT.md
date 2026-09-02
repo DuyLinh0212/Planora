@@ -37,6 +37,21 @@ ASP.NET Core maps `__` to nested configuration keys. Secrets belong in .NET user
 
 Production payment activation is automatic through the SePay bank-transfer webhook. The webhook is verified server-side; do not activate a subscription from a browser redirect. Callback retries are idempotent.
 
+Task-assignment emails are sent only to active assignees who enable `EmailTaskNotificationsEnabled` in their account settings. Gmail linking is optional. When the acting user has linked Gmail, Planora can send through that account; otherwise the shared SMTP mailbox is used. Configure these Render variables for the shared mailbox (Gmail SMTP requires a Google App Password, not the normal account password):
+
+```text
+TaskEmailNotifications__FrontendBaseUrl=https://<user-web-domain>
+TaskEmailNotifications__SmtpHost=smtp.gmail.com
+TaskEmailNotifications__SmtpPort=587
+TaskEmailNotifications__EnableSsl=true
+TaskEmailNotifications__Username=<Planora sender mailbox>
+TaskEmailNotifications__Password=<Google App Password>
+TaskEmailNotifications__FromAddress=<Planora sender mailbox>
+TaskEmailNotifications__FromNameSuffix=via Planora
+```
+
+`Username` and `FromAddress` normally use the same mailbox. If these SMTP variables are empty, the in-app notification still appears but no email can be delivered.
+
 ## Render
 
 Use `render.yaml` to create the Docker web service. Fill every `sync: false` variable in Render. Keep `Database__ApplyMigrationsOnStartup=true` for the single production instance during deploy, and use a public HTTPS API origin for:

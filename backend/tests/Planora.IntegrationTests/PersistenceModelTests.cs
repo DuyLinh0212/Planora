@@ -66,7 +66,7 @@ public sealed class PersistenceModelTests
     }
 
     [Fact]
-    public void User_EmailTaskNotificationsEnabled_DefaultsToOffUntilGmailIsLinked()
+    public void User_EmailTaskNotificationsEnabled_DefaultsToOffUntilUserOptsIn()
     {
         using var dbContext = CreateDbContext();
 

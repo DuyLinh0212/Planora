@@ -104,11 +104,6 @@ public sealed class ProfileService(
         if (user is null)
             return ApplicationResult.Failure(ApplicationErrors.NotFound("User profile"));
         var emailTaskNotificationsEnabled = request.EmailTaskNotificationsEnabled ?? user.EmailTaskNotificationsEnabled;
-        if (emailTaskNotificationsEnabled && !await dbContext.UserGmailLinks.AnyAsync(link => link.UserId == userId, cancellationToken))
-            return ApplicationResult.Failure(ApplicationErrors.Validation(
-                "preferences.gmail_link_required",
-                "Link your Gmail account before enabling email notifications.",
-                "emailTaskNotificationsEnabled"));
         user.UpdateUserPreferences(
             language,
             theme,

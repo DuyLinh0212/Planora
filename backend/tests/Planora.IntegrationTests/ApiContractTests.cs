@@ -183,9 +183,13 @@ public sealed class ApiContractTests : IClassFixture<WebApplicationFactory<Progr
         };
         preferencesRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authentication.AccessToken);
         var preferencesResponse = await _httpClient.SendAsync(preferencesRequest);
-        Assert.Equal(HttpStatusCode.BadRequest, preferencesResponse.StatusCode);
-        var preferencesProblem = await preferencesResponse.Content.ReadFromJsonAsync<ProblemDescriptor>();
-        Assert.Equal("preferences.gmail_link_required", preferencesProblem?.Code);
+        Assert.Equal(HttpStatusCode.NoContent, preferencesResponse.StatusCode);
+
+        using var updatedProfileRequest = new HttpRequestMessage(HttpMethod.Get, "/api/profile");
+        updatedProfileRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authentication.AccessToken);
+        var updatedProfileResponse = await _httpClient.SendAsync(updatedProfileRequest);
+        var updatedProfile = await updatedProfileResponse.Content.ReadFromJsonAsync<ProfileDescriptor>();
+        Assert.True(updatedProfile?.EmailTaskNotificationsEnabled);
     }
 
     [Fact]
@@ -248,5 +252,5 @@ public sealed class ApiContractTests : IClassFixture<WebApplicationFactory<Progr
     private sealed record ProblemDescriptor(string Code);
     private sealed record AuthenticationDescriptor(Guid UserId, string AccessToken);
     private sealed record GmailLinkDescriptor(bool IsLinked, bool IsServerConfigured);
-    private sealed record ProfileDescriptor(Guid UserId, GmailLinkDescriptor GmailLink);
+    private sealed record ProfileDescriptor(Guid UserId, GmailLinkDescriptor GmailLink, bool EmailTaskNotificationsEnabled);
 }

@@ -89,13 +89,8 @@ public sealed class GmailLinkService(
         var link = await dbContext.UserGmailLinks.FirstOrDefaultAsync(item => item.UserId == userId, cancellationToken);
         if (link is not null)
             dbContext.UserGmailLinks.Remove(link);
-        if (user.EmailTaskNotificationsEnabled)
-            user.UpdateUserPreferences(
-                user.PreferredLanguage,
-                user.ThemePreference,
-                user.TimeZoneId,
-                emailTaskNotificationsEnabled: false,
-                timeProvider.GetUtcNow());
+        // Gmail is an optional sender. Unlinking it must not opt the user out of
+        // task emails because the shared SMTP mailbox remains available.
         await dbContext.SaveChangesAsync(cancellationToken);
         return ApplicationResult.Success();
     }

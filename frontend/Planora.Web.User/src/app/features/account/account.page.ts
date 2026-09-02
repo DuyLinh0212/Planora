@@ -110,23 +110,9 @@ export class AccountPage {
     return this.emailTaskNotificationsValue;
   }
   set emailTaskNotifications(enabled: boolean) {
-    if (!enabled || this.gmailLink().isLinked) {
-      this.emailTaskNotificationsValue = enabled;
-      return;
-    }
-    this.emailTaskNotificationsValue = true;
-    queueMicrotask(() => {
-      this.changeDetector.detectChanges();
-      this.emailTaskNotificationsValue = false;
-      this.changeDetector.detectChanges();
-    });
-    if (!this.gmailLink().isServerConfigured) {
-      this.error.set(
-        'Bạn cần liên kết Gmail trước khi bật thông báo email. Backend hiện chưa cấu hình Gmail OAuth.',
-      );
-      return;
-    }
-    void this.linkGmail(true);
+    // Email delivery uses the shared Planora SMTP mailbox by default. Linking
+    // Gmail is optional and only changes the sender used by the dispatcher.
+    this.emailTaskNotificationsValue = enabled;
   }
 
   // Password change state
@@ -309,18 +295,6 @@ export class AccountPage {
 
   onEmailTaskNotificationsChanged(enabled: boolean): void {
     if (this.gmailBusy()) return;
-    if (enabled && !this.gmailLink().isLinked) {
-      this.emailTaskNotifications = false;
-      if (!this.gmailLink().isServerConfigured) {
-        this.error.set(
-          'Bạn cần liên kết Gmail trước khi bật thông báo email. Backend hiện chưa cấu hình Gmail OAuth.',
-        );
-        return;
-      }
-      void this.linkGmail();
-      return;
-    }
-
     this.emailTaskNotifications = enabled;
     this.api
       .updatePreferences(this.language, this.theme, this.timeZone, enabled)

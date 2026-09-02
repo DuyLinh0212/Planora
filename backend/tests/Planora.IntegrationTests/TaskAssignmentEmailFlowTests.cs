@@ -4,9 +4,6 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Planora.Domain.Users;
-using Planora.Infrastructure.Persistence;
 
 namespace Planora.IntegrationTests;
 
@@ -25,7 +22,7 @@ public sealed class TaskAssignmentEmailFlowTests
 
         var leader = await RegisterAccountAsync(client, "leader");
         var member = await RegisterAccountAsync(client, "member");
-        await LinkGmailAndEnableEmailNotificationsAsync(factory.Services, member.UserId);
+        await EnableEmailNotificationsAsync(client, member);
 
         var projectId = await CreateProjectAsync(client, leader);
         var roleId = await GetOwnerlessRoleIdAsync(client, leader, projectId);
@@ -113,26 +110,18 @@ public sealed class TaskAssignmentEmailFlowTests
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
-    private static async Task LinkGmailAndEnableEmailNotificationsAsync(IServiceProvider services, Guid userId)
+    private static async Task EnableEmailNotificationsAsync(HttpClient client, Account account)
     {
-        await using var scope = services.CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<PlanoraDbContext>();
-        var user = await dbContext.Users.FindAsync(userId);
-        Assert.NotNull(user);
-        var currentTime = DateTimeOffset.UtcNow;
-        dbContext.UserGmailLinks.Add(UserGmailLink.CreateUserGmailLink(
-            userId,
-            user.Email,
-            "test-refresh-token-cipher",
-            "test-refresh-token-nonce",
-            currentTime));
-        user.UpdateUserPreferences(
-            user.PreferredLanguage,
-            user.ThemePreference,
-            user.TimeZoneId,
-            emailTaskNotificationsEnabled: true,
-            currentTime);
-        await dbContext.SaveChangesAsync();
+        using var request = Authorized(HttpMethod.Put, "/api/profile/preferences", account);
+        request.Content = JsonContent.Create(new
+        {
+            PreferredLanguage = "vi",
+            ThemePreference = "calm",
+            TimeZoneId = "Asia/Ho_Chi_Minh",
+            EmailTaskNotificationsEnabled = true
+        });
+        var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
     private static async Task<Guid> CreateProjectAsync(HttpClient client, Account leader)

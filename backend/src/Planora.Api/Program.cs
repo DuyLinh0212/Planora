@@ -152,12 +152,14 @@ if (app.Configuration.GetValue("Database:ApplyMigrationsOnStartup", false))
 }
 
 app.Logger.LogInformation(
-    "External integration configuration loaded. Environment={Environment}, GoogleLoginConfigured={GoogleLoginConfigured}, GmailConfigured={GmailConfigured}",
+    "External integration configuration loaded. Environment={Environment}, GoogleLoginConfigured={GoogleLoginConfigured}, GmailConfigured={GmailConfigured}, TaskEmailSmtpConfigured={TaskEmailSmtpConfigured}",
     app.Environment.EnvironmentName,
     !string.IsNullOrWhiteSpace(builder.Configuration["Authentication:Google:ClientId"]),
     !string.IsNullOrWhiteSpace(builder.Configuration["GmailIntegration:ClientId"])
         && !string.IsNullOrWhiteSpace(builder.Configuration["GmailIntegration:ClientSecret"])
-        && !string.IsNullOrWhiteSpace(builder.Configuration["GmailIntegration:TokenEncryptionKey"]));
+        && !string.IsNullOrWhiteSpace(builder.Configuration["GmailIntegration:TokenEncryptionKey"]),
+    !string.IsNullOrWhiteSpace(builder.Configuration["TaskEmailNotifications:SmtpHost"])
+        && !string.IsNullOrWhiteSpace(builder.Configuration["TaskEmailNotifications:FromAddress"]));
 
 app.UseExceptionHandler();
 if (!app.Environment.IsDevelopment())
