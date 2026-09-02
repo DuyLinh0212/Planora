@@ -1,0 +1,1080 @@
+/*
+ * Planora responsive contract
+ *
+ * Component styles in this application were migrated from a single stylesheet.
+ * This file is loaded last and deliberately owns cross-page viewport behaviour:
+ * shells, touch targets, content stacking, data overflow and mobile dialogs.
+ */
+
+@media (max-width: 1180px) {
+  :root {
+    --rail-width: 204px;
+  }
+
+  .page {
+    padding-inline: 18px !important;
+  }
+
+  .workspace-bar {
+    padding-inline: 18px !important;
+  }
+
+  .project-context,
+  .project-tabs {
+    padding-inline: 16px !important;
+  }
+
+  .project-description {
+    max-width: 42vw !important;
+  }
+
+  .account-grid,
+  .profile-layout {
+    grid-template-columns: minmax(280px, 0.75fr) minmax(0, 1.25fr) !important;
+  }
+
+  .project-area {
+    grid-template-columns: minmax(0, 1fr) 260px !important;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .project-resources,
+  .trend {
+    grid-column: 1 / -1 !important;
+  }
+
+  .task-board {
+    grid-template-columns: repeat(6, minmax(220px, 1fr)) !important;
+  }
+
+  .guide-video-section {
+    grid-template-columns: minmax(0, 1fr) 270px !important;
+  }
+}
+
+@media (max-width: 980px) {
+  :root {
+    --rail-width: 0px;
+  }
+
+  .workspace-frame {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .global-rail {
+    position: fixed !important;
+    z-index: 120 !important;
+    inset: 0 auto 0 0 !important;
+    width: min(82vw, 292px) !important;
+    height: 100dvh !important;
+    padding-top: max(18px, env(safe-area-inset-top)) !important;
+    transform: translateX(-104%) !important;
+    transition: transform 180ms ease !important;
+    box-shadow: 20px 0 60px rgb(8 19 35 / 28%) !important;
+    overflow-y: auto !important;
+  }
+
+  .global-rail.is-open {
+    transform: translateX(0) !important;
+  }
+
+  .rail-close,
+  .menu-trigger {
+    display: grid !important;
+  }
+
+  .rail-scrim {
+    position: fixed !important;
+    z-index: 110 !important;
+    inset: 0 !important;
+    display: block !important;
+    border: 0 !important;
+    background: rgb(8 19 35 / 48%) !important;
+    backdrop-filter: blur(2px);
+  }
+
+  .workspace-stage {
+    width: 100% !important;
+  }
+
+  .workspace-aside {
+    display: none !important;
+  }
+
+  .project-area,
+  .member-workspace,
+  .file-workspace,
+  .sprint-workspace,
+  .support-workspace,
+  .settings-layout,
+  .settings-content-grid,
+  .account-grid,
+  .profile-layout,
+  .analytics-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .profile-col-left,
+  .profile-col-right {
+    min-width: 0 !important;
+  }
+
+  .plan-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .support-workspace,
+  .member-workspace,
+  .file-workspace,
+  .sprint-workspace {
+    overflow-y: auto !important;
+  }
+
+  .guide-video-section,
+  .guide-steps {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .permission-groups {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .file-preview-dialog {
+    width: calc(100vw - 28px) !important;
+    height: calc(100dvh - 28px) !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --topbar-height: 60px;
+  }
+
+  html,
+  body,
+  app-root {
+    min-height: 100%;
+  }
+
+  body {
+    font-size: 14px;
+    overscroll-behavior: none;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  .button {
+    min-height: 42px !important;
+  }
+
+  .icon-button {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .workspace-bar {
+    min-width: 0 !important;
+    padding: env(safe-area-inset-top) 12px 0 !important;
+    gap: 10px !important;
+  }
+
+  .workspace-bar__title {
+    min-width: 0 !important;
+    gap: 8px !important;
+  }
+
+  .workspace-bar__title > div {
+    min-width: 0 !important;
+  }
+
+  .workspace-bar__title p {
+    font-size: 8px !important;
+  }
+
+  .workspace-bar__title h1 {
+    max-width: 45vw !important;
+    overflow: hidden !important;
+    font-size: 17px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .workspace-bar__actions {
+    flex: 0 0 auto !important;
+    gap: 6px !important;
+  }
+
+  .workspace-bar__actions .button {
+    width: 42px !important;
+    padding: 0 !important;
+  }
+
+  .workspace-bar__actions .button span,
+  .workspace-bar__actions .avatar {
+    display: none !important;
+  }
+
+  .system-banner {
+    padding: 8px 12px !important;
+    align-items: flex-start !important;
+    font-size: 10px !important;
+  }
+
+  .notification-panel {
+    z-index: 130 !important;
+    top: var(--topbar-height) !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-height: none !important;
+    border-width: 1px 0 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .notification-actions {
+    flex-wrap: wrap !important;
+  }
+
+  .notification-actions .button {
+    flex: 1 1 120px !important;
+  }
+
+  .workspace-content,
+  .project-page {
+    min-width: 0 !important;
+  }
+
+  .page {
+    padding: 14px 12px calc(20px + env(safe-area-inset-bottom)) !important;
+    scrollbar-gutter: auto !important;
+  }
+
+  .page--fill {
+    overflow-y: auto !important;
+  }
+
+  .page-intro,
+  .page-intro--compact,
+  .billing-plan-heading {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .page-intro h2 {
+    font-size: clamp(22px, 7vw, 27px) !important;
+  }
+
+  .page-intro > div > p:last-child {
+    max-width: none !important;
+    font-size: 11px !important;
+    line-height: 1.55 !important;
+  }
+
+  .page-intro > .button,
+  .page-intro > .header-actions,
+  .header-actions,
+  .page-actions {
+    width: 100% !important;
+  }
+
+  .header-actions,
+  .page-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+
+  .header-actions > *,
+  .page-actions > * {
+    flex: 1 1 140px !important;
+  }
+
+  .field-pair,
+  .form-grid,
+  .permission-groups {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .form-span-2 {
+    grid-column: auto !important;
+  }
+
+  .dialog-layer {
+    padding: 0 !important;
+    align-items: end !important;
+  }
+
+  .dialog,
+  .dialog--small,
+  .dialog--wide,
+  .dialog--task,
+  .dialog--permissions,
+  .dialog--submission {
+    width: 100% !important;
+    max-width: none !important;
+    max-height: min(92dvh, calc(100dvh - env(safe-area-inset-top))) !important;
+    margin: 0 !important;
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom)) !important;
+    border-width: 1px 0 0 !important;
+    border-radius: 18px 18px 0 0 !important;
+  }
+
+  .dialog > header {
+    position: sticky !important;
+    z-index: 3 !important;
+    top: -18px !important;
+    margin: -18px -16px 0 !important;
+    padding: 16px !important;
+    border-bottom: 1px solid var(--line) !important;
+    background: var(--surface-raised) !important;
+  }
+
+  .dialog > header h2 {
+    font-size: 20px !important;
+  }
+
+  .dialog > footer {
+    position: sticky !important;
+    z-index: 3 !important;
+    bottom: calc(-18px - env(safe-area-inset-bottom)) !important;
+    margin: 4px -16px calc(-18px - env(safe-area-inset-bottom)) !important;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom)) !important;
+    border-top: 1px solid var(--line) !important;
+    background: var(--surface-raised) !important;
+  }
+
+  .toast,
+  .quota-toast,
+  .profile-toast {
+    right: 12px !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    left: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  /* Authentication: the task on a phone is signing in, so the form owns the first viewport. */
+  .auth-stage {
+    min-height: 100dvh !important;
+    display: block !important;
+    overflow-y: auto !important;
+  }
+
+  .auth-story {
+    display: none !important;
+  }
+
+  .auth-form-stage {
+    min-height: 100dvh !important;
+    padding: max(18px, env(safe-area-inset-top)) 12px max(18px, env(safe-area-inset-bottom)) !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: visible !important;
+  }
+
+  .auth-card,
+  .auth-card--register,
+  .simple-auth {
+    width: 100% !important;
+    max-width: 540px !important;
+    padding: 22px 18px !important;
+    border-radius: 16px !important;
+  }
+
+  .auth-brand {
+    align-items: flex-start !important;
+  }
+
+  .auth-copy h1,
+  .auth-copy h2 {
+    font-size: clamp(26px, 8vw, 34px) !important;
+  }
+
+  .auth-options {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* Project context becomes a compact identity bar; tabs remain readable and scrollable. */
+  .project-shell {
+    grid-template-rows: 66px 48px minmax(0, 1fr) !important;
+  }
+
+  .project-context {
+    padding: 9px 10px !important;
+    grid-template-columns: 40px 42px minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .project-back {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .project-mark {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .project-description {
+    display: none !important;
+  }
+
+  .project-identity > p {
+    font-size: 8px !important;
+  }
+
+  .project-identity > div {
+    min-width: 0 !important;
+    gap: 6px !important;
+  }
+
+  .project-identity h2 {
+    max-width: none !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    font-size: 14px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .project-identity .status-chip {
+    min-height: 21px !important;
+    padding-inline: 6px !important;
+    font-size: 8px !important;
+  }
+
+  .project-tabs {
+    padding: 0 6px !important;
+    gap: 2px !important;
+    scroll-snap-type: x proximity;
+  }
+
+  .project-tabs a {
+    min-width: max-content !important;
+    min-height: 47px !important;
+    padding: 0 10px !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    font-size: 10px !important;
+    scroll-snap-align: start;
+  }
+
+  .project-tabs a span {
+    display: inline !important;
+  }
+
+  /* Projects */
+  .page--projects {
+    height: auto !important;
+    min-height: 100% !important;
+    display: block !important;
+    overflow-y: auto !important;
+  }
+
+  .portfolio-strip {
+    margin-bottom: 12px !important;
+    padding-bottom: 4px !important;
+    display: flex !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+  }
+
+  .portfolio-strip > article {
+    min-width: 138px !important;
+    scroll-snap-align: start;
+  }
+
+  .portfolio-capacity {
+    display: none !important;
+  }
+
+  .project-toolbar,
+  .task-toolbar,
+  .file-toolbar {
+    align-items: stretch !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .project-toolbar .search-control,
+  .task-toolbar .search-control,
+  .file-toolbar .search-control {
+    min-width: 0 !important;
+    flex: 1 1 220px !important;
+  }
+
+  .segmented,
+  .toolbar-count {
+    display: none !important;
+  }
+
+  .project-collection {
+    overflow: visible !important;
+  }
+
+  .project-row {
+    min-height: 104px !important;
+    padding: 13px 12px !important;
+    grid-template-columns: 44px minmax(0, 1fr) 42px !important;
+    gap: 10px !important;
+  }
+
+  .project-row dl {
+    display: none !important;
+  }
+
+  .project-row__identity p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .project-open {
+    width: 42px !important;
+    min-width: 42px !important;
+    padding: 0 !important;
+  }
+
+  .project-open span {
+    display: none !important;
+  }
+
+  /* Overview and analytics */
+  .flow-strip,
+  .metric-grid,
+  .resource-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .dashboard-grid,
+  .analytics-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-grid > article,
+  .analytics-grid > article,
+  .project-resources,
+  .trend {
+    grid-column: auto !important;
+    min-height: 210px !important;
+  }
+
+  .spark-bars {
+    min-width: 520px !important;
+  }
+
+  .trend {
+    overflow-x: auto !important;
+  }
+
+  /* Tasks */
+  .task-toolbar .select-control {
+    width: auto !important;
+    flex: 1 1 132px !important;
+  }
+
+  .task-board {
+    min-height: 480px !important;
+    padding-bottom: 10px !important;
+    grid-template-columns: repeat(6, minmax(82vw, 1fr)) !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x proximity;
+  }
+
+  .task-column {
+    scroll-snap-align: start;
+  }
+
+  .task-drawer {
+    width: min(100vw, 540px) !important;
+    padding: 16px !important;
+  }
+
+  .task-drawer > footer {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+
+  .task-drawer > footer > * {
+    flex: 1 1 120px !important;
+  }
+
+  .task-facts,
+  .submission-file-grid,
+  .submission-cards-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .inline-create {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  /* Sprints, files and members */
+  .sprint-workspace,
+  .file-workspace,
+  .member-workspace,
+  .support-workspace {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: auto !important;
+  }
+
+  .backlog-pane,
+  .folder-pane,
+  .conversation-list {
+    min-height: 190px !important;
+    max-height: 42dvh !important;
+  }
+
+  .sprint-list,
+  .file-pane,
+  .support-thread {
+    min-height: 430px !important;
+    overflow: visible !important;
+  }
+
+  .folder-pane {
+    overflow-y: auto !important;
+  }
+
+  .member-metrics {
+    grid-template-columns: repeat(3, minmax(132px, 1fr)) !important;
+    overflow-x: auto !important;
+  }
+
+  .member-table,
+  .invitation-ledger,
+  .payment-history-panel {
+    overflow-x: auto !important;
+  }
+
+  .member-grid,
+  .payment-grid .data-grid__head,
+  .payment-grid .data-grid__row {
+    min-width: 680px !important;
+  }
+
+  /* Complex project views keep their information model and get intentional horizontal panning. */
+  .view-switcher {
+    width: 100% !important;
+    padding-bottom: 3px !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+  }
+
+  .view-switcher button {
+    min-width: max-content !important;
+  }
+
+  .view-switcher button span {
+    display: inline !important;
+  }
+
+  .view-surface,
+  .gantt-chart-wrapper,
+  .workload-table,
+  .dependency-grid,
+  .timeline,
+  .calendar-view,
+  .mini-kanban-view {
+    max-width: 100% !important;
+    overflow: auto !important;
+  }
+
+  .gantt-header,
+  .gantt-row,
+  .workload-row,
+  .task-list-grid,
+  .dependency-grid {
+    min-width: 760px !important;
+  }
+
+  /* Empty data sets should be readable without panning an otherwise desktop-width grid. */
+  .task-list-grid:has(> .compact-empty),
+  .member-grid:has(> .compact-empty),
+  .payment-grid:has(> .compact-empty) {
+    min-width: 0 !important;
+  }
+
+  .task-list-grid > .compact-empty,
+  .member-grid > .compact-empty,
+  .payment-grid > .compact-empty {
+    position: sticky !important;
+    left: 0 !important;
+    width: calc(100vw - 40px) !important;
+    max-width: 100% !important;
+    justify-self: start !important;
+  }
+
+  .mini-kanban {
+    min-width: 760px !important;
+  }
+
+  /* Account */
+  .profile-page {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: auto !important;
+  }
+
+  .profile-layout {
+    gap: 12px !important;
+  }
+
+  .p-card,
+  .setting-item-card {
+    border-radius: 12px !important;
+  }
+
+  .p-card {
+    padding: 16px !important;
+  }
+
+  .p-card__header {
+    align-items: flex-start !important;
+  }
+
+  .info-row {
+    grid-template-columns: minmax(92px, 0.7fr) minmax(0, 1.3fr) !important;
+    gap: 10px !important;
+  }
+
+  .info-input,
+  .info-select {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .setting-item-card {
+    min-height: 78px !important;
+    padding: 13px !important;
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 11px !important;
+  }
+
+  .setting-item__left,
+  .setting-item__right {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .setting-item__right {
+    justify-content: flex-end !important;
+    flex-wrap: wrap !important;
+  }
+
+  .email-address {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+
+  .theme-segmented-control {
+    width: 100% !important;
+    overflow-x: auto !important;
+  }
+
+  .theme-btn {
+    flex: 1 0 max-content !important;
+  }
+
+  /* Billing */
+  .current-plan {
+    width: 100% !important;
+  }
+
+  .quota-card {
+    padding: 15px !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .quota-card dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .quota-card dl > div {
+    border: 0 !important;
+    border-top: 1px solid var(--line) !important;
+  }
+
+  .billing-plan-heading > span {
+    max-width: none !important;
+    text-align: left !important;
+  }
+
+  .plan-list {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .provider-choice {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .bank-transfer-status {
+    grid-template-columns: 24px minmax(0, 1fr) !important;
+  }
+
+  .bank-transfer-status > button {
+    grid-column: 1 / -1 !important;
+    justify-content: center !important;
+  }
+
+  .bank-transfer-qr img {
+    width: min(100%, 320px) !important;
+  }
+
+  .bank-transfer-details > div {
+    grid-template-columns: minmax(100px, 0.8fr) minmax(0, 1.2fr) !important;
+  }
+
+  /* Settings */
+  .project-settings-page,
+  .settings-layout {
+    width: 100% !important;
+  }
+
+  .project-header-card,
+  .settings-card__header,
+  .status-card-row,
+  .danger-zone-card {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .project-header-details,
+  .settings-card__body,
+  .settings-actions-footer {
+    padding-inline: 15px !important;
+  }
+
+  .date-fields-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .input-with-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .settings-actions-footer {
+    position: sticky !important;
+    z-index: 5 !important;
+    bottom: 0 !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    background: var(--paper) !important;
+  }
+
+  /* Notifications, support and guide */
+  .notification-history-item {
+    padding: 14px !important;
+    grid-template-columns: 34px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .notification-history-icon {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .notification-history-copy > header {
+    flex-direction: column !important;
+  }
+
+  .notification-history-actions {
+    flex-wrap: wrap !important;
+  }
+
+  .notification-history-actions .button {
+    flex: 1 1 120px !important;
+  }
+
+  .support-thread > header,
+  .conversation-list > header {
+    padding: 13px !important;
+  }
+
+  .message-stream {
+    min-height: 300px !important;
+  }
+
+  .message-bubble {
+    max-width: 88% !important;
+  }
+
+  .message-composer {
+    position: sticky !important;
+    bottom: 0 !important;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+    background: var(--surface) !important;
+  }
+
+  .guide-header {
+    padding: 20px 18px !important;
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .guide-header h2 {
+    font-size: 25px !important;
+  }
+
+  .guide-video-card > header {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .guide-media-meta {
+    flex-wrap: wrap !important;
+  }
+
+  /* Shared file and Markdown tools */
+  .file-preview-overlay {
+    padding: 0 !important;
+  }
+
+  .file-preview-dialog {
+    width: 100% !important;
+    height: 100dvh !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .file-preview-dialog__header {
+    padding: max(12px, env(safe-area-inset-top)) 12px 12px !important;
+    gap: 8px !important;
+  }
+
+  .file-preview-dialog__meta small {
+    display: none !important;
+  }
+
+  .file-preview-dialog__actions .button span {
+    display: none !important;
+  }
+
+  .file-properties-drawer {
+    width: min(92vw, 390px) !important;
+    max-width: none !important;
+  }
+
+  .md-editor__toolbar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+  }
+
+  .md-editor--split .md-editor__body,
+  .md-editor__body {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .md-editor__pane--preview {
+    border-top: 1px solid var(--line) !important;
+    border-left: 0 !important;
+  }
+
+  .maintenance-layer article,
+  .session-expired-dialog {
+    width: calc(100vw - 24px) !important;
+    padding: 22px 18px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding-inline: 10px !important;
+  }
+
+  .workspace-bar__title h1 {
+    max-width: 39vw !important;
+  }
+
+  .project-identity .status-chip {
+    display: none !important;
+  }
+
+  .flow-strip,
+  .metric-grid,
+  .resource-grid,
+  .quota-card dl {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .task-board {
+    grid-template-columns: repeat(6, minmax(88vw, 1fr)) !important;
+  }
+
+  .p-card__header,
+  .p-card__actions {
+    gap: 6px !important;
+  }
+
+  .p-card__actions .btn-primary,
+  .p-card__actions .btn-cancel {
+    min-width: 42px !important;
+    padding-inline: 9px !important;
+  }
+
+  .info-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 4px !important;
+  }
+
+  .info-value,
+  .info-input,
+  .info-select {
+    text-align: left !important;
+  }
+
+  .bank-transfer-details > div {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 3px !important;
+  }
+
+  .dialog > footer .button {
+    flex: 1 1 120px !important;
+  }
+
+  .dialog > footer {
+    flex-wrap: wrap !important;
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .auth-form-stage {
+    place-items: start center !important;
+  }
+
+  .dialog,
+  .dialog--small,
+  .dialog--wide,
+  .dialog--task {
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .global-rail,
+  .task-card,
+  .button,
+  .icon-button {
+    transition: none !important;
+  }
+}
