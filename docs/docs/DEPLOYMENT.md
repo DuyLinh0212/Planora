@@ -54,7 +54,7 @@ Render hiện chỉ deploy một API web service. Chỉ tách worker/scheduler r
 ## Vercel
 Không đưa DB/Cloudinary/Payment secret vào client/public env.
 
-Đặt Root Directory tương ứng (`frontend/Planora.Web.User` hoặc `frontend/Planora.Web.Admin`). Mỗi frontend có `vercel.json` tự sinh cấu hình production từ các biến public `PLANORA_API_URL` (và `PLANORA_GOOGLE_CLIENT_ID` cho User Web). Không import `.env.example` ở repository root vào Vercel.
+Đặt Root Directory tương ứng (`frontend/Planora.Web.User` hoặc `frontend/Planora.Web.Admin`). Mỗi frontend có `vercel.json` tự sinh cấu hình production từ các biến public `PLANORA_API_URL` (và `PLANORA_GOOGLE_CLIENT_ID` cho User Web). Không import `backend.env.example` ở repository root vào Vercel.
 
 ## SignalR
 1 backend instance: SignalR trực tiếp.

@@ -24,7 +24,7 @@
 - `mobile/user-app` — responsive Flutter workspace foundation.
 - `docs/implementation/FRONTEND_STRUCTURE.md` — ownership rules and target structure for Angular and Flutter frontends.
 - `docs/implementation/BACKEND_STRUCTURE.md` — current Clean Architecture tree, dependency direction, and naming rules.
-- `.env.example`, `docker-compose.yml` — local PostgreSQL configuration and service definition.
+- `backend.env.example`, `docker-compose.yml` — local PostgreSQL configuration and service definition.
 - `.config/dotnet-tools.json` — repository-pinned EF Core CLI 10.0.11.
 - `backend/src/Planora.Infrastructure/Persistence/PostgresMigrations` — production PostgreSQL migrations.
 - `backend/tools/Planora.DataMigration` — one-time SQL Server-to-Neon ETL/verification utility.

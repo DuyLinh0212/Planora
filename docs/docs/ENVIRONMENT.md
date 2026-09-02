@@ -1,10 +1,10 @@
 # ENVIRONMENT CONFIGURATION
 
-`.env.example` ở repository root là template cho backend/local. Mỗi frontend có thêm `.env.example` riêng chỉ chứa cấu hình public dùng khi build trên Vercel. Không dùng lại các template SQL Server/ZaloPay cũ.
+`backend.env.example` ở repository root là template cho backend/local. Mỗi frontend có thêm `.env.example` riêng chỉ chứa cấu hình public dùng khi build trên Vercel. Không dùng lại các template SQL Server/ZaloPay cũ.
 
 ## Local development
 
-1. Copy `.env.example` thành `.env`.
+1. Copy `backend.env.example` thành `.env`.
 2. Start PostgreSQL: `docker compose up -d postgres`.
 3. Thay các giá trị `CHANGE_ME_*` và thêm credential provider nếu cần.
 4. Apply EF migrations:

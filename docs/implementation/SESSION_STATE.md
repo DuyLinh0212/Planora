@@ -33,7 +33,7 @@ Build Planora Phase 0–3 from the approved documentation set under `docs/docs/`
 
 ## Next actions
 
-1. Configure real secrets from `.env.example` or .NET user secrets.
+1. Configure real secrets from `backend.env.example` or .NET user secrets.
 2. Set Render/Neon secrets and run the production smoke-test checklist.
 3. Connect the visual frontends to the deployed API and keep authenticated end-to-end tests in CI.
 4. Add monitoring/alerts and complete remaining roadmap items (GitHub/calendar integrations, AI assistance, MFA, and malware scanning).
