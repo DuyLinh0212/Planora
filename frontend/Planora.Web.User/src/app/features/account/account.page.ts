@@ -104,6 +104,9 @@ export class AccountPage {
   editCountry = '';
   editGender = '';
 
+  /** Native date inputs use an ISO value, while the profile keeps the Vietnamese display format. */
+  readonly maxBirthDate = this.toDateInputValue(new Date());
+
   // Email notifications
   private emailTaskNotificationsValue = false;
   get emailTaskNotifications(): boolean {
@@ -213,7 +216,7 @@ export class AccountPage {
 
   startEditing(): void {
     this.editPhone = this.extraInfo().phone;
-    this.editBirthDate = this.extraInfo().birthDate;
+    this.editBirthDate = this.toDateInputValue(this.extraInfo().birthDate);
     this.editCountry = this.extraInfo().country;
     this.editGender = this.extraInfo().gender;
     this.isEditing.set(true);
@@ -226,6 +229,10 @@ export class AccountPage {
 
   saveProfile(): void {
     if (!this.displayName.trim() || this.saving()) return;
+    if (this.editBirthDate && !this.isValidBirthDate(this.editBirthDate)) {
+      this.error.set('Ngày sinh không hợp lệ. Hãy chọn ngày không vượt quá hôm nay.');
+      return;
+    }
     this.saving.set(true);
     this.error.set(null);
 
@@ -234,7 +241,7 @@ export class AccountPage {
       const updated = {
         ...info,
         phone: this.editPhone.trim() || info.phone,
-        birthDate: this.editBirthDate.trim() || info.birthDate,
+        birthDate: this.formatBirthDate(this.editBirthDate) || info.birthDate,
         country: this.editCountry.trim() || info.country,
         gender: this.editGender || info.gender,
       };
@@ -474,6 +481,35 @@ export class AccountPage {
     } catch {
       // Ignore storage errors
     }
+  }
+
+  private toDateInputValue(value: string | Date): string {
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const day = String(value.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    const trimmed = value.trim();
+    const displayMatch = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(trimmed);
+    if (displayMatch) {
+      return `${displayMatch[3]}-${displayMatch[2].padStart(2, '0')}-${displayMatch[1].padStart(2, '0')}`;
+    }
+    return /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? trimmed : '';
+  }
+
+  private formatBirthDate(value: string): string {
+    if (!this.isValidBirthDate(value)) return '';
+    const [year, month, day] = value.split('-');
+    return `${day}/${month}/${year}`;
+  }
+
+  private isValidBirthDate(value: string): boolean {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const selected = new Date(`${value}T00:00:00`);
+    const today = new Date(`${this.maxBirthDate}T00:00:00`);
+    return !Number.isNaN(selected.getTime()) && selected <= today && this.toDateInputValue(selected) === value;
   }
 
   private readErrorMessage(error: unknown, fallback: string): string {

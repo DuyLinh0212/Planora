@@ -95,9 +95,11 @@
                 <span class="info-label">Ngày sinh</span>
                 @if (isEditing()) {
                   <input
+                    type="date"
                     class="info-input"
                     [(ngModel)]="editBirthDate"
-                    placeholder="DD/MM/YYYY"
+                    [max]="maxBirthDate"
+                    aria-label="Ngày sinh"
                   />
                 } @else {
                   <span class="info-value">{{ extraInfo().birthDate }}</span>
