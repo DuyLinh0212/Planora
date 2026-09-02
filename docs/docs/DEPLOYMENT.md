@@ -62,11 +62,10 @@ Khi scale nhiều instance mới xem xét backplane/managed SignalR.
 
 ## CI/CD
 PR/push:
-`policy -> restore -> build -> PostgreSQL migration -> test -> web/mobile build -> Docker build`
+`policy -> restore -> build -> PostgreSQL migration -> test -> web build -> Docker build`
 
-Main sau khi CI thành công:
-`deploy exact SHA to Render -> wait live -> health/ready -> deploy User/Admin to Vercel`
+Sau khi merge vào `main`, Render và Vercel tự động deploy qua Git integration. GitHub Actions không lưu deploy token và không thực hiện deploy thủ công.
 
-Chi tiết secrets, environment protection và release Android nằm trong `docs/docs/CI_CD.md`.
+Chi tiết cấu hình nằm trong `docs/docs/CI_CD.md`.
 
 Destructive migration phải review.
