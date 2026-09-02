@@ -329,6 +329,81 @@
   margin: 16px auto 4px;
 }
 
+.bank-transfer-status {
+  margin: 14px 0 2px;
+  padding: 11px 12px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid color-mix(in srgb, var(--blue) 26%, var(--line));
+  border-radius: 9px;
+  color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 7%, var(--surface));
+}
+
+.bank-transfer-status > svg {
+  width: 18px;
+  height: 18px;
+}
+
+.bank-transfer-status > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.bank-transfer-status b {
+  color: var(--ink);
+  font-size: 10px;
+}
+
+.bank-transfer-status span {
+  color: var(--muted);
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.bank-transfer-status button {
+  min-height: 28px;
+  padding: 5px 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  color: inherit;
+  background: var(--surface);
+  font-size: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.bank-transfer-status button svg {
+  width: 11px;
+  height: 11px;
+}
+
+.bank-transfer-status.is-confirmed {
+  color: var(--green);
+  border-color: color-mix(in srgb, var(--green) 34%, var(--line));
+  background: color-mix(in srgb, var(--green) 9%, var(--surface));
+}
+
+.bank-transfer-status.has-error {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 34%, var(--line));
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+}
+
+.is-spinning {
+  animation: billing-spin 0.9s linear infinite;
+}
+
+@keyframes billing-spin {
+  to { transform: rotate(360deg); }
+}
+
 .bank-transfer-qr img {
   display: block;
   width: min(100%, 280px);

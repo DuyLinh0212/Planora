@@ -1,14 +1,14 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { LucideCheck, LucideChevronDown, LucideDatabase, LucideReceiptText, LucideSparkles, LucideX } from '@lucide/angular';
-import { finalize, Subscription, switchMap, take, timer } from 'rxjs';
+import { LucideCheck, LucideChevronDown, LucideCircleCheckBig, LucideClock3, LucideDatabase, LucideReceiptText, LucideRefreshCw, LucideSparkles, LucideTriangleAlert, LucideX } from '@lucide/angular';
+import { catchError, EMPTY, finalize, Subscription, switchMap, take, timer } from 'rxjs';
 import { AvailablePlan, BankTransferInstructions, UserPayment } from '../../core/api/api.models';
 import { PlanoraApiService } from '../../core/api/planora-api.service';
 import { WorkspaceStore } from '../../core/workspace/workspace.store';
 
 @Component({
   selector: 'app-billing-page',
-  imports: [DatePipe, DecimalPipe, LucideCheck, LucideChevronDown, LucideDatabase, LucideReceiptText, LucideSparkles, LucideX],
+  imports: [DatePipe, DecimalPipe, LucideCheck, LucideChevronDown, LucideCircleCheckBig, LucideClock3, LucideDatabase, LucideReceiptText, LucideRefreshCw, LucideSparkles, LucideTriangleAlert, LucideX],
   templateUrl: './billing.page.html',
   styleUrl: './billing.page.css',
 })
@@ -25,8 +25,12 @@ export class BillingPage implements OnInit, OnDestroy {
   readonly busy = signal(false);
   readonly toast = signal<string | null>(null);
   readonly bankTransferInstructions = signal<BankTransferInstructions | null>(null);
+  readonly bankTransferState = signal<'checking' | 'waiting' | 'confirmed' | 'connection-error'>('waiting');
+  readonly bankTransferLastCheckedAt = signal<Date | null>(null);
+  readonly bankTransferCheckingNow = signal(false);
   private readonly api = inject(PlanoraApiService);
   private bankTransferWatcher?: Subscription;
+  private bankTransferPaymentId?: string;
 
   ngOnInit(): void {
     this.store.refreshProfile();
@@ -96,7 +100,6 @@ export class BillingPage implements OnInit, OnDestroy {
         if (checkout.bankTransferInstructions) {
           this.bankTransferInstructions.set(checkout.bankTransferInstructions);
           this.watchBankTransfer(checkout.payment.id);
-          this.notify('Hãy chuyển đúng số tiền và nội dung. Gói sẽ tự kích hoạt ngay khi ngân hàng báo có.');
           return;
         }
         this.notify('Giao dịch đã được ghi nhận.');
@@ -124,20 +127,60 @@ export class BillingPage implements OnInit, OnDestroy {
 
   private watchBankTransfer(paymentId: string): void {
     this.bankTransferWatcher?.unsubscribe();
-    this.bankTransferWatcher = timer(5000, 5000).pipe(
-      take(36),
-      switchMap(() => this.api.getPayments()),
+    this.bankTransferPaymentId = paymentId;
+    this.bankTransferLastCheckedAt.set(null);
+    this.bankTransferState.set('checking');
+    this.bankTransferWatcher = timer(0, 3000).pipe(
+      take(120),
+      switchMap(() => this.loadBankTransferStatus()),
     ).subscribe({
       next: (payments) => {
         this.payments.set(payments);
+        this.bankTransferLastCheckedAt.set(new Date());
+        this.bankTransferState.set('waiting');
         const payment = payments.find((item) => item.id === paymentId);
         if (payment?.status !== 'Success') return;
         this.bankTransferWatcher?.unsubscribe();
-        this.bankTransferInstructions.set(null);
+        this.bankTransferState.set('confirmed');
         this.store.refreshProfile();
-        this.notify('Đã nhận được chuyển khoản và kích hoạt gói tự động.');
       },
     });
+  }
+
+  checkBankTransferNow(): void {
+    const paymentId = this.bankTransferPaymentId;
+    if (!paymentId || this.bankTransferCheckingNow() || this.bankTransferState() === 'confirmed') return;
+    this.bankTransferCheckingNow.set(true);
+    this.bankTransferState.set('checking');
+    this.loadBankTransferStatus().pipe(finalize(() => this.bankTransferCheckingNow.set(false))).subscribe({
+      next: (payments) => {
+        this.payments.set(payments);
+        this.bankTransferLastCheckedAt.set(new Date());
+        const payment = payments.find((item) => item.id === paymentId);
+        if (payment?.status !== 'Success') {
+          this.bankTransferState.set('waiting');
+          return;
+        }
+        this.bankTransferWatcher?.unsubscribe();
+        this.bankTransferState.set('confirmed');
+        this.store.refreshProfile();
+      },
+    });
+  }
+
+  dismissBankTransfer(): void {
+    this.bankTransferWatcher?.unsubscribe();
+    this.bankTransferPaymentId = undefined;
+    this.bankTransferInstructions.set(null);
+  }
+
+  private loadBankTransferStatus() {
+    return this.api.getPayments().pipe(
+      catchError(() => {
+        this.bankTransferState.set('connection-error');
+        return EMPTY;
+      }),
+    );
   }
 
   private notify(value: string): void { this.toast.set(value); setTimeout(() => this.toast.set(null), 2800); }

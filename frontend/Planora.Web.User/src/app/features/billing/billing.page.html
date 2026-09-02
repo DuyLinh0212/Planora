@@ -180,14 +180,14 @@
     </div>
   }
   @if (bankTransferInstructions(); as instructions) {
-    <div class="dialog-layer" (click)="bankTransferInstructions.set(null)">
+    <div class="dialog-layer" (click)="dismissBankTransfer()">
       <article class="dialog dialog--small" (click)="$event.stopPropagation()">
         <header>
           <div>
             <p class="eyebrow">Chuyển khoản tự động</p>
             <h2>Thông tin thanh toán</h2>
           </div>
-          <button class="icon-button" (click)="bankTransferInstructions.set(null)">
+          <button class="icon-button" (click)="dismissBankTransfer()">
             <svg lucideX></svg>
           </button>
         </header>
@@ -195,6 +195,37 @@
           Mã QR này đã gồm đúng số tiền và nội dung giao dịch. Planora tự kích hoạt khi nhận webhook
           báo có từ ngân hàng.
         </p>
+        <section class="bank-transfer-status" [class.is-confirmed]="bankTransferState() === 'confirmed'" [class.has-error]="bankTransferState() === 'connection-error'" aria-live="polite">
+          @if (bankTransferState() === 'confirmed') {
+            <svg lucideCircleCheckBig></svg>
+            <div>
+              <b>Đã nhận thanh toán — gói đã được kích hoạt</b>
+              <span>Thông tin gói của bạn đã được cập nhật.</span>
+            </div>
+          } @else if (bankTransferState() === 'connection-error') {
+            <svg lucideTriangleAlert></svg>
+            <div>
+              <b>Chưa kiểm tra được trạng thái</b>
+              <span>Giao dịch vẫn được giữ an toàn. Planora sẽ tiếp tục thử lại.</span>
+            </div>
+            <button type="button" (click)="checkBankTransferNow()" [disabled]="bankTransferCheckingNow()">Thử lại</button>
+          } @else {
+            <svg [class.is-spinning]="bankTransferState() === 'checking'" lucideClock3></svg>
+            <div>
+              <b>{{ bankTransferState() === 'checking' ? 'Đang kiểm tra thanh toán…' : 'Đang chờ ngân hàng xác nhận' }}</b>
+              <span>
+                @if (bankTransferLastCheckedAt(); as lastCheckedAt) {
+                  Đã kiểm tra lúc {{ lastCheckedAt | date: 'HH:mm:ss' }}. Tự động kiểm tra lại sau vài giây.
+                } @else {
+                  Planora đang kiểm tra trạng thái giao dịch.
+                }
+              </span>
+            </div>
+            <button type="button" (click)="checkBankTransferNow()" [disabled]="bankTransferCheckingNow()">
+              <svg [class.is-spinning]="bankTransferCheckingNow()" lucideRefreshCw></svg> Kiểm tra ngay
+            </button>
+          }
+        </section>
         <div class="bank-transfer-qr">
           <img
             [src]="instructions.qrCodeUrl"
