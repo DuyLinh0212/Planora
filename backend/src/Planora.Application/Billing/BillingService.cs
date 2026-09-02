@@ -174,7 +174,7 @@ public sealed class BillingService(
         {
             if (!bankTransferDetails.IsConfigured || string.IsNullOrWhiteSpace(payment.ProviderOrderId))
                 return ApplicationResult.Failure<PaymentCheckoutResponse>(ApplicationErrors.External("payment.bank_transfer_not_configured", "Automatic bank transfer is not configured yet. Please try again later."));
-            return ApplicationResult.Success(new PaymentCheckoutResponse(response, null, bankTransferDetails.GetInstructions(payment.ProviderOrderId)));
+            return ApplicationResult.Success(new PaymentCheckoutResponse(response, null, bankTransferDetails.GetInstructions(payment.ProviderOrderId, payment.Amount)));
         }
 
         if (payment.Provider != PaymentProvider.Momo)

@@ -12,14 +12,29 @@ public sealed class BankTransferPaymentDetailsProvider(IOptions<BankTransferPaym
 
     public bool IsConfigured => _options.IsConfigured;
 
-    public string CreatePaymentReference(Guid paymentId) => $"{NormalisedPrefix}{paymentId:N}";
+    // VietQR limits the transfer description to 25 characters. 20 hexadecimal characters
+    // give 80 bits of uniqueness while leaving room for the standard PLN prefix.
+    public string CreatePaymentReference(Guid paymentId) => $"{NormalisedPrefix}{paymentId:N}".ToUpperInvariant()[..Math.Min(25, NormalisedPrefix.Length + 20)];
 
-    public BankTransferInstructionsResponse GetInstructions(string transferContent) => new(
-        _options.BankName.Trim(),
-        _options.AccountName.Trim(),
-        _options.AccountNumber.Trim(),
-        transferContent,
-        string.IsNullOrWhiteSpace(_options.Branch) ? null : _options.Branch.Trim());
+    public BankTransferInstructionsResponse GetInstructions(string transferContent, decimal amount)
+    {
+        var bankName = _options.BankName.Trim();
+        var accountName = _options.AccountName.Trim();
+        var accountNumber = _options.AccountNumber.Trim();
+        var bankId = string.IsNullOrWhiteSpace(_options.VietQrBankId) ? bankName : _options.VietQrBankId.Trim();
+        var qrCodeUrl = $"https://img.vietqr.io/image/{Uri.EscapeDataString(bankId)}-{Uri.EscapeDataString(accountNumber)}-compact2.png" +
+                        $"?amount={amount.ToString("0", System.Globalization.CultureInfo.InvariantCulture)}" +
+                        $"&addInfo={Uri.EscapeDataString(transferContent)}" +
+                        $"&accountName={Uri.EscapeDataString(accountName)}";
+
+        return new BankTransferInstructionsResponse(
+            bankName,
+            accountName,
+            accountNumber,
+            transferContent,
+            string.IsNullOrWhiteSpace(_options.Branch) ? null : _options.Branch.Trim(),
+            qrCodeUrl);
+    }
 
     public string? ExtractPaymentReference(string content)
     {
@@ -48,5 +63,7 @@ public sealed class BankTransferPaymentDetailsProvider(IOptions<BankTransferPaym
         _ => "PLN"
     };
 
-    private Regex PaymentReferenceRegex() => new($"{Regex.Escape(NormalisedPrefix)}[0-9A-F]{{32}}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
+    // Accept both 20-character references created now and the previous 32-character
+    // UUID references so callbacks for already-issued payment instructions still work.
+    private Regex PaymentReferenceRegex() => new($"{Regex.Escape(NormalisedPrefix)}[0-9A-F]{{20}}(?:[0-9A-F]{{12}})?", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
 }

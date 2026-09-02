@@ -40,6 +40,8 @@ Infrastructure:
 ### Chuyển khoản ngân hàng
 
 - Client nhận số tài khoản và mã nội dung chuyển khoản duy nhất từ backend.
+- QR được tạo động bằng VietQR Quick Link, gồm số tiền và mã nội dung của đúng giao dịch. Cấu hình `Payment:BankTransfer:VietQrBankId` bằng mã BIN VietQR của ngân hàng nhận (ví dụ ACB: `970416`). Nếu chưa cấu hình, hệ thống dùng `BankName` làm bank ID.
+- Mã nội dung mới có tối đa 25 ký tự để tương thích giới hạn VietQR.
 - SePay gọi `POST /api/payments/bank-transfer/sepay/ipn` khi tài khoản báo có.
 - Backend chỉ xử lý tiền vào, đúng tài khoản nhận, đúng amount và đúng mã nội dung. Header `Authorization: Apikey …` phải khớp secret đã cấu hình.
 - Không có bước admin duyệt để kích hoạt gói; endpoint admin review chỉ phục vụ đối soát/audit.

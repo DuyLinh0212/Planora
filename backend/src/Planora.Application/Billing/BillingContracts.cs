@@ -5,7 +5,13 @@ namespace Planora.Application.Billing;
 public sealed record CreatePaymentIntentRequest(Guid PlanId, PaymentProvider Provider, string IdempotencyKey);
 public sealed record UserPaymentResponse(Guid Id, string PlanName, PaymentProvider Provider, decimal Amount, string Currency, PaymentStatus Status, DateTimeOffset CreatedAt, DateTimeOffset? PaidAt);
 public sealed record PaymentCheckoutResponse(UserPaymentResponse Payment, string? CheckoutUrl, BankTransferInstructionsResponse? BankTransferInstructions);
-public sealed record BankTransferInstructionsResponse(string BankName, string AccountName, string AccountNumber, string TransferContent, string? Branch);
+public sealed record BankTransferInstructionsResponse(
+    string BankName,
+    string AccountName,
+    string AccountNumber,
+    string TransferContent,
+    string? Branch,
+    string QrCodeUrl);
 public sealed record UserSubscriptionResponse(Guid? SubscriptionId, string PlanCode, string PlanName, SubscriptionStatus? Status, DateTimeOffset? StartedAt, DateTimeOffset? ExpiresAt, bool AutoRenew);
 public sealed record AvailablePlanResponse(Guid Id, string Code, string Name, decimal Price, string Currency, BillingPeriod BillingPeriod, int MaxOwnedProjects, long MaxStorageBytes, IReadOnlyList<string> Entitlements);
 
@@ -38,7 +44,7 @@ public interface IBankTransferPaymentDetailsProvider
 {
     bool IsConfigured { get; }
     string CreatePaymentReference(Guid paymentId);
-    BankTransferInstructionsResponse GetInstructions(string transferContent);
+    BankTransferInstructionsResponse GetInstructions(string transferContent, decimal amount);
     string? ExtractPaymentReference(string content);
     bool IsExpectedDestinationAccount(string accountNumber);
     bool IsValidWebhookAuthorization(string? authorizationHeader);

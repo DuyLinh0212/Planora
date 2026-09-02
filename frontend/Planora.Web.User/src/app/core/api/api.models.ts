@@ -262,6 +262,7 @@ export interface BankTransferInstructions {
   accountNumber: string;
   transferContent: string;
   branch: string | null;
+  qrCodeUrl: string;
 }
 
 export interface PaymentCheckout {
@@ -349,7 +350,13 @@ export interface TaskSubmissionDetail extends TaskSubmissionResponse {
   submittedByUserId: string;
   submittedByDisplayName: string;
   links: { id: string; url: string; linkType: string; title: string | null }[];
-  files: { projectFileId: string; fileVersionId: string; name: string; mimeType: string; sizeBytes: number }[];
+  files: {
+    projectFileId: string;
+    fileVersionId: string;
+    name: string;
+    mimeType: string;
+    sizeBytes: number;
+  }[];
   reviewFeedback?: string | null;
   reviewedAt?: string | null;
 }

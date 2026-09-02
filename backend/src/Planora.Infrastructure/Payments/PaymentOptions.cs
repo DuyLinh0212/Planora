@@ -22,6 +22,8 @@ public sealed class MomoPaymentOptions
 public sealed class BankTransferPaymentOptions
 {
     public string BankName { get; init; } = string.Empty;
+    /// <summary>VietQR Quick Link bank ID, for example <c>acb</c> or <c>970416</c>.</summary>
+    public string? VietQrBankId { get; init; }
     public string AccountName { get; init; } = string.Empty;
     public string AccountNumber { get; init; } = string.Empty;
     public string? Branch { get; init; }
