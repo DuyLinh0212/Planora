@@ -54,6 +54,7 @@ yarn-error.log*
 .vscode/
 .DS_Store
 Thumbs.db
+.codex-remote-attachments/
 
 # Local database and test artifacts
 *.mdf
