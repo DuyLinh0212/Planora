@@ -3,7 +3,7 @@
       <div>
         <p class="eyebrow">Identity operations</p>
         <h1>User accounts</h1>
-        <p>Search, inspect, suspend and restore access.</p>
+        <p>Search, inspect, suspend, restore access and assign plans.</p>
       </div>
     </header>
     <article class="panel data-panel">
@@ -33,7 +33,7 @@
           <span>{{ account.planName ?? 'Free' }}</span>
           <b>{{ account.ownedProjectCount }}</b>
           <span>{{ formatBytes(account.storageBytes) }}</span>
-          <button class="text" (click)="selectedAccount.set(account)">View →</button>
+          <button class="text" (click)="selectAccount(account)">View →</button>
         </div>
       }
     </article>
@@ -60,6 +60,22 @@
           <p>
             <small>Plan</small><b>{{ account.planName ?? 'Free' }}</b>
           </p>
+          <label>
+            <small>Assign plan</small>
+            <select
+              [ngModel]="selectedPlanId()"
+              (ngModelChange)="selectedPlanId.set($event)"
+              aria-label="Assign subscription plan"
+            >
+              <option [ngValue]="null">Select plan</option>
+              @for (plan of context.plans(); track plan.id) {
+                @if (plan.isActive) {
+                  <option [ngValue]="plan.id">{{ plan.name }}</option>
+                }
+              }
+            </select>
+            <button class="button primary" type="button" (click)="assignPlan()">Set plan</button>
+          </label>
           <p>
             <small>Owned projects</small><b>{{ account.ownedProjectCount }}</b>
           </p>

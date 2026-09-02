@@ -43,4 +43,11 @@ public sealed class AdminAccountsController(AdminAccountService adminAccountServ
         var result = await adminAccountService.RestoreUserAccountAsync(accountId, cancellationToken);
         return result.ToHttpResult();
     }
+
+    [HttpPost("{accountId:guid}/plan")]
+    public async Task<IResult> AssignPlanAsync(Guid accountId, AssignAccountPlanRequest request, CancellationToken cancellationToken)
+    {
+        var result = await adminAccountService.AssignPlanAsync(accountId, request, cancellationToken);
+        return result.ToHttpResult();
+    }
 }

@@ -63,6 +63,7 @@ export interface AdminAccount {
   displayName: string;
   status: string;
   systemRole: string;
+  planId: string | null;
   planName: string | null;
   joinedAt: string;
   lastActiveAt: string;
@@ -222,6 +223,9 @@ export class PlanoraAdminApiService {
   }
   restoreAdministratorAccount(accountId: string): Observable<void> {
     return this.httpClient.post<void>(`${this.apiUrl}/accounts/${accountId}/restore`, {});
+  }
+  assignPlanToAccount(accountId: string, planId: string): Observable<void> {
+    return this.httpClient.post<void>(`${this.apiUrl}/accounts/${accountId}/plan`, { planId });
   }
   getSubscriptionPlans(): Observable<SubscriptionPlan[]> {
     return this.httpClient.get<SubscriptionPlan[]>(`${this.apiUrl}/plans`);

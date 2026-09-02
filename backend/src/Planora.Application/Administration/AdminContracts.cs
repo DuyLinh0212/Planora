@@ -31,6 +31,7 @@ public sealed record AdminAccountResponse(
     string DisplayName,
     UserStatus Status,
     SystemRole SystemRole,
+    Guid? PlanId,
     string? PlanName,
     DateTimeOffset JoinedAt,
     DateTimeOffset LastActiveAt,
@@ -46,6 +47,8 @@ public sealed record AdminAccountDetailsResponse(
     int MaxOwnedProjects,
     long MaxStorageBytes,
     IReadOnlyList<AdminActivityResponse> RecentAdminActions);
+
+public sealed record AssignAccountPlanRequest(Guid PlanId);
 
 public sealed record CreateSubscriptionPlanRequest(
     string Code,

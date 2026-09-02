@@ -47,6 +47,11 @@ public sealed class AdminAccountService(
                 dbContext.UserSubscriptions
                     .Where(subscription => subscription.UserId == user.Id && subscription.Status == SubscriptionStatus.Active)
                     .OrderByDescending(subscription => subscription.StartedAt)
+                    .Select(subscription => (Guid?)subscription.PlanId)
+                    .FirstOrDefault(),
+                dbContext.UserSubscriptions
+                    .Where(subscription => subscription.UserId == user.Id && subscription.Status == SubscriptionStatus.Active)
+                    .OrderByDescending(subscription => subscription.StartedAt)
                     .Join(dbContext.SubscriptionPlans, subscription => subscription.PlanId, plan => plan.Id, (subscription, plan) => plan.Name)
                     .FirstOrDefault(),
                 user.CreatedAt,
@@ -77,6 +82,11 @@ public sealed class AdminAccountService(
                 user.DisplayName,
                 user.Status,
                 user.SystemRole,
+                dbContext.UserSubscriptions
+                    .Where(subscription => subscription.UserId == user.Id && subscription.Status == SubscriptionStatus.Active)
+                    .OrderByDescending(subscription => subscription.StartedAt)
+                    .Select(subscription => (Guid?)subscription.PlanId)
+                    .FirstOrDefault(),
                 dbContext.UserSubscriptions
                     .Where(subscription => subscription.UserId == user.Id && subscription.Status == SubscriptionStatus.Active)
                     .OrderByDescending(subscription => subscription.StartedAt)
@@ -167,6 +177,56 @@ public sealed class AdminAccountService(
         await dbContext.SaveChangesAsync(cancellationToken);
         return ApplicationResult.Success();
     }
+
+    public async Task<ApplicationResult> AssignPlanAsync(
+        Guid accountId,
+        AssignAccountPlanRequest request,
+        CancellationToken cancellationToken)
+    {
+        var authorizationError = await adminAuthorizationService.GetSystemAdministratorAuthorizationErrorAsync(cancellationToken);
+        if (authorizationError is not null)
+            return ApplicationResult.Failure(authorizationError);
+
+        var accountExists = await dbContext.Users.AnyAsync(user => user.Id == accountId, cancellationToken);
+        if (!accountExists)
+            return ApplicationResult.Failure(ApplicationErrors.NotFound("Account"));
+
+        var plan = await dbContext.SubscriptionPlans
+            .FirstOrDefaultAsync(candidate => candidate.Id == request.PlanId && candidate.IsActive, cancellationToken);
+        if (plan is null)
+            return ApplicationResult.Failure(ApplicationErrors.NotFound("Active subscription plan"));
+
+        var now = timeProvider.GetUtcNow();
+        var activeSubscriptions = await dbContext.UserSubscriptions
+            .Where(subscription => subscription.UserId == accountId && subscription.Status == SubscriptionStatus.Active)
+            .ToListAsync(cancellationToken);
+        foreach (var activeSubscription in activeSubscriptions)
+            activeSubscription.ExpireUserSubscription(now);
+
+        // Free is represented by the absence of an active subscription. Paid plans granted by
+        // an administrator are active immediately and have no payment transaction attached.
+        if (!string.Equals(plan.Code, "FREE", StringComparison.OrdinalIgnoreCase))
+        {
+            dbContext.UserSubscriptions.Add(UserSubscription.ActivateUserSubscription(
+                accountId,
+                plan.Id,
+                paymentTransactionId: null,
+                now,
+                GetSubscriptionExpiry(plan.BillingPeriod, now),
+                autoRenew: false));
+        }
+
+        AddAccountAuditLog("account.plan_assigned", accountId, now);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return ApplicationResult.Success();
+    }
+
+    private static DateTimeOffset? GetSubscriptionExpiry(BillingPeriod billingPeriod, DateTimeOffset startedAt) => billingPeriod switch
+    {
+        BillingPeriod.Monthly => startedAt.AddMonths(1),
+        BillingPeriod.Yearly => startedAt.AddYears(1),
+        _ => null
+    };
 
     private void AddAccountAuditLog(string action, Guid accountId, DateTimeOffset createdAt) =>
         dbContext.AuditLogs.Add(AuditLog.CreateAuditLog(
