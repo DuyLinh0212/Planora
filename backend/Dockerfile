@@ -16,4 +16,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENV ASPNETCORE_ENVIRONMENT=Production
+# Render's constrained Linux runtime may expose a very small inotify quota.
+# Configuration is immutable in production, so do not allocate file watchers.
+ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
+# Keep framework file providers safe if a component requests a change token.
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
 ENTRYPOINT ["dotnet", "Planora.Api.dll"]

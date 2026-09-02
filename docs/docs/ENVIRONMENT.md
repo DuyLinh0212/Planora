@@ -24,7 +24,7 @@ ASP.NET Core maps `__` to nested configuration keys. Secrets belong in .NET user
 
 | Group | Variables | Secret? |
 |---|---|:---:|
-| Runtime | `ASPNETCORE_ENVIRONMENT`, `ASPNETCORE_URLS` | No |
+| Runtime | `ASPNETCORE_ENVIRONMENT`, `ASPNETCORE_URLS`, `DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE`, `DOTNET_USE_POLLING_FILE_WATCHER` | No |
 | Database | `ConnectionStrings__DefaultConnection` | Yes |
 | JWT | `Jwt__Issuer`, `Jwt__Audience`, `Jwt__Secret`, token lifetimes | Secret |
 | External auth | `Authentication__Google__*`, `Authentication__Facebook__*` | Client secret only |
