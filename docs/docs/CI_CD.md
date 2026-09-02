@@ -1,15 +1,14 @@
 # CI/CD
 
-Planora uses GitHub Actions as the delivery gate for the .NET API, both Angular applications, the Flutter application, and the production container.
+Planora uses GitHub Actions as the delivery gate for the .NET API, both Angular applications, and the production container.
 
 ## Delivery flow
 
 1. A pull request or push to `main`/`develop` starts `CI`.
-2. CI rejects tracked local credentials/backups, builds and tests the backend against a disposable PostgreSQL 17 database, checks EF migrations, tests and builds both Angular applications, analyzes/tests Flutter, and builds the backend Docker image.
+2. CI rejects tracked local credentials/backups, builds and tests the backend against a disposable PostgreSQL 17 database, checks EF migrations, tests and builds both Angular applications, and builds the backend Docker image.
 3. `Security` runs dependency review and CodeQL when GitHub Advanced Security is available.
 4. A successful `CI` run on `main` starts `CD Production`.
 5. The CD job checks that the SHA is reachable from `main` and has a successful `CI success` check, deploys that exact SHA to Render, waits for Render to report `live`, verifies `/health/ready`, and only then deploys both Vercel applications.
-6. A `v*` tag starts a signed Android APK/AAB release and attaches both files to a GitHub Release.
 
 Render and Vercel Git-based automatic production deployments should be disabled. `render.yaml` already sets `autoDeployTrigger: off`; this prevents an untested commit from racing the gated workflow.
 
@@ -27,10 +26,6 @@ Add these Environment secrets:
 | `VERCEL_ORG_ID` | Vercel team/account id |
 | `VERCEL_USER_PROJECT_ID` | Vercel project id for `Planora.Web.User` |
 | `VERCEL_ADMIN_PROJECT_ID` | Vercel project id for `Planora.Web.Admin` |
-| `ANDROID_KEYSTORE_BASE64` | Base64-encoded Android JKS/keystore |
-| `ANDROID_KEYSTORE_PASSWORD` | Android keystore password |
-| `ANDROID_KEY_ALIAS` | Android signing key alias |
-| `ANDROID_KEY_PASSWORD` | Android signing key password |
 
 Add these Environment variables:
 
@@ -60,19 +55,9 @@ Disable Vercel Git production deployments because GitHub Actions owns the produc
 
 Set the Render CORS allowed origins to the final user/admin production domains, not temporary Vercel preview URLs.
 
-## Android signing setup
-
-Encode the release keystore without line wrapping and store the result as `ANDROID_KEYSTORE_BASE64`:
-
-```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes('planora-release.jks'))
-```
-
-Never commit the keystore or its passwords. A manual mobile release requires a semantic tag such as `v1.2.3`; tag pushes use the tag automatically.
-
 ## Dependency policy
 
-Dependabot checks GitHub Actions, NuGet, both npm projects, Flutter packages, and Docker weekly. High/critical production npm advisories fail CI unless an exact advisory has a non-expired entry in `.github/security/npm-audit-allowlist.json`.
+Dependabot checks GitHub Actions, NuGet, both npm projects, and Docker weekly. High/critical production npm advisories fail CI unless an exact advisory has a non-expired entry in `.github/security/npm-audit-allowlist.json`.
 
 The current `xlsx` exceptions expire on 2026-12-01. Replace or upgrade `xlsx` before that date; CI will fail automatically after expiry.
 
@@ -94,11 +79,6 @@ npm test -- --watch=false --browsers=ChromeHeadless
 npm run build -- --configuration production
 Pop-Location
 
-Push-Location mobile/user-app
-flutter pub get --enforce-lockfile
-flutter analyze --fatal-infos
-flutter test
-Pop-Location
 ```
 
 Do not run production deployment workflows from a fork. GitHub withholds protected Environment secrets from ordinary pull requests, and the production workflow additionally refuses commits outside `main` or without the required successful CI check.

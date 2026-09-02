@@ -36,15 +36,6 @@ updates:
       admin-web:
         patterns: ["*"]
 
-  - package-ecosystem: pub
-    directory: /mobile/user-app
-    schedule:
-      interval: weekly
-      day: monday
-    groups:
-      mobile:
-        patterns: ["*"]
-
   - package-ecosystem: docker
     directory: /
     schedule:
