@@ -1,4 +1,4 @@
-name: CD Production
+name: Deploy Production
 
 on:
   workflow_run:
@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Render + Vercel production
+    name: Deploy Render + Vercel
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')

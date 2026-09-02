@@ -7,7 +7,7 @@ Planora uses GitHub Actions as the delivery gate for the .NET API, both Angular 
 1. A pull request or push to `main`/`develop` starts `CI`.
 2. CI rejects tracked local credentials/backups, builds and tests the backend against a disposable PostgreSQL 17 database, checks EF migrations, tests and builds both Angular applications, and builds the backend Docker image.
 3. `Security` runs dependency review and CodeQL when GitHub Advanced Security is available.
-4. A successful `CI` run on `main` starts `CD Production`.
+4. A successful `CI` run on `main` starts `Deploy Production`.
 5. The CD job checks that the SHA is reachable from `main` and has a successful `CI success` check, deploys that exact SHA to Render, waits for Render to report `live`, verifies `/health/ready`, and only then deploys both Vercel applications.
 
 Render and Vercel Git-based automatic production deployments should be disabled. `render.yaml` already sets `autoDeployTrigger: off`; this prevents an untested commit from racing the gated workflow.

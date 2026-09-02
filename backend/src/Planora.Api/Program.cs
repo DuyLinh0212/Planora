@@ -139,7 +139,7 @@ builder.Services.AddRateLimiter(options =>
         $"password:{httpContext.Connection.RemoteIpAddress}",
         _ => new FixedWindowRateLimiterOptions { PermitLimit = 5, Window = TimeSpan.FromMinutes(5), QueueLimit = 0, AutoReplenishment = true }));
 });
-builder.Services.AddHealthChecks().AddDbContextCheck<PlanoraDbContext>("sql-server", tags: ["ready"]);
+builder.Services.AddHealthChecks().AddDbContextCheck<PlanoraDbContext>("postgres", tags: ["ready"]);
 
 var app = builder.Build();
 

@@ -15,9 +15,11 @@ declare global {
             client_id: string;
             callback: (response: GoogleCredentialResponse) => void;
             cancel_on_tap_outside?: boolean;
+            use_fedcm_for_prompt?: boolean;
           }) => void;
-          prompt: (callback?: (notification: GooglePromptMoment) => void) => void;
         };
+        prompt: (callback?: (notification: GooglePromptMoment) => void) => void;
+      };
         oauth2: {
           initCodeClient: (options: {
             client_id: string;
@@ -48,6 +50,10 @@ export class GoogleIdentityService {
       window.google!.accounts.id.initialize({
         client_id: environment.googleClientId,
         cancel_on_tap_outside: true,
+        // Keep the explicit login button usable when Chrome has disabled
+        // FedCM for this origin (for example after a previous dismissal).
+        // Google Identity Services will use its regular prompt instead.
+        use_fedcm_for_prompt: false,
         callback: (response) => {
           if (response.credential) resolve(response.credential);
           else reject(new Error('Google không trả về identity token.'));
@@ -55,7 +61,7 @@ export class GoogleIdentityService {
       });
       window.google!.accounts.id.prompt((notification) => {
         if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          reject(new Error('Không thể mở Google Login. Kiểm tra Client ID và allowed origin.'));
+          reject(new Error('Google Login đang bị trình duyệt chặn. Hãy kiểm tra Allowed JavaScript origins hoặc cho phép đăng nhập bên thứ ba cho trang này.'));
         }
       });
     });

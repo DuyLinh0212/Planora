@@ -301,6 +301,43 @@
   text-align: center;
 }
 
+/* The two-column story is useful on wide screens, but must give the form the
+   full viewport on tablets and phones. Keep the story as a compact banner so
+   the product context remains visible without forcing horizontal scrolling. */
+@media (max-width: 1024px) {
+  .auth-stage {
+    min-height: 100dvh;
+    height: auto;
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .auth-story {
+    min-height: 260px;
+    padding: 28px clamp(24px, 6vw, 64px);
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .auth-story > div:not(.story-ribbon) {
+    align-self: end;
+  }
+
+  .auth-story h1 {
+    max-width: 720px;
+    font-size: clamp(38px, 6vw, 58px);
+  }
+
+  .auth-board {
+    display: none;
+  }
+
+  .auth-form-stage {
+    min-height: calc(100dvh - 260px);
+    padding: 28px 18px 42px;
+    overflow: visible;
+  }
+}
+
 .password-strength {
   margin-top: -6px;
   display: grid;

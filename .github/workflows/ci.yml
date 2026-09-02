@@ -86,7 +86,10 @@ jobs:
     env:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=planora_ci;Username=postgres;Password=planora_ci_password;SSL Mode=Disable
-      Jwt__Secret: planora-ci-only-secret-with-at-least-32-characters
+      # Program.cs requires at least 64 bytes for the JWT signing key. This is
+      # disposable CI-only material; production secrets stay in Render/GitHub
+      # Environment secrets.
+      Jwt__Secret: planora-ci-only-secret-with-at-least-64-bytes-for-tests-2026-cix
     defaults:
       run:
         working-directory: backend
