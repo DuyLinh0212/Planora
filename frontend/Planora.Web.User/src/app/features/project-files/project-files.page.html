@@ -1,0 +1,353 @@
+    <section class="page page--fill files-page">
+      <header class="page-intro page-intro--compact">
+        <div>
+          <p class="eyebrow">Kho lưu trữ có phiên bản</p>
+          <h2>Tệp &amp; tài liệu</h2>
+          <p>Tệp project nằm đúng nơi, có thư mục phân cấp theo Sprint &amp; Task và dấu vết phiên bản.</p>
+        </div>
+        <div class="header-actions">
+          @if (store.hasPermission('folder.create')) {
+            <button class="button" (click)="folderDialog.set(true)">
+              <svg lucideFolderPlus></svg>
+              <span>Thư mục</span>
+            </button>
+          }
+          @if (store.hasPermission('file.upload')) {
+            <button class="button button--primary" (click)="openUpload(fileInput)">
+              <svg lucideUpload></svg>
+              <span>Tải tệp</span>
+            </button>
+            <input #fileInput hidden type="file" (change)="upload($event)" />
+          }
+        </div>
+      </header>
+
+      <section class="file-workspace">
+        <aside class="panel folder-pane">
+          <header>
+            <p class="eyebrow">Cấu trúc</p>
+            <h3>Kho lưu trữ</h3>
+          </header>
+
+          <div class="tree-nav">
+            <!-- All files item -->
+            <button
+              type="button"
+              class="tree-node tree-node--root"
+              [class.active]="activeNav().type === 'all'"
+              (click)="selectNav({ type: 'all' })"
+            >
+              <svg lucideFolder></svg>
+              <span class="tree-node__label">Tất cả tệp</span>
+              <b class="tree-node__count">{{ totalItems() }}</b>
+            </button>
+
+            <!-- Sprints & Tasks Tree Section -->
+            <div class="tree-section">
+              <div class="tree-section__header" (click)="sprintTreeExpanded.set(!sprintTreeExpanded())">
+                <span class="tree-toggle">
+                  @if (sprintTreeExpanded()) { <svg lucideChevronDown></svg> } @else { <svg lucideChevronRight></svg> }
+                </span>
+                <svg lucideLayers></svg>
+                <span class="tree-section__title">Theo Sprint &amp; Task</span>
+              </div>
+
+              @if (sprintTreeExpanded()) {
+                <div class="tree-section__children">
+                  @for (sprint of store.sprints(); track sprint.id) {
+                    <div class="tree-branch">
+                      <div
+                        class="tree-node tree-node--sprint"
+                        [class.active]="activeNav().type === 'sprint' && getSprintId(activeNav()) === sprint.id"
+                        (click)="selectNav({ type: 'sprint', sprintId: sprint.id })"
+                      >
+                        <span class="tree-toggle" (click)="toggleSprintCollapse(sprint.id, $event)">
+                          @if (isSprintExpanded(sprint.id)) { <svg lucideChevronDown></svg> } @else { <svg lucideChevronRight></svg> }
+                        </span>
+                        <span class="tree-node__label">{{ sprint.name }}</span>
+                        <b class="tree-node__count">{{ countInSprint(sprint.id) }}</b>
+                      </div>
+
+                      @if (isSprintExpanded(sprint.id)) {
+                        <div class="tree-subbranch">
+                          @for (task of tasksInSprint(sprint.id); track task.id) {
+                            <button
+                              type="button"
+                              class="tree-node tree-node--task"
+                              [class.active]="activeNav().type === 'task' && getTaskId(activeNav()) === task.id"
+                              (click)="selectNav({ type: 'task', taskId: task.id })"
+                            >
+                              <span class="tree-indent"></span>
+                              <svg lucideFileText></svg>
+                              <span class="tree-node__label" [title]="task.title">{{ task.title }}</span>
+                              <b class="tree-node__count">{{ countInTask(task.id) }}</b>
+                            </button>
+                          } @empty {
+                            <div class="tree-empty">Chưa có công việc</div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  } @empty {
+                    <div class="tree-empty">Chưa có Sprint nào</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Custom Folders Tree Section -->
+            <div class="tree-section">
+              <div class="tree-section__header" (click)="customFoldersExpanded.set(!customFoldersExpanded())">
+                <span class="tree-toggle">
+                  @if (customFoldersExpanded()) { <svg lucideChevronDown></svg> } @else { <svg lucideChevronRight></svg> }
+                </span>
+                <svg lucideFolder></svg>
+                <span class="tree-section__title">Thư mục tùy chỉnh</span>
+              </div>
+
+              @if (customFoldersExpanded()) {
+                <div class="tree-section__children">
+                  @for (folder of folderTree(); track folder.id) {
+                    <button
+                      type="button"
+                        class="tree-node tree-node--folder"
+                        [class.active]="activeNav().type === 'folder' && getFolderId(activeNav()) === folder.id"
+                        [style.paddingLeft.px]="18 + folder.depth * 16"
+                      (click)="selectNav({ type: 'folder', folderId: folder.id })"
+                    >
+                      <svg lucideFolder></svg>
+                      <span class="tree-node__label">{{ folder.name }}</span>
+                      <b class="tree-node__count">{{ countInFolder(folder.id) }}</b>
+                    </button>
+                  } @empty {
+                    <div class="tree-empty">Chưa tạo thư mục tùy chỉnh</div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Files & Documents Pane -->
+        <article class="panel file-pane">
+          <div class="file-toolbar">
+            <label class="search-control">
+              <svg lucideSearch></svg>
+              <input [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Tìm kiếm tệp, tài liệu…" />
+            </label>
+
+            <div class="file-toolbar__actions">
+              @if (store.hasPermission('document.edit')) {
+                <button class="button" (click)="openCreateDocument()">
+                  <svg lucideFileText></svg>
+                  <span>Tài liệu mới</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="explorer-pathbar">
+            <div class="explorer-breadcrumb" aria-label="Đường dẫn thư mục">
+              @for (crumb of breadcrumbs(); track crumb.label; let last = $last) {
+                <button type="button" [disabled]="last" (click)="selectNav(crumb.filter)">{{ crumb.label }}</button>
+                @if (!last) { <span aria-hidden="true">/</span> }
+              }
+            </div>
+            <span class="filter-count">{{ visibleFolders().length + filteredFiles().length + filteredDocuments().length }} mục</span>
+          </div>
+
+          <div class="data-grid file-grid">
+            <div class="data-grid__head">
+              <span>Tên tệp / Tài liệu</span>
+              <span>Định dạng</span>
+              <span>Phiên bản</span>
+              <span>Dung lượng</span>
+              <span class="actions-col">Thao tác</span>
+            </div>
+
+            @for (folder of visibleFolders(); track folder.id) {
+              <div class="data-grid__row data-grid__row--clickable explorer-folder-row" (click)="selectNav({ type: 'folder', folderId: folder.id })">
+                <span class="file-cell"><div class="file-cell__icon folder-icon"><svg lucideFolder></svg></div><div class="file-cell__meta"><b class="file-title">{{ folder.name }}</b><small>{{ countInFolder(folder.id) }} mục trong thư mục</small></div></span>
+                <span><span class="badge badge--folder">THƯ MỤC</span></span><span>—</span><span>—</span>
+                <span class="actions-col" (click)="$event.stopPropagation()">
+                  @if (store.hasPermission('folder.edit')) { <button type="button" class="btn-action" title="Đổi tên thư mục" (click)="renameFolder(folder)"><svg lucideMoreHorizontal></svg></button> }
+                  @if (store.hasPermission('folder.delete')) { <button type="button" class="btn-action btn-action--danger" title="Xóa thư mục" (click)="deleteFolder(folder)"><svg lucideX></svg></button> }
+                </span>
+              </div>
+            }
+
+            <!-- Documents Rows -->
+            @for (document of filteredDocuments(); track document.id) {
+              <div class="data-grid__row data-grid__row--clickable" (click)="editDocument(document)">
+                <span class="file-cell">
+                  <div class="file-cell__icon doc-icon">
+                    <svg lucideFileText></svg>
+                  </div>
+                  <div class="file-cell__meta">
+                    <b class="file-title">{{ document.title }}</b>
+                    @if (getAssociatedTask(document.sourceTaskId); as task) {
+                      <small class="task-tag">{{ task.title }}</small>
+                    }
+                  </div>
+                </span>
+                <span><span class="badge badge--doc">Tài liệu Markdown</span></span>
+                <span>v{{ document.versionNumber }}</span>
+                <span>—</span>
+                <span class="actions-col" (click)="$event.stopPropagation()">
+                  <button type="button" class="btn-action" title="Chỉnh sửa tài liệu" (click)="editDocument(document)">
+                    <svg lucideFileText></svg>
+                  </button>
+                </span>
+              </div>
+            }
+
+            <!-- Files Rows -->
+            @for (file of filteredFiles(); track file.id) {
+              <div class="data-grid__row data-grid__row--clickable" (click)="selectFileProperties(file)">
+                <span class="file-cell">
+                  <div class="file-cell__icon" [attr.data-type]="getFileType(file.name, file.mimeType)">
+                    @switch (getFileType(file.name, file.mimeType)) {
+                      @case ('image') { <svg lucideImage></svg> }
+                      @case ('pdf') { <svg lucideFileText></svg> }
+                      @case ('docx') { <svg lucideFileText></svg> }
+                      @case ('spreadsheet') { <svg lucideFileSpreadsheet></svg> }
+                      @case ('code') { <svg lucideFileCode></svg> }
+                      @default { <svg lucideFile></svg> }
+                    }
+                  </div>
+                  <div class="file-cell__meta">
+                    <b class="file-title">{{ file.name }}</b>
+                    @if (getAssociatedTask(file.sourceTaskId); as task) {
+                      <small class="task-tag">{{ task.title }}</small>
+                    }
+                  </div>
+                </span>
+                <span><span class="badge" [attr.data-ext]="getFileExtBadge(file.name)">{{ getFileExtBadge(file.name) }}</span></span>
+                <span>v{{ file.versionNumber }}</span>
+                <span>{{ formatBytes(file.sizeBytes) }}</span>
+                <span class="actions-col" (click)="$event.stopPropagation()">
+                  <button type="button" class="btn-action" title="Xem trước nội dung" (click)="previewFile(file)">
+                    <svg lucideEye></svg>
+                  </button>
+                  <button type="button" class="btn-action" title="Tải xuống tệp" (click)="downloadFile(file)">
+                    <svg lucideDownload></svg>
+                  </button>
+                </span>
+              </div>
+            }
+
+            @if (!filteredDocuments().length && !filteredFiles().length) {
+              <div class="compact-empty">
+                <svg lucideFolder></svg>
+                <b>Không có tệp hoặc tài liệu nào</b>
+                <span>Hãy tải tệp lên hoặc tạo tài liệu Markdown mới trong mục này.</span>
+              </div>
+            }
+          </div>
+        </article>
+      </section>
+
+      <!-- Create Folder Dialog -->
+      @if (folderDialog()) {
+        <div class="dialog-layer" (click)="folderDialog.set(false)">
+          <form class="dialog dialog--small" (ngSubmit)="createFolder()" (click)="$event.stopPropagation()">
+            <header>
+              <div>
+                <p class="eyebrow">Kho project</p>
+                <h2>Tạo thư mục mới</h2>
+              </div>
+              <button class="icon-button" type="button" (click)="folderDialog.set(false)"><svg lucideX></svg></button>
+            </header>
+            <label class="field">
+              <span>Tên thư mục</span>
+              <input name="folderName" [(ngModel)]="folderName" placeholder="Ví dụ: Tài liệu API, Báo cáo kiểm thử…" required />
+            </label>
+            <footer>
+              <button class="button" type="button" (click)="folderDialog.set(false)">Hủy</button>
+              <button class="button button--primary" [disabled]="busy() || !folderName.trim()">Tạo thư mục</button>
+            </footer>
+          </form>
+        </div>
+      }
+
+      <!-- Create / Edit Document Dialog with Markdown Editor -->
+      @if (documentDialog() || editingDocument()) {
+        <div class="dialog-layer" (click)="closeDocument()">
+          <form class="dialog dialog--wide dialog--doc-editor" (ngSubmit)="saveDocument()" (click)="$event.stopPropagation()">
+            <header>
+              <div>
+                <p class="eyebrow">{{ editingDocument() ? 'Lưu phiên bản mới' : 'Tài liệu Markdown mới' }}</p>
+                <h2>{{ editingDocument() ? editingDocument()!.title : 'Tạo tài liệu dự án' }}</h2>
+              </div>
+              <button class="icon-button" type="button" (click)="closeDocument()"><svg lucideX></svg></button>
+            </header>
+
+            @if (!editingDocument()) {
+              <label class="field">
+                <span>Tiêu đề tài liệu</span>
+                <input name="title" [(ngModel)]="documentDraft.title" placeholder="Ví dụ: Hướng dẫn cài đặt hệ thống" required />
+              </label>
+            }
+
+            <div class="field-label">
+              <span>Nội dung tài liệu</span>
+            </div>
+            <app-markdown-editor [(value)]="documentDraft.content" [rows]="10" [disabled]="!store.hasPermission('document.edit')"></app-markdown-editor>
+
+            @if (store.hasPermission('document.edit')) {
+              <label class="field">
+                <span>Ghi chú thay đổi (Audit note)</span>
+                <input name="changeNote" [(ngModel)]="documentDraft.changeNote" placeholder="Ví dụ: Cập nhật thông số kết nối API" />
+              </label>
+            }
+
+            @if (editingDocument()) {
+              <section class="version-history" aria-label="Lịch sử phiên bản">
+                <header>
+                  <div>
+                    <p class="eyebrow">Audit trail</p>
+                    <h3>Lịch sử phiên bản</h3>
+                  </div>
+                  <b>{{ documentVersions().length }}</b>
+                </header>
+                @for (version of documentVersions(); track version.id) {
+                  <article>
+                    <span>
+                      <b>v{{ version.versionNumber }} · {{ version.editedByDisplayName }}</b>
+                      <small>{{ version.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</small>
+                    </span>
+                    <p>{{ version.changeNote || 'Không có ghi chú.' }}</p>
+                  </article>
+                } @empty {
+                  <div class="compact-empty"><span>Đang tải lịch sử…</span></div>
+                }
+              </section>
+            }
+
+            <footer>
+              <button class="button" type="button" (click)="closeDocument()">Đóng</button>
+              @if (store.hasPermission('document.edit')) {
+                <button class="button button--primary" [disabled]="busy()">Lưu tài liệu</button>
+              }
+            </footer>
+          </form>
+        </div>
+      }
+
+      <!-- File Properties Drawer -->
+      @if (selectedFileProperties(); as activeFile) {
+        <app-file-properties-drawer
+          [file]="activeFile"
+          (close)="selectedFileProperties.set(null)"
+          (preview)="previewFromDrawer($event)"
+          (delete)="deleteFile($event)"
+        ></app-file-properties-drawer>
+      }
+
+      <!-- File Preview Modal -->
+      @if (previewModalFile(); as modalFile) {
+        <app-file-preview-modal [file]="modalFile" (close)="previewModalFile.set(null)"></app-file-preview-modal>
+      }
+
+      @if (toast()) { <div class="toast">{{ toast() }}</div> }
+    </section>

@@ -1,0 +1,52 @@
+:host .guide-video-section {
+  width: min(1180px, 100%) !important;
+  justify-self: center;
+  grid-template-columns: minmax(0, 860px) 300px !important;
+}
+
+:host .guide-video-card {
+  width: 100%;
+  max-width: 860px;
+}
+
+:host .guide-header {
+  min-height: 96px;
+  padding: 15px 20px;
+}
+
+:host .guide-header h2 {
+  font-size: 25px;
+}
+
+:host .guide-player-shell {
+  padding: 8px;
+}
+
+:host .guide-player-shell video {
+  height: min(34dvh, (100vw - 370px) * 0.5625, 310px);
+  min-height: 240px;
+  aspect-ratio: auto;
+}
+
+:host .guide-steps {
+  min-height: 88px;
+}
+
+:host .guide-steps article {
+  min-height: 88px;
+  padding: 10px;
+}
+
+@media (max-width: 760px) {
+  :host .guide-video-section {
+    grid-template-columns: 1fr !important;
+  }
+  :host .guide-player-shell video {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16/9;
+  }
+  :host .guide-header {
+    min-height: 0;
+  }
+}

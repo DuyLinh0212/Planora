@@ -1,0 +1,109 @@
+    <div class="drawer-scrim" (click)="onClose()"></div>
+    <aside class="file-properties-drawer">
+      <header class="file-properties-drawer__header">
+        <div>
+          <p class="eyebrow">Chi tiết &amp; Thuộc tính</p>
+          <h2>{{ file()?.name }}</h2>
+        </div>
+        <button type="button" class="icon-button" (click)="onClose()"><svg lucideX></svg></button>
+      </header>
+
+      <div class="file-properties-drawer__body">
+        <div class="file-card-preview">
+          @if (isImage()) {
+            <div class="file-thumbnail-wrap">
+              @if (thumbnailUrl(); as thumbnailUrl) {
+                <img [src]="thumbnailUrl" [alt]="file()?.name || 'Ảnh'" (error)="imageLoadError.set(true)" />
+              } @else if (imageLoadError()) {
+                <span class="file-thumbnail-wrap__state">Không tải được ảnh</span>
+              } @else {
+                <span class="file-thumbnail-wrap__state">Đang tải ảnh…</span>
+              }
+            </div>
+          } @else {
+            <div class="file-icon-wrap" [attr.data-type]="fileTypeCategory()">
+              @switch (fileTypeCategory()) {
+                @case ('pdf') { <svg lucideFileText></svg> }
+                @case ('docx') { <svg lucideFileText></svg> }
+                @case ('spreadsheet') { <svg lucideFileSpreadsheet></svg> }
+                @case ('code') { <svg lucideFileCode></svg> }
+                @default { <svg lucideFile></svg> }
+              }
+            </div>
+          }
+          <div class="file-card-info">
+            <b>{{ file()?.name }}</b>
+            <span>{{ formatBytes(file()?.sizeBytes || 0) }} · {{ file()?.mimeType }}</span>
+          </div>
+        </div>
+
+        <div class="file-actions-row">
+          <button type="button" class="button button--primary" (click)="onPreview()">
+            <svg lucideEye></svg>
+            <span>Xem trước</span>
+          </button>
+          <button type="button" class="button" (click)="onDownload()">
+            <svg lucideDownload></svg>
+            <span>Tải xuống</span>
+          </button>
+          <button type="button" class="button button--icon" title="Sao chép liên kết" (click)="copyLink()">
+            @if (copied()) { <svg lucideCheck></svg> } @else { <svg lucideCopy></svg> }
+          </button>
+        </div>
+
+        <section class="properties-section">
+          <h3><svg lucideInfo></svg><span>Thông tin tệp</span></h3>
+          <dl class="properties-list">
+            <div>
+              <dt>Tên tệp:</dt>
+              <dd>{{ file()?.name }}</dd>
+            </div>
+            <div>
+              <dt>Định dạng:</dt>
+              <dd><span class="badge">{{ fileExtension() }}</span></dd>
+            </div>
+            <div>
+              <dt>Dung lượng:</dt>
+              <dd>{{ formatBytes(file()?.sizeBytes || 0) }} ({{ file()?.sizeBytes | number }} bytes)</dd>
+            </div>
+            <div>
+              <dt>Phiên bản:</dt>
+              <dd>v{{ file()?.versionNumber || 1 }}</dd>
+            </div>
+            <div>
+              <dt>MIME Type:</dt>
+              <dd class="code-mono">{{ file()?.mimeType }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="properties-section">
+          <h3><svg lucideFolder></svg><span>Vị trí lưu trữ</span></h3>
+          <dl class="properties-list">
+            <div>
+              <dt>Thư mục:</dt>
+              <dd>{{ folderName() }}</dd>
+            </div>
+            @if (associatedTask(); as task) {
+              <div>
+                <dt>Công việc:</dt>
+                <dd><b>{{ task.title }}</b></dd>
+              </div>
+              <div>
+                <dt>Sprint:</dt>
+                <dd>{{ sprintName(task.sprintId) }}</dd>
+              </div>
+            }
+          </dl>
+        </section>
+
+        @if (store.hasPermission('file.delete')) {
+          <footer class="file-properties-drawer__footer">
+            <button type="button" class="button button--danger" (click)="onDelete()">
+              <svg lucideTrash2></svg>
+              <span>Xóa tệp khỏi project</span>
+            </button>
+          </footer>
+        }
+      </div>
+    </aside>

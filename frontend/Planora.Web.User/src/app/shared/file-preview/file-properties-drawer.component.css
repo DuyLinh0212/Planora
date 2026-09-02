@@ -1,0 +1,207 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy global stylesheet: File Properties Drawer. */
+/* ==========================================================================
+   File Properties Drawer
+   ========================================================================== */
+.file-properties-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 380px;
+  max-width: 100vw;
+  background: var(--surface);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
+  z-index: 950;
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.2s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.file-properties-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.file-properties-drawer__header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+  color: var(--ink);
+  word-break: break-all;
+}
+
+.file-properties-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.file-card-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px;
+  border-radius: 10px;
+  background: var(--bg-soft, #f8fafc);
+  border: 1px solid var(--line);
+  text-align: center;
+  gap: 12px;
+}
+
+.file-thumbnail-wrap {
+  width: 100%;
+  height: 140px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-thumbnail-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.file-thumbnail-wrap__state {
+  color: rgba(226, 232, 240, 0.9);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.file-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: rgba(45, 108, 223, 0.1);
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-icon-wrap svg {
+  width: 36px;
+  height: 36px;
+}
+
+.file-icon-wrap[data-type=pdf] {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.file-icon-wrap[data-type=docx] {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.file-icon-wrap[data-type=spreadsheet] {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.file-icon-wrap[data-type=code] {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.file-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-card-info b {
+  font-size: 13.5px;
+  color: var(--ink);
+  word-break: break-all;
+}
+
+.file-card-info span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.file-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+}
+
+.properties-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.properties-section h3 svg {
+  width: 16px;
+  height: 16px;
+  color: var(--blue);
+}
+
+.properties-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.properties-list div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.properties-list div dt {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.properties-list div dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: right;
+  max-width: 200px;
+  word-break: break-all;
+}
+
+.code-mono {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+}
+
+.file-properties-drawer__footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.file-properties-drawer__footer .button {
+  width: 100%;
+}

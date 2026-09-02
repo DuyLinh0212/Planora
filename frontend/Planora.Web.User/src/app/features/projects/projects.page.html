@@ -1,0 +1,85 @@
+    <section class="page page--projects">
+      <header class="page-intro">
+        <div>
+          <p class="eyebrow">{{ 'projects.catalog' | t }}</p>
+          <h2>{{ 'projects.title' | t }}</h2>
+          <p>{{ 'projects.description' | t }}</p>
+        </div>
+        <button class="button button--primary" type="button" (click)="openCreate()">
+          <svg lucideFolderPlus></svg><span>{{ 'action.createProject' | t }}</span>
+        </button>
+      </header>
+
+      <section class="portfolio-strip" aria-label="Tóm tắt project">
+        <article><svg lucideBriefcaseBusiness></svg><span><small>{{ 'projects.total' | t }}</small><b>{{ store.projects().length }}</b></span></article>
+        <article><svg lucideUsersRound></svg><span><small>{{ 'projects.joined' | t }}</small><b>{{ store.profile().participatingProjectCount }}</b></span></article>
+        <article><svg lucideCalendarClock></svg><span><small>{{ 'projects.active' | t }}</small><b>{{ activeCount() }}</b></span></article>
+        <div class="portfolio-capacity"><span><small>Quyền sở hữu</small><b>{{ store.profile().quota.ownedProjects }} / {{ store.profile().quota.maxOwnedProjects || '—' }}</b></span><i><b [style.width.%]="quotaPercent()"></b></i></div>
+      </section>
+
+      <div class="project-toolbar">
+        <label class="search-control"><svg lucideSearch></svg><input [ngModel]="search()" (ngModelChange)="search.set($event)" [placeholder]="i18n.t('projects.search')" /></label>
+        <div class="segmented" aria-label="Lọc project">
+          @for (option of filters; track option.value) {
+            <button type="button" [class.active]="filter() === option.value" (click)="filter.set(option.value)">{{ option.key | t }}</button>
+          }
+        </div>
+      </div>
+
+      <section class="project-area">
+        <div class="project-collection">
+          @for (project of filteredProjects(); track project.id) {
+            <article class="project-row">
+              <span class="project-mark">{{ initials(project.name) }}</span>
+              <div class="project-row__identity"><div><h3>{{ project.name }}</h3><span class="status-chip" [attr.data-status]="statusKey(project.status)">{{ statusLabel(project.status) }}</span></div><p>{{ project.description || 'Chưa có mô tả dự án.' }}</p></div>
+              <dl><div><dt>{{ 'projects.members' | t }}</dt><dd>{{ project.memberCount }}</dd></div><div><dt>{{ 'projects.updated' | t }}</dt><dd>{{ project.updatedAt | date:'dd/MM/yyyy' }}</dd></div></dl>
+              <a class="project-open" [routerLink]="['/projects', project.id, 'overview']"><span>{{ 'projects.open' | t }}</span><svg lucideArrowUpRight></svg></a>
+            </article>
+          } @empty {
+            <div class="empty-workspace">
+              <span><svg lucideBriefcaseBusiness></svg></span>
+              <div><h3>{{ store.accountLoading() ? ('common.loading' | t) : ('projects.empty' | t) }}</h3><p>{{ search() ? 'Thử từ khóa khác hoặc bỏ bộ lọc.' : ('projects.emptyHint' | t) }}</p></div>
+              @if (!search() && !store.accountLoading()) { <button class="button button--primary" (click)="openCreate()">{{ 'projects.createFirst' | t }}</button> }
+            </div>
+          }
+        </div>
+
+        <aside class="workspace-aside" aria-label="Tình trạng workspace">
+          <article class="panel workspace-card">
+            <header><span><svg lucideGauge></svg></span><div><p class="eyebrow">Workspace pulse</p><h3>{{ activeCount() }} project đang chạy</h3></div></header>
+            <dl>
+              <div><dt>Sở hữu</dt><dd>{{ store.profile().quota.ownedProjects }} / {{ store.profile().quota.maxOwnedProjects || '—' }}</dd></div>
+              <div><dt>Tham gia</dt><dd>{{ store.profile().participatingProjectCount }}</dd></div>
+              <div><dt>Cập nhật mới nhất</dt><dd>{{ latestProjectDate() }}</dd></div>
+            </dl>
+          </article>
+
+          <article class="panel workspace-card workspace-card--open">
+            <p class="eyebrow">Project gần nhất</p>
+            @if (latestProject(); as project) {
+              <h3>{{ project.name }}</h3>
+              <p>{{ project.description || 'Chưa có mô tả dự án.' }}</p>
+              <a class="button" [routerLink]="['/projects', project.id, 'overview']">Tiếp tục project <svg lucideArrowUpRight></svg></a>
+            } @else {
+              <h3>Chưa có project</h3>
+              <p>Workspace sẽ bắt đầu có dữ liệu sau khi project đầu tiên được tạo.</p>
+              <button class="button" type="button" (click)="openCreate()">Tạo dự án</button>
+            }
+          </article>
+        </aside>
+      </section>
+
+      @if (createOpen()) {
+        <div class="dialog-layer" (click)="closeCreate()">
+          <form class="dialog" (ngSubmit)="createProject()" #form="ngForm" (click)="$event.stopPropagation()">
+            <header><div><p class="eyebrow">{{ 'projects.new' | t }}</p><h2>{{ 'projects.createTitle' | t }}</h2></div><button class="icon-button" type="button" (click)="closeCreate()"><svg lucideX></svg></button></header>
+            <p class="dialog-copy">Sau khi tạo, bạn sẽ vào trang chi tiết để thiết lập sprint, công việc và thành viên.</p>
+            <label class="field"><span>{{ 'projects.name' | t }}</span><input name="name" [(ngModel)]="draft.name" maxlength="120" placeholder="Ví dụ: Planora Mobile" required /></label>
+            <label class="field"><span>{{ 'projects.descriptionLabel' | t }}</span><textarea name="description" [(ngModel)]="draft.description" rows="3" placeholder="Mục tiêu và phạm vi ngắn gọn"></textarea></label>
+            <div class="field-pair"><label class="field"><span>{{ 'projects.startDate' | t }}</span><input name="startAt" type="date" [(ngModel)]="draft.startAt" /></label><label class="field"><span>{{ 'projects.endDate' | t }}</span><input name="endAt" type="date" [(ngModel)]="draft.endAt" /></label></div>
+            @if (error()) { <p class="form-alert">{{ error() }}</p> }
+            <footer><button class="button" type="button" (click)="closeCreate()">{{ 'common.cancel' | t }}</button><button class="button button--primary" [disabled]="form.invalid || saving()">{{ saving() ? ('common.loading' | t) : ('projects.createAndOpen' | t) }}</button></footer>
+          </form>
+        </div>
+      }
+    </section>

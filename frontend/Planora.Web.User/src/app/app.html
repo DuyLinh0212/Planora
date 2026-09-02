@@ -1,0 +1,40 @@
+    <router-outlet />
+    @if (quotaNotice.notice(); as notice) {
+      <aside class="quota-toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <span class="quota-toast__signal" aria-hidden="true">!</span>
+        <div>
+          <p class="eyebrow">Giới hạn gói</p>
+          <h2>{{ notice.title }}</h2>
+          <p>{{ notice.message }}</p>
+          <button type="button" class="quota-toast__action" (click)="openBilling()">Xem gói & thanh toán</button>
+        </div>
+        <button type="button" class="quota-toast__dismiss" aria-label="Đóng thông báo" (click)="quotaNotice.dismiss()">×</button>
+      </aside>
+    }
+    @if (auth.sessionExpired()) {
+      <div class="session-expired-layer" role="presentation">
+        <section class="session-expired-dialog" role="alertdialog" aria-modal="true" aria-labelledby="session-expired-title" aria-describedby="session-expired-copy">
+          <span class="session-expired-icon" aria-hidden="true">!</span>
+          <p class="eyebrow">Bảo vệ phiên làm việc</p>
+          <h2 id="session-expired-title">Phiên đăng nhập đã hết hạn</h2>
+          <p id="session-expired-copy">Vì lý do bảo mật, bạn cần đăng nhập lại để tiếp tục. Nếu đã bật “Ghi nhớ đăng nhập”, Planora tự làm mới phiên khi bạn đang sử dụng và chỉ yêu cầu đăng nhập lại sau hơn 1 ngày không hoạt động.</p>
+          <button class="button button--primary button--wide" type="button" (click)="auth.dismissSessionExpired()">Đăng nhập lại</button>
+        </section>
+      </div>
+    }
+    @if (maintenance.status().isEnabled) {
+      <section class="maintenance-screen" role="alert" aria-live="assertive" aria-labelledby="maintenance-title">
+        <div class="maintenance-screen__signal" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <article>
+          <app-planora-logo tone="dark" [compact]="true" />
+          <p class="eyebrow">Tạm dừng hệ thống</p>
+          <h1 id="maintenance-title">Planora đang bảo trì</h1>
+          <p>{{ maintenance.status().message || 'Hệ thống đang được nâng cấp. Vui lòng quay lại sau.' }}</p>
+          <div class="maintenance-screen__status">
+            <span [class.is-checking]="maintenance.checking()"></span>
+            {{ maintenance.checking() ? 'Đang kiểm tra lại…' : 'Tự động kiểm tra mỗi 30 giây' }}
+          </div>
+          <button class="button button--primary" type="button" (click)="maintenance.checkNow()">Kiểm tra ngay</button>
+        </article>
+      </section>
+    }

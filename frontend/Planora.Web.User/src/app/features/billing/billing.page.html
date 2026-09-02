@@ -1,0 +1,73 @@
+    <section class="page billing-page">
+      <header class="page-intro page-intro--compact">
+        <div>
+          <p class="eyebrow">Tài khoản & dung lượng</p>
+          <h2>Gói & thanh toán</h2>
+          <p>Chọn gói phù hợp. Lịch sử giao dịch luôn được giữ riêng và chỉ hiển thị khi bạn cần xem.</p>
+        </div>
+        <span class="current-plan"><svg lucideSparkles></svg><span><small>Gói đang dùng</small><b>{{ store.profile().quota.planName }}</b></span></span>
+      </header>
+
+      <section class="quota-card panel" aria-label="Hạn mức gói hiện tại">
+        <div class="quota-visual">
+          <span [style.--usage.%]="storagePercent()"><b>{{ storagePercent() }}%</b></span>
+          <div><p class="eyebrow">Dung lượng đã dùng</p><h3>{{ store.profile().quota.storageBytes / 1073741824 | number:'1.1-1' }} / {{ store.profile().quota.maxStorageBytes / 1073741824 | number:'1.0-1' }} GB</h3></div>
+        </div>
+        <dl>
+          <div><dt>Project sở hữu</dt><dd>{{ store.profile().quota.ownedProjects }} / {{ store.profile().quota.maxOwnedProjects }}</dd></div>
+          <div><dt>Thành viên / project</dt><dd>{{ store.profile().quota.maxMembersPerProject }}</dd></div>
+          <div><dt>File mỗi lần tải</dt><dd>{{ store.profile().quota.maxFileSizeBytes / 1048576 | number }} MB</dd></div>
+          <div><dt>Phiên bản / file</dt><dd>{{ store.profile().quota.maxVersionsPerFile }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="billing-plan-heading">
+        <div><p class="eyebrow">So sánh gói</p><h3>Chọn mức dung lượng bạn cần</h3></div>
+        <span>Không tự gia hạn khi chưa xác nhận thanh toán.</span>
+      </section>
+
+      <section class="plan-list">
+        @for (plan of plans(); track plan.id) {
+          <article class="panel plan-card" [class.is-current]="plan.code.toUpperCase() === store.profile().quota.planCode">
+            <header>
+              <div><p class="eyebrow">{{ periodLabel(plan.billingPeriod) }}</p><h3>{{ plan.name }}</h3></div>
+              @if (plan.code.toUpperCase() === store.profile().quota.planCode) { <span class="status-chip">Đang dùng</span> }
+            </header>
+            <p class="plan-price"><b>{{ plan.price | number }}</b><span>{{ plan.price ? plan.currency + ' / tháng' : 'Không tính phí' }}</span></p>
+            <ul>@for (feature of plan.entitlements.slice(0, 5); track feature) {<li><svg lucideCheck></svg><span>{{ feature }}</span></li>}</ul>
+            <button class="button button--wide" [class.button--primary]="plan.code.toUpperCase() !== 'FREE'" [disabled]="plan.code.toUpperCase() === store.profile().quota.planCode || busy()" (click)="checkoutPlan.set(plan)">
+              {{ plan.code.toUpperCase() === store.profile().quota.planCode ? 'Gói hiện tại' : 'Chọn ' + plan.name }}
+            </button>
+          </article>
+        }
+        @if (plansLoading()) { <div class="compact-empty billing-empty"><b>Đang tải bảng giá…</b></div> }
+        @else if (plansError()) { <div class="compact-empty billing-empty"><b>Chưa tải được bảng giá</b><span>{{ plansError() }}</span><button class="button" type="button" (click)="loadPlans()">Thử lại</button></div> }
+        @else if (!plans().length) { <div class="compact-empty billing-empty"><b>Chưa có gói để nâng cấp</b><span>Backend chưa khởi tạo bảng giá. Hãy khởi động lại API rồi thử lại.</span><button class="button" type="button" (click)="loadPlans()">Tải lại bảng giá</button></div> }
+      </section>
+
+      <section class="payment-history-panel panel" [class.is-open]="historyOpen()">
+        <button class="payment-history-toggle" type="button" (click)="toggleHistory()" [attr.aria-expanded]="historyOpen()">
+          <span class="payment-history-toggle__icon"><svg lucideReceiptText></svg></span>
+          <span><b>Lịch sử giao dịch</b><small>Chỉ mở khi bạn muốn đối chiếu các thanh toán trước đây.</small></span>
+          <i>{{ historyOpen() ? 'Ẩn' : 'Xem lịch sử' }} <svg lucideChevronDown></svg></i>
+        </button>
+        @if (historyOpen()) {
+          <div class="data-grid payment-grid">
+            <div class="data-grid__head"><span>Gói</span><span>Phương thức</span><span>Số tiền</span><span>Trạng thái</span></div>
+            @for (payment of payments(); track payment.id) {
+              <div class="data-grid__row"><span><b>{{ payment.planName }}</b><small>{{ payment.createdAt | date:'dd/MM/yyyy, HH:mm' }}</small></span><span>{{ providerLabel(payment.provider) }}</span><span>{{ payment.amount | number }} {{ payment.currency }}</span><span class="status-chip" [class.status-chip--success]="payment.status === 'Success'" [class.status-chip--danger]="payment.status === 'Failed'">{{ paymentStatusLabel(payment.status) }}</span></div>
+            } @empty {
+              <div class="compact-empty"><b>{{ paymentsError() ? 'Chưa tải được lịch sử' : 'Chưa có giao dịch' }}</b><span>{{ paymentsError() || 'Các giao dịch sau này sẽ xuất hiện ở đây.' }}</span></div>
+            }
+          </div>
+        }
+      </section>
+
+      @if (checkoutPlan(); as plan) {
+        <div class="dialog-layer" (click)="checkoutPlan.set(null)"><article class="dialog dialog--small" (click)="$event.stopPropagation()"><header><div><p class="eyebrow">Thanh toán bảo mật</p><h2>Nâng cấp {{ plan.name }}</h2></div><button class="icon-button" (click)="checkoutPlan.set(null)"><svg lucideX></svg></button></header><p class="dialog-copy">Gói chỉ được kích hoạt sau khi backend xác nhận giao dịch thành công.</p><div class="provider-choice"><button [disabled]="busy()" (click)="createPayment('Momo')"><svg lucideCreditCard></svg><span><b>MoMo</b><small>Ví điện tử</small></span></button><button [disabled]="busy()" (click)="createPayment('BankTransfer')"><svg lucideDatabase></svg><span><b>Chuyển khoản</b><small>Tự động qua ngân hàng</small></span></button></div></article></div>
+      }
+      @if (bankTransferInstructions(); as instructions) {
+        <div class="dialog-layer" (click)="bankTransferInstructions.set(null)"><article class="dialog dialog--small" (click)="$event.stopPropagation()"><header><div><p class="eyebrow">Chuyển khoản tự động</p><h2>Thông tin thanh toán</h2></div><button class="icon-button" (click)="bankTransferInstructions.set(null)"><svg lucideX></svg></button></header><p class="dialog-copy">Chuyển chính xác số tiền của gói đã chọn và giữ nguyên nội dung dưới đây. Planora tự kích hoạt khi nhận webhook báo có từ ngân hàng.</p><dl class="bank-transfer-details"><div><dt>Ngân hàng</dt><dd>{{ instructions.bankName }}</dd></div><div><dt>Chủ tài khoản</dt><dd>{{ instructions.accountName }}</dd></div><div><dt>Số tài khoản</dt><dd>{{ instructions.accountNumber }}</dd></div>@if (instructions.branch) { <div><dt>Chi nhánh</dt><dd>{{ instructions.branch }}</dd></div> }<div><dt>Nội dung chuyển khoản</dt><dd>{{ instructions.transferContent }}</dd></div></dl></article></div>
+      }
+      @if (toast()) { <div class="toast">{{ toast() }}</div> }
+    </section>

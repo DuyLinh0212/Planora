@@ -1,0 +1,140 @@
+    <div class="file-preview-overlay" (click)="onClose()">
+      <div class="file-preview-dialog" (click)="$event.stopPropagation()">
+        <header class="file-preview-dialog__header">
+          <div class="file-preview-dialog__meta">
+            <span class="file-badge" [attr.data-type]="category()">{{ category().toUpperCase() }}</span>
+            <div>
+              <h3>{{ file()?.name }}</h3>
+              <small>
+                {{ formatBytes(file()?.sizeBytes || 0) }}
+                @if (file()?.versionNumber) { · Phiên bản v{{ file()?.versionNumber }} }
+              </small>
+            </div>
+          </div>
+
+          <div class="file-preview-dialog__actions">
+            @if (category() === 'image') {
+              <button type="button" class="icon-button" title="Thu nhỏ" (click)="zoomOut()"><svg lucideZoomOut></svg></button>
+              <button type="button" class="icon-button" title="Phóng to" (click)="zoomIn()"><svg lucideZoomIn></svg></button>
+              <button type="button" class="icon-button" title="Xoay 90 độ" (click)="rotate()"><svg lucideRotateCw></svg></button>
+              <button type="button" class="icon-button" title="Đặt lại" (click)="resetTransform()"><svg lucideMaximize2></svg></button>
+            }
+
+            <button type="button" class="button button--secondary" (click)="download()">
+              <svg lucideDownload></svg>
+              <span>Tải xuống</span>
+            </button>
+
+            @if (blobUrl()) {
+              <a [href]="blobUrl()" target="_blank" rel="noopener" class="icon-button" title="Mở trong tab mới">
+                <svg lucideExternalLink></svg>
+              </a>
+            }
+
+            <button type="button" class="icon-button" title="Đóng" (click)="onClose()">
+              <svg lucideX></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="file-preview-dialog__body">
+          @if (loading()) {
+            <div class="file-preview-state">
+              <div class="preview-spinner"></div>
+              <p>Đang tải nội dung tệp…</p>
+            </div>
+          } @else if (error()) {
+            <div class="file-preview-state file-preview-state--error">
+              <svg lucideFile></svg>
+              <h4>Không thể hiển thị xem trước trực tiếp</h4>
+              <p>{{ error() }}</p>
+              <button class="button button--primary" (click)="download()">
+                <svg lucideDownload></svg>
+                <span>Tải tệp về máy để xem</span>
+              </button>
+            </div>
+          } @else {
+            @switch (category()) {
+              @case ('image') {
+                <div class="image-preview-container">
+                  <img
+                    [src]="blobUrl()"
+                    [alt]="file()?.name || 'Hình ảnh'"
+                    [style.transform]="imageTransform()"
+                  />
+                </div>
+              }
+              @case ('pdf') {
+                <iframe class="pdf-frame" [src]="safePdfUrl()" title="Xem tệp PDF"></iframe>
+              }
+              @case ('docx') {
+                <div class="docx-preview-content" [innerHTML]="docxHtml()"></div>
+              }
+              @case ('spreadsheet') {
+                <div class="spreadsheet-preview">
+                  @if (sheetNames().length > 1) {
+                    <div class="spreadsheet-tabs">
+                      @for (name of sheetNames(); track name) {
+                        <button
+                          type="button"
+                          class="spreadsheet-tab"
+                          [class.active]="activeSheet() === name"
+                          (click)="selectSheet(name)"
+                        >
+                          {{ name }}
+                        </button>
+                      }
+                    </div>
+                  }
+                  <div class="spreadsheet-table-wrapper">
+                    <table class="spreadsheet-table">
+                      <thead>
+                        <tr>
+                          <th class="col-index">#</th>
+                          @for (col of columnHeaders(); track col) {
+                            <th>{{ col }}</th>
+                          }
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (row of activeSheetData(); track $index; let rIdx = $index) {
+                          <tr>
+                            <td class="row-index">{{ rIdx + 1 }}</td>
+                            @for (cell of row; track $index) {
+                              <td>{{ cell }}</td>
+                            }
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              }
+              @case ('text') {
+                <div class="text-preview">
+                  <div class="text-preview__toolbar">
+                    <span>Định dạng văn bản / mã nguồn</span>
+                    <button type="button" class="button button--small" (click)="copyText()">
+                      <svg lucideCopy></svg>
+                      <span>{{ copied() ? 'Đã sao chép!' : 'Sao chép nội dung' }}</span>
+                    </button>
+                  </div>
+                  <pre class="text-preview__code"><code>{{ textContent() }}</code></pre>
+                </div>
+              }
+              @default {
+                <div class="file-preview-state">
+                  <svg lucideFile></svg>
+                  <h4>Định dạng không hỗ trợ xem trực tiếp</h4>
+                  <p>Bạn có thể tải tệp về máy tính để mở bằng ứng dụng chuyên dụng.</p>
+                  <button class="button button--primary" (click)="download()">
+                    <svg lucideDownload></svg>
+                    <span>Tải tệp xuống</span>
+                  </button>
+                </div>
+              }
+            }
+          }
+        </div>
+      </div>
+    </div>

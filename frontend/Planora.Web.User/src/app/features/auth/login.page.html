@@ -1,0 +1,78 @@
+    <main class="auth-stage">
+      <section class="auth-story">
+        <a class="auth-brand" routerLink="/login" aria-label="Planora">
+          <app-planora-logo tone="light" />
+        </a>
+        <div>
+          <p class="eyebrow">Biến kế hoạch thành tiến độ</p>
+          <h1>Một nơi để nhóm của bạn<br />lập kế hoạch, làm và duyệt.</h1>
+          <p>Project rõ phạm vi. Sprint rõ mục tiêu. Công việc rõ người chịu trách nhiệm.</p>
+        </div>
+        <div class="auth-board" aria-hidden="true">
+          <span><b>Plan</b><i></i><i></i></span>
+          <span><b>Doing</b><i></i></span>
+          <span><b>Review</b><i></i><i></i></span>
+          <span><b>Done</b><i></i></span>
+        </div>
+        <div class="story-ribbon"><i></i><i></i><i></i><i></i></div>
+      </section>
+
+      <section class="auth-form-stage">
+        <article class="auth-card auth-card--login">
+          <header>
+            <app-planora-logo tone="dark" [compact]="true" />
+            <div><p>Chào mừng trở lại</p><h2>Đăng nhập Planora</h2></div>
+          </header>
+          <form (ngSubmit)="submit()" #form="ngForm" novalidate>
+            <label class="field">
+              <span>Email hoặc tên đăng nhập</span>
+              <input
+                name="identifier"
+                [(ngModel)]="identifier"
+                autocomplete="username"
+                placeholder="you@gmail.com"
+                required
+              />
+            </label>
+            <label class="field">
+              <span>Mật khẩu</span>
+              <span class="password-field">
+                <input
+                  name="password"
+                  [(ngModel)]="password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  autocomplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  [attr.aria-label]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+                  (click)="togglePassword()"
+                >
+                  @if (showPassword()) { <svg lucideEyeOff></svg> } @else { <svg lucideEye></svg> }
+                </button>
+              </span>
+            </label>
+
+            <div class="auth-options">
+              <label title="Giữ phiên trên thiết bị này. Khi bạn tiếp tục sử dụng Planora, phiên được tự làm mới; sau hơn 1 ngày không hoạt động, bạn cần đăng nhập lại."><input type="checkbox" name="remember" [(ngModel)]="remember" /><span>Ghi nhớ đăng nhập</span></label>
+              <a routerLink="/forgot-password">Quên mật khẩu?</a>
+            </div>
+
+            @if (error()) { <p class="form-alert" role="alert">{{ error() }}</p> }
+
+            <button class="button button--primary button--wide" [disabled]="form.invalid || busy()">
+              @if (busy()) { <svg class="spin" lucideLoaderCircle></svg> }
+              <span>{{ busy() ? 'Đang đăng nhập…' : 'Đăng nhập' }}</span>
+            </button>
+          </form>
+
+          <div class="auth-divider"><span>hoặc tiếp tục với</span></div>
+          <button class="button google-button button--wide" type="button" [disabled]="googleBusy()" (click)="loginWithGoogle()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2.1H12v4h5.4a4.7 4.7 0 0 1-2 3v2.6h3.2c1.9-1.8 3-4.4 3-7.5Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.3l-3.2-2.6c-.9.6-2 1-3.4 1a5.8 5.8 0 0 1-5.4-4H3.3v2.7A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.6 14.1a6 6 0 0 1 0-3.9V7.5H3.3a10 10 0 0 0 0 9.3l3.3-2.7Z"/><path fill="#EA4335" d="M12 6.1c1.5 0 2.8.5 3.8 1.5l2.9-2.9A9.7 9.7 0 0 0 3.3 7.5l3.3 2.7A5.8 5.8 0 0 1 12 6.1Z"/></svg>
+            <span>{{ googleBusy() ? 'Đang mở Google…' : 'Tiếp tục với Google' }}</span>
+          </button>
+          <p class="auth-switch">Chưa có tài khoản? <a routerLink="/register">Tạo tài khoản</a></p>
+        </article>
+      </section>
+    </main>

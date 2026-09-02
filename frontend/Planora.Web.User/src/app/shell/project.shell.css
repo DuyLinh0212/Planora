@@ -1,0 +1,180 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy global stylesheet: Project shell. */
+/* Project shell */
+.project-shell {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 76px 47px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.project-context {
+  min-width: 0;
+  padding: 12px 24px;
+  display: grid;
+  grid-template-columns: 38px 46px minmax(220px, auto) minmax(180px, 1fr);
+  align-items: center;
+  gap: 11px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.project-back {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+}
+
+.project-back:hover {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+
+.project-mark {
+  width: 44px;
+  height: 44px;
+  background: var(--teal);
+}
+
+.project-identity {
+  min-width: 0;
+}
+
+.project-identity > p {
+  margin: 0 0 3px;
+  color: var(--muted);
+  font: 600 9px/1.2 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+}
+
+.project-identity > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.project-identity h2 {
+  max-width: 380px;
+  overflow: hidden;
+  font-size: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-description {
+  max-width: 620px;
+  margin: 0;
+  justify-self: end;
+  color: var(--muted);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-tabs {
+  min-width: 0;
+  padding: 0 24px;
+  display: flex;
+  align-items: stretch;
+  gap: 3px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.project-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.project-tabs a {
+  position: relative;
+  min-width: max-content;
+  padding: 0 11px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.project-tabs a::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  bottom: -1px;
+  left: 10px;
+  height: 2px;
+  background: transparent;
+}
+
+.project-tabs a:hover,
+.project-tabs a.active {
+  color: var(--blue);
+}
+
+.project-tabs a.active::after {
+  background: var(--blue);
+}
+
+.project-tabs svg {
+  width: 15px;
+  height: 15px;
+}
+
+.project-page {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.project-loading,
+.project-missing {
+  grid-row: 1/-1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.project-loading p,
+.project-missing p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.project-missing > span {
+  color: var(--coral);
+  font: 700 12px "IBM Plex Mono", monospace;
+}
+
+.project-missing .button {
+  margin-top: 10px;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--line);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin {
+  animation: spin 800ms linear infinite;
+}

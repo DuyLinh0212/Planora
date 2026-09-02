@@ -1,0 +1,179 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy global stylesheet: Support. */
+/* Support */
+.support-workspace {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.conversation-list,
+.support-thread {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.conversation-list > div {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.conversation-list > div > button {
+  width: 100%;
+  min-height: 61px;
+  padding: 9px 12px;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 9px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  background: transparent;
+  text-align: left;
+}
+
+.conversation-list > div > button.active {
+  background: var(--surface-soft);
+  box-shadow: inset 3px 0 var(--blue);
+}
+
+.conversation-list button > i {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--blue);
+  background: var(--surface-soft);
+}
+
+.conversation-list button > i svg {
+  width: 14px;
+  height: 14px;
+}
+
+.conversation-list button > span {
+  min-width: 0;
+  display: grid;
+}
+
+.conversation-list button b,
+.conversation-list button small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-list button b {
+  font-size: 9px;
+}
+
+.conversation-list button small {
+  color: var(--muted);
+  font-size: 7px;
+}
+
+.support-thread {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.message-stream {
+  min-height: 0;
+  padding: 13px;
+  display: grid;
+  align-content: start;
+  gap: 11px;
+  overflow-y: auto;
+}
+
+.message-stream article {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.message-stream article.is-mine {
+  flex-direction: row-reverse;
+}
+
+.message-stream .avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 7px;
+}
+
+.message-stream article > div {
+  max-width: 72%;
+  padding: 8px 10px;
+  display: grid;
+  gap: 3px;
+  border-radius: 3px 10px 10px 10px;
+  background: var(--surface-soft);
+}
+
+.message-stream article.is-mine > div {
+  color: #fff;
+  background: var(--blue);
+  border-radius: 10px 3px 10px 10px;
+}
+
+.message-stream b {
+  font-size: 8px;
+}
+
+.message-stream p {
+  margin: 0;
+  font-size: 9px;
+}
+
+.message-stream small {
+  color: var(--muted);
+  font-size: 7px;
+}
+
+.message-stream article.is-mine small {
+  color: #dbe4ff;
+}
+
+.message-composer {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 40px;
+  gap: 7px;
+  border-top: 1px solid var(--line);
+}
+
+.message-composer .button {
+  width: 40px;
+  padding: 0;
+}
+
+.thread-placeholder {
+  height: 100%;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  color: var(--muted);
+  text-align: center;
+}
+
+.thread-placeholder > svg {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 9px;
+  color: var(--blue);
+}
+
+.thread-placeholder h3,
+.thread-placeholder p {
+  margin: 0;
+}
+
+.thread-placeholder p {
+  font-size: 9px;
+}

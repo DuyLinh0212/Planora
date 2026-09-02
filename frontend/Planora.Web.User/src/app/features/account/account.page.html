@@ -1,0 +1,500 @@
+    <section class="page profile-page">
+      <!-- Main 2-Column Grid -->
+      <div class="profile-layout">
+        <!-- ================= LEFT COLUMN ================= -->
+        <div class="profile-col-left">
+          <!-- Card: Thông tin cá nhân -->
+          <article class="p-card personal-info-card">
+            <div class="p-card__header">
+              <h3 class="p-card__title">Thông tin cá nhân</h3>
+              <div class="p-card__actions">
+                @if (isEditing()) {
+                  <button class="btn-cancel btn-sm" (click)="cancelEditing()" [disabled]="saving()">
+                    Hủy
+                  </button>
+                  <button class="btn-primary btn-sm" (click)="saveProfile()" [disabled]="saving()">
+                    <svg lucideSave></svg>
+                    <span>{{ saving() ? 'Đang lưu…' : 'Lưu' }}</span>
+                  </button>
+                } @else {
+                  <button class="btn-primary btn-sm" (click)="startEditing()">
+                    <svg lucidePencil></svg>
+                    <span>Chỉnh sửa</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Avatar Center -->
+            <div class="avatar-center-wrap">
+              <div
+                class="avatar-ring-container"
+                [class.frame-default]="extraInfo().avatarFrame === 'default'"
+                [class.frame-gold]="extraInfo().avatarFrame === 'gold'"
+                [class.frame-gradient]="extraInfo().avatarFrame === 'gradient'"
+              >
+                <div class="avatar-circle">
+                  @if (avatarUrl()) {
+                    <img [src]="avatarUrl()" alt="Ảnh đại diện" class="avatar-img" />
+                  } @else {
+                    <span class="avatar-initials">{{ initials() }}</span>
+                  }
+                </div>
+
+                <!-- Camera Overlay Button -->
+                <label
+                  class="avatar-camera-btn"
+                  [class.is-busy]="avatarBusy()"
+                  title="Đổi ảnh đại diện"
+                >
+                  <svg lucideCamera></svg>
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    (change)="uploadAvatar($event)"
+                    [disabled]="avatarBusy()"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <!-- Key-Value Info List -->
+            <div class="info-list">
+              <div class="info-row">
+                <span class="info-label">Tên hiển thị</span>
+                @if (isEditing()) {
+                  <input
+                    class="info-input"
+                    [(ngModel)]="displayName"
+                    placeholder="Nhập họ và tên"
+                  />
+                } @else {
+                  <span class="info-value info-value--strong">{{ displayName || store.profile().displayName }}</span>
+                }
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value info-value--email">{{ store.profile().email || 'minhanh@example.com' }}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">Điện thoại</span>
+                @if (isEditing()) {
+                  <input
+                    class="info-input"
+                    [(ngModel)]="editPhone"
+                    placeholder="+84 912 345 678"
+                  />
+                } @else {
+                  <span class="info-value">{{ extraInfo().phone }}</span>
+                }
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">Ngày sinh</span>
+                @if (isEditing()) {
+                  <input
+                    class="info-input"
+                    [(ngModel)]="editBirthDate"
+                    placeholder="DD/MM/YYYY"
+                  />
+                } @else {
+                  <span class="info-value">{{ extraInfo().birthDate }}</span>
+                }
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">Quốc gia</span>
+                @if (isEditing()) {
+                  <input
+                    class="info-input"
+                    [(ngModel)]="editCountry"
+                    placeholder="Việt Nam"
+                  />
+                } @else {
+                  <span class="info-value">{{ extraInfo().country }}</span>
+                }
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">Giới tính</span>
+                @if (isEditing()) {
+                  <select class="info-select" [(ngModel)]="editGender">
+                    <option value="Nữ">Nữ</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                } @else {
+                  <span class="info-value">{{ extraInfo().gender }}</span>
+                }
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">Tham gia từ</span>
+                <span class="info-value">{{ extraInfo().joinedDate }}</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card: Gói đang dùng -->
+          <article class="p-card current-plan-card">
+            <h3 class="p-card__title">Gói đang dùng</h3>
+
+            <!-- Plan Header Info -->
+            <div class="plan-summary-box">
+              <div class="plan-gem-badge">
+                <svg lucideGem></svg>
+              </div>
+              <div class="plan-summary-text">
+                <div class="plan-title-row">
+                  <h4>{{ store.profile().quota.planName || 'Free' }}</h4>
+                  <span class="active-badge" [class.active-badge--expired]="isPlanExpired()">
+                    {{ isPlanExpired() ? 'Hết hạn' : 'Đang hoạt động' }}
+                  </span>
+                </div>
+                <p class="plan-expiry-text">{{ expirationDisplay() }}</p>
+              </div>
+            </div>
+
+            <!-- View details button -->
+            <a routerLink="/billing" class="btn-plan-details">
+              Xem chi tiết gói
+            </a>
+
+            <!-- Checklist of Features (Real Entitlements) -->
+            <ul class="plan-feature-list">
+              @for (feature of realEntitlements(); track feature) {
+                <li>
+                  <span class="check-icon"><svg lucideCheck></svg></span>
+                  <span>{{ feature }}</span>
+                </li>
+              }
+            </ul>
+          </article>
+        </div>
+
+        <!-- ================= RIGHT COLUMN ================= -->
+        <div class="profile-col-right">
+          <!-- 1. Email -->
+          <div class="setting-item-card">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideMail></svg></div>
+              <div class="setting-text">
+                <h4>Email</h4>
+                <p>Email đã liên kết với tài khoản của bạn.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <span class="email-address">{{ store.profile().email || 'minhanh@example.com' }}</span>
+              <span class="status-pill status-pill--verified">Đã xác thực</span>
+              <span class="chevron-icon"><svg lucideChevronRight></svg></span>
+            </div>
+          </div>
+
+          <!-- 2. Thông báo Email -->
+          <div class="setting-item-card">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideBell></svg></div>
+              <div class="setting-text">
+                <h4>Thông báo Email</h4>
+                <p>Nhận email cập nhật về hoạt động và thông báo.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <label class="switch-toggle" [class.is-busy]="gmailBusy()">
+                <input
+                  type="checkbox"
+                  role="switch"
+                  [attr.aria-checked]="emailTaskNotifications"
+                  [ngModel]="emailTaskNotifications"
+                  (ngModelChange)="onEmailTaskNotificationsChanged($event)"
+                  [disabled]="gmailBusy()"
+                />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3. Ngôn ngữ -->
+          <div class="setting-item-card">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideGlobe></svg></div>
+              <div class="setting-text">
+                <h4>Ngôn ngữ</h4>
+                <p>Chọn ngôn ngữ hiển thị của ứng dụng.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <div class="select-wrapper">
+                <select
+                  [(ngModel)]="language"
+                  (ngModelChange)="onLanguageChanged($event)"
+                  class="custom-select"
+                >
+                  <option value="vi">Tiếng Việt</option>
+                  <option value="en">English</option>
+                </select>
+                <span class="select-chevron"><svg lucideChevronDown></svg></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Giao diện -->
+          <div class="setting-item-card">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideMonitor></svg></div>
+              <div class="setting-text">
+                <h4>Giao diện</h4>
+                <p>Chọn chủ đề giao diện bạn yêu thích.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <div class="theme-segmented-control" aria-label="Chọn giao diện">
+                <button
+                  type="button"
+                  class="theme-btn"
+                  [class.active]="theme === 'light'"
+                  (click)="setTheme('light')"
+                >
+                  <svg lucideSun></svg>
+                  <span>Sáng</span>
+                </button>
+                <button
+                  type="button"
+                  class="theme-btn"
+                  [class.active]="theme === 'dark'"
+                  (click)="setTheme('dark')"
+                >
+                  <svg lucideMoon></svg>
+                  <span>Tối</span>
+                </button>
+                <button
+                  type="button"
+                  class="theme-btn"
+                  [class.active]="theme === 'calm'"
+                  (click)="setTheme('calm')"
+                >
+                  <svg lucideSparkles></svg>
+                  <span>Yên bình</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Khung avatar -->
+          <div class="setting-item-card">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideSquare></svg></div>
+              <div class="setting-text">
+                <h4>Khung avatar</h4>
+                <p>Chọn khung viền cho ảnh đại diện của bạn.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <div class="frame-selector-group">
+                <button
+                  type="button"
+                  class="frame-choice frame-choice--default"
+                  [class.is-selected]="extraInfo().avatarFrame === 'default'"
+                  (click)="selectAvatarFrame('default')"
+                  title="Khung tiêu chuẩn xanh"
+                ></button>
+                <button
+                  type="button"
+                  class="frame-choice frame-choice--gold"
+                  [class.is-selected]="extraInfo().avatarFrame === 'gold'"
+                  (click)="selectAvatarFrame('gold')"
+                  title="Khung vàng ánh kim"
+                ></button>
+                <button
+                  type="button"
+                  class="frame-choice frame-choice--gradient"
+                  [class.is-selected]="extraInfo().avatarFrame === 'gradient'"
+                  (click)="selectAvatarFrame('gradient')"
+                  title="Khung gradient đa sắc"
+                ></button>
+              </div>
+              <span class="chevron-icon"><svg lucideChevronRight></svg></span>
+            </div>
+          </div>
+
+          <!-- 6. Bảo mật -->
+          <div class="setting-item-card clickable-row" (click)="openPasswordModal()">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideShield></svg></div>
+              <div class="setting-text">
+                <h4>Bảo mật</h4>
+                <p>Đổi mật khẩu và quản lý các tùy chọn bảo mật.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <span class="chevron-icon"><svg lucideChevronRight></svg></span>
+            </div>
+          </div>
+
+          <!-- 7. Hỗ trợ -->
+          <a routerLink="/support" class="setting-item-card clickable-row">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideHelpCircle></svg></div>
+              <div class="setting-text">
+                <h4>Hỗ trợ</h4>
+                <p>Trung tâm trợ giúp và liên hệ với chúng tôi.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <span class="chevron-icon"><svg lucideChevronRight></svg></span>
+            </div>
+          </a>
+
+          <!-- 8. Điều khoản -->
+          <a routerLink="/terms" class="setting-item-card clickable-row">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideFileText></svg></div>
+              <div class="setting-text">
+                <h4>Điều khoản</h4>
+                <p>Đọc các điều khoản sử dụng và chính sách.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <span class="chevron-icon"><svg lucideChevronRight></svg></span>
+            </div>
+          </a>
+
+          <!-- 9. Nâng cấp gói -->
+          <a routerLink="/billing" class="setting-item-card clickable-row">
+            <div class="setting-item__left">
+              <div class="setting-icon"><svg lucideCrown></svg></div>
+              <div class="setting-text">
+                <h4>Nâng cấp gói</h4>
+                <p>Nâng cấp để sử dụng thêm tính năng cao cấp.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <span class="chevron-icon"><svg lucideChevronRight></svg></span>
+            </div>
+          </a>
+
+          <!-- 10. Đăng xuất -->
+          <div class="setting-item-card clickable-row row--danger" (click)="logoutConfirmation.set(true)">
+            <div class="setting-item__left">
+              <div class="setting-icon setting-icon--danger"><svg lucideLogOut></svg></div>
+              <div class="setting-text">
+                <h4 class="text-danger">Đăng xuất</h4>
+                <p>Đăng xuất khỏi tài khoản trên thiết bị này.</p>
+              </div>
+            </div>
+            <div class="setting-item__right">
+              <span class="chevron-icon"><svg lucideChevronRight></svg></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= MODALS ================= -->
+
+      <!-- Password Change Modal -->
+      @if (passwordModalOpen()) {
+        <div class="modal-overlay" (click)="passwordModalOpen.set(false)">
+          <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-labelledby="pwd-title">
+            <header class="modal-header">
+              <div class="modal-header__title">
+                <svg lucideKeyRound></svg>
+                <div>
+                  <h3 id="pwd-title">Đổi mật khẩu</h3>
+                  <p>Mật khẩu mới cần ít nhất 9 ký tự và một ký tự đặc biệt.</p>
+                </div>
+              </div>
+              <button class="btn-close" (click)="passwordModalOpen.set(false)">
+                <svg lucideX></svg>
+              </button>
+            </header>
+
+            <form (ngSubmit)="changePassword()" class="modal-body">
+              <div class="form-group">
+                <label>Mật khẩu hiện tại</label>
+                <input
+                  name="current"
+                  type="password"
+                  [(ngModel)]="currentPassword"
+                  autocomplete="current-password"
+                  placeholder="Nhập mật khẩu hiện tại"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Mật khẩu mới</label>
+                <input
+                  name="new"
+                  type="password"
+                  [(ngModel)]="newPassword"
+                  autocomplete="new-password"
+                  placeholder="Nhập mật khẩu mới"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Xác nhận mật khẩu mới</label>
+                <input
+                  name="confirm"
+                  type="password"
+                  [(ngModel)]="confirmPassword"
+                  autocomplete="new-password"
+                  placeholder="Nhập lại mật khẩu mới"
+                  required
+                />
+              </div>
+
+              @if (passwordError()) {
+                <div class="modal-alert modal-alert--error">{{ passwordError() }}</div>
+              }
+
+              <div class="modal-actions">
+                <button type="button" class="btn-cancel" (click)="passwordModalOpen.set(false)">
+                  Hủy
+                </button>
+                <button type="submit" class="btn-primary" [disabled]="passwordBusy()">
+                  {{ passwordBusy() ? 'Đang cập nhật…' : 'Đổi mật khẩu và đăng xuất' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+
+      <!-- Logout Confirmation Modal -->
+      @if (logoutConfirmation()) {
+        <div class="modal-overlay" (click)="logoutConfirmation.set(false)">
+          <section class="modal-card modal-card--small" role="alertdialog" aria-modal="true" aria-labelledby="logout-title" (click)="$event.stopPropagation()">
+            <header class="modal-header">
+              <div class="modal-header__title">
+                <div class="danger-icon-badge"><svg lucideLogOut></svg></div>
+                <div>
+                  <h3 id="logout-title">Xác nhận đăng xuất</h3>
+                  <p>Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</p>
+                </div>
+              </div>
+              <button class="btn-close" (click)="logoutConfirmation.set(false)"><svg lucideX></svg></button>
+            </header>
+            <p class="modal-desc">Sau khi đăng xuất, bạn sẽ cần đăng nhập lại để tiếp tục làm việc trên Planora.</p>
+            <footer class="modal-actions">
+              <button class="btn-cancel" type="button" (click)="logoutConfirmation.set(false)">Hủy</button>
+              <button class="btn-danger" type="button" (click)="confirmSignOut()">
+                <svg lucideLogOut></svg>
+                <span>Đăng xuất</span>
+              </button>
+            </footer>
+          </section>
+        </div>
+      }
+
+      <!-- Toast Feedback -->
+      @if (error()) {
+        <div class="profile-toast profile-toast--error">{{ error() }}</div>
+      }
+      @if (toast()) {
+        <div class="profile-toast profile-toast--success">{{ toast() }}</div>
+      }
+    </section>

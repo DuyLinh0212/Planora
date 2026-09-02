@@ -1,0 +1,40 @@
+    <section class="page project-dashboard">
+      <header class="page-intro page-intro--compact">
+        <div><p class="eyebrow">Nhịp làm việc hiện tại</p><h2>{{ sprintTitle() }}</h2><p>{{ store.activeSprint().goal }}</p></div>
+        <div class="header-actions">@if (store.hasPermission('sprint.view')) {<a class="button" [routerLink]="projectLink('sprints')"><svg lucideCalendarRange></svg><span>Xem sprint</span></a>}@if (store.hasPermission('task.create')) {<a class="button button--primary" [routerLink]="projectLink('tasks')" [queryParams]="{ create: 1 }">Tạo công việc</a>}</div>
+      </header>
+
+      <section class="flow-strip" aria-label="Luồng tiến độ">
+        @for (stage of stages(); track stage.key) {
+          <article [attr.data-stage]="stage.key"><span>{{ stage.value }}</span><div><b>{{ stage.label }}</b><small>{{ stage.help }}</small></div><i></i></article>
+        }
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel sprint-focus">
+          <header><div><p class="eyebrow">Sprint đang chọn</p><h3>{{ store.activeSprint().name }}</h3></div><span class="status-chip">{{ store.activeSprint().status }}</span></header>
+          <div class="sprint-gauge"><div><b>{{ progress() }}%</b><small>hoàn thành</small></div><i><b [style.width.%]="progress()"></b></i></div>
+          <dl><div><dt>Bắt đầu</dt><dd>{{ store.activeSprint().startAt | date:'dd/MM' }}</dd></div><div><dt>Kết thúc</dt><dd>{{ store.activeSprint().endAt | date:'dd/MM' }}</dd></div><div><dt>Còn lại</dt><dd>{{ remainingCount() }} việc</dd></div></dl>
+          <a [routerLink]="projectLink('sprints')">Mở kế hoạch sprint <svg lucideArrowRight></svg></a>
+        </article>
+
+        <article class="panel task-pulse">
+          <header><div><p class="eyebrow">Công việc cần chú ý</p><h3>Ưu tiên hôm nay</h3></div><span>{{ attentionTasks().length }}</span></header>
+          <div class="attention-list">
+            @for (task of attentionTasks().slice(0, 4); track task.id) {
+              <a [routerLink]="projectLink('tasks')"><i [attr.data-priority]="task.priority"></i><span><b>{{ task.title }}</b><small>{{ task.status }} · {{ task.effectiveDueAt | date:'dd/MM' }}</small></span><svg lucideArrowRight></svg></a>
+            } @empty { <div class="compact-empty"><svg lucideCircleCheckBig></svg><b>Không có việc khẩn cấp</b><span>Nhịp làm việc đang ổn định.</span></div> }
+          </div>
+        </article>
+
+        <article class="panel project-resources">
+          <header><p class="eyebrow">Tài nguyên project</p><h3>Tất cả trong một chỗ</h3></header>
+          <div class="resource-grid">
+            <a [routerLink]="projectLink('tasks')"><svg lucideListChecks></svg><span><b>{{ store.tasks().length }}</b><small>Công việc</small></span></a>
+            <a [routerLink]="projectLink('members')"><svg lucideUsersRound></svg><span><b>{{ store.members().length }}</b><small>Thành viên</small></span></a>
+            <a [routerLink]="projectLink('files')"><svg lucideFileStack></svg><span><b>{{ fileCount() }}</b><small>Tệp & tài liệu</small></span></a>
+            <a [routerLink]="projectLink('sprints')"><svg lucideClock3></svg><span><b>{{ store.sprints().length }}</b><small>Sprint</small></span></a>
+          </div>
+        </article>
+      </section>
+    </section>

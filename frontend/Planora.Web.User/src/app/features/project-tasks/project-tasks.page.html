@@ -1,0 +1,616 @@
+    <section class="page page--fill task-page">
+      <header class="page-intro page-intro--compact">
+        <div>
+          <p class="eyebrow">{{ store.tasks().length }} công việc · {{ store.activeSprint().name }}</p>
+          <h2>Bảng công việc</h2>
+          <p>Theo dõi từ lúc cam kết đến khi kết quả được duyệt.</p>
+        </div>
+        @if (store.hasPermission('task.create')) {
+          <button class="button button--primary" type="button" (click)="openCreate()">
+            <svg lucideCirclePlus></svg>
+            <span>Tạo công việc</span>
+          </button>
+        }
+      </header>
+
+      <div class="task-toolbar">
+        <label class="search-control">
+          <svg lucideSearch></svg>
+          <input [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Tìm công việc…" />
+        </label>
+        <label class="select-control">
+          <svg lucideListFilter></svg>
+          <select [ngModel]="priority()" (ngModelChange)="priority.set($event)">
+            <option value="all">Mọi mức ưu tiên</option>
+            <option value="High">Cao</option>
+            <option value="Medium">Trung bình</option>
+            <option value="Low">Thấp</option>
+          </select>
+        </label>
+        <span class="toolbar-count">Hiển thị {{ filteredTasks().length }} / {{ store.tasks().length }}</span>
+      </div>
+
+      <section class="task-board">
+        @for (status of statuses; track status) {
+          <article class="task-column" [attr.data-status]="status">
+            <header>
+              <i></i>
+              <b>{{ statusLabel(status) }}</b>
+              <span>{{ tasksFor(status).length }}</span>
+            </header>
+            <div class="task-column__body">
+              @for (task of tasksFor(status); track task.id) {
+                <button class="task-card" type="button" (click)="openTask(task)">
+                  <span class="task-card__top">
+                    <small>{{ shortId(task.id) }}</small>
+                    <em [attr.data-priority]="task.priority">{{ priorityLabel(task.priority) }}</em>
+                  </span>
+                  <b>{{ task.title }}</b>
+                  <p>{{ task.description || 'Chưa có mô tả.' }}</p>
+                  <footer>
+                    <span><svg lucideCalendarClock></svg>{{ task.effectiveDueAt | date:'dd/MM' }}</span>
+                    <svg lucideChevronRight></svg>
+                  </footer>
+                </button>
+              } @empty {
+                <div class="column-empty"><span>Không có việc</span></div>
+              }
+            </div>
+            @if (status === 'Todo' && store.hasPermission('task.create')) {
+              <button class="column-add" type="button" (click)="openCreate()">+ Thêm công việc</button>
+            }
+          </article>
+        }
+      </section>
+
+      @if (selectedTask(); as task) {
+        <div class="drawer-scrim" (click)="selectedTask.set(null)"></div>
+        <aside class="task-drawer">
+          <header>
+            <div>
+              <p class="eyebrow">{{ shortId(task.id) }}</p>
+              <h2>{{ task.title }}</h2>
+            </div>
+            <button class="icon-button" (click)="selectedTask.set(null)"><svg lucideX></svg></button>
+          </header>
+
+          <div class="drawer-status">
+            <span class="status-chip">{{ statusLabel(task.status) }}</span>
+            <span [attr.data-priority]="task.priority">{{ priorityLabel(task.priority) }}</span>
+          </div>
+
+          <dl class="task-facts">
+            <div><dt>Deadline</dt><dd>{{ task.effectiveDueAt | date:'dd/MM/yyyy' }}</dd></div>
+            <div><dt>Loại</dt><dd>{{ task.type ?? 'General' }}</dd></div>
+            <div><dt>Yêu cầu nộp</dt><dd>{{ task.submissionRequirement ?? 'Any' }}</dd></div>
+            <div><dt>Sprint</dt><dd>{{ sprintName(task.sprintId) }}</dd></div>
+          </dl>
+
+          <section class="assignee-block">
+            <h3>Người thực hiện</h3>
+            <ul class="assignee-list">
+              @for (name of assigneeNames(task); track name) {
+                <li>{{ name }}</li>
+              } @empty {
+                <li class="assignee-list__empty">Chưa giao cho ai.</li>
+              }
+            </ul>
+            @if (store.hasPermission('task.assign')) {
+              <div class="assignee-assign">
+                <label class="field">
+                  <span>Giao thêm thành viên</span>
+                  <select [ngModel]="assigneeToAdd()" (ngModelChange)="assigneeToAdd.set($event)" aria-label="Chọn thành viên để giao việc">
+                    <option value="">Chọn thành viên…</option>
+                    @for (member of assignableMembers(task); track member.membershipId) {
+                      <option [value]="member.membershipId">{{ member.displayName }}</option>
+                    }
+                  </select>
+                </label>
+                <button class="button" type="button" [disabled]="!assigneeToAdd() || assigning()" (click)="assignTask(task)">
+                  {{ assigning() ? 'Đang giao…' : 'Giao việc' }}
+                </button>
+              </div>
+            }
+            <small>Thành viên nhận thông báo trong Planora và email từ người giao việc nếu họ bật tuỳ chọn nhận email.</small>
+          </section>
+
+          <section>
+            <h3>Mô tả</h3>
+            <app-markdown [value]="task.description"></app-markdown>
+            <h3>Tiêu chí hoàn thành</h3>
+            <p class="field-help">Đây là các điều kiện cụ thể để người duyệt xác nhận kết quả đạt yêu cầu.</p>
+            <ul class="criteria-list">
+              @for (criterion of task.acceptanceCriteria; track criterion) {
+                <li>{{ criterion }}</li>
+              } @empty {
+                <li>Chưa thiết lập tiêu chí.</li>
+              }
+            </ul>
+          </section>
+
+          @if (reviewSubmission(); as submission) {
+            <section class="review-submission">
+              <div class="review-submission__header">
+                <h3>Bài nộp lần {{ submission.attemptNumber }}</h3>
+                <span class="submission-badge" [attr.data-status]="submission.status">
+                  {{ submissionStatusLabel(submission.status) }}
+                </span>
+              </div>
+
+              <p class="submission-meta">
+                <b>{{ submission.submittedByDisplayName }}</b> · {{ submission.submittedAt | date:'dd/MM/yyyy HH:mm' }}
+              </p>
+
+              @if (submission.description) {
+                <div class="submission-note-card">
+                  <p>{{ submission.description }}</p>
+                </div>
+              }
+
+              @if (submission.links.length) {
+                <h4>Đường dẫn kết quả</h4>
+                <ul class="submission-links-list">
+                  @for (link of submission.links; track link.id) {
+                    <li>
+                      <a [href]="link.url" target="_blank" rel="noopener" class="link-card">
+                        <svg lucideExternalLink></svg>
+                        <span>{{ link.title || link.url }}</span>
+                      </a>
+                    </li>
+                  }
+                </ul>
+              }
+
+              @if (submission.files.length) {
+                <h4>Tệp kết quả đã nộp ({{ submission.files.length }})</h4>
+                <div class="submission-file-grid">
+                  @for (file of submission.files; track file.fileVersionId) {
+                    <article class="submission-file-card" [class.submission-file-card--image]="isImageFile(file.name, file.mimeType)">
+                      @if (isImageFile(file.name, file.mimeType)) {
+                        <div class="submission-file-thumb" (click)="previewSubmittedFile(file)">
+                          @if (thumbnailUrl(file.projectFileId, file.fileVersionId); as thumbnailUrl) {
+                            <img [src]="thumbnailUrl" [alt]="file.name" />
+                          } @else {
+                            <span class="submission-thumb-placeholder" [class.submission-thumb-placeholder--unavailable]="thumbnailUnavailable(file.projectFileId, file.fileVersionId)">
+                              <svg lucideFileText></svg>
+                              <span>{{ thumbnailUnavailable(file.projectFileId, file.fileVersionId) ? 'Không tải được ảnh' : 'Đang tải ảnh…' }}</span>
+                            </span>
+                          }
+                          <div class="thumb-overlay"><svg lucideEye></svg><span>Xem ảnh</span></div>
+                        </div>
+                      } @else {
+                        <div class="submission-file-icon" (click)="previewSubmittedFile(file)">
+                          <svg lucideFileText></svg>
+                        </div>
+                      }
+                      <div class="submission-file-details">
+                        <b class="file-name" [title]="file.name">{{ file.name }}</b>
+                        <small>{{ fileSize(file.sizeBytes) }}</small>
+                        <div class="card-btn-row">
+                          <button type="button" class="btn-text" (click)="previewSubmittedFile(file)">
+                            <svg lucideEye></svg> Xem
+                          </button>
+                          <button type="button" class="btn-text" (click)="downloadSubmittedFile(file)">
+                            <svg lucideDownload></svg> Tải
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+
+              @if (submission.reviewFeedback) {
+                <div class="review-feedback-alert">
+                  <div class="review-feedback-alert__title">
+                    <svg lucideAlertCircle></svg>
+                    <b>Phản hồi từ người duyệt (Yêu cầu làm lại):</b>
+                  </div>
+                  <p>{{ submission.reviewFeedback }}</p>
+                </div>
+              }
+
+              @if (task.status === 'Submitted' && store.hasPermission('task.review')) {
+                <label class="field review-field">
+                  <span>Phản hồi duyệt</span>
+                  <textarea [(ngModel)]="reviewFeedback" rows="3" placeholder="Bắt buộc nhập lý do khi yêu cầu làm lại…"></textarea>
+                </label>
+              }
+            </section>
+          }
+
+          <!-- Deadline & Extension Section -->
+          <section class="task-detail-section deadline-extension-box">
+            <header>
+              <b>Hạn chót &amp; Gia hạn deadline</b>
+              @if (deadlineHistory().length > 0) {
+                <button type="button" class="btn-text" (click)="showDeadlineHistory.set(!showDeadlineHistory())">
+                  {{ showDeadlineHistory() ? 'Ẩn lịch sử' : 'Xem lịch sử' }} ({{ deadlineHistory().length }})
+                </button>
+              }
+            </header>
+
+            <!-- Pending Extension Requests -->
+            @for (req of pendingExtensionRequests(); track req.id) {
+              <div class="extension-pending-card">
+                <div class="card-head">
+                  <span>Yêu cầu gia hạn đến: {{ req.requestedDueAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                  <small>Bởi: {{ req.requestedByDisplayName }}</small>
+                </div>
+                <p><b>Lý do:</b> {{ req.reason }}</p>
+
+                @if (store.hasPermission('task.extend_deadline')) {
+                  <div class="extension-actions">
+                    <button class="button button--primary" type="button" [disabled]="extensionBusy()" (click)="approveExtension(req)">
+                      Duyệt gia hạn
+                    </button>
+                    <button class="button button--danger" type="button" [disabled]="extensionBusy()" (click)="rejectExtension(req)">
+                      Từ chối
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Extension Actions Row -->
+            <div class="card-btn-row" style="margin-top: 8px;">
+              @if (canSubmitTask(task) && task.status !== 'Done' && task.status !== 'Expired') {
+                <button class="button button--quiet" type="button" (click)="openExtensionModal(task)">
+                  <svg lucideCalendarClock></svg> Yêu cầu gia hạn
+                </button>
+              }
+              @if (store.hasPermission('task.extend_deadline')) {
+                <button class="button button--quiet" type="button" (click)="openDirectExtendModal(task)">
+                  <svg lucideCalendarClock></svg> Đổi deadline trực tiếp
+                </button>
+              }
+            </div>
+
+            <!-- Deadline History List -->
+            @if (showDeadlineHistory() && deadlineHistory().length > 0) {
+              <div class="deadline-history-list">
+                @for (item of deadlineHistory(); track item.id) {
+                  <div class="deadline-history-item">
+                    <div class="history-dates">
+                      <s>{{ item.oldDueAt | date:'dd/MM' }}</s> ➔ <b>{{ item.newDueAt | date:'dd/MM/yyyy' }}</b>
+                    </div>
+                    <span class="history-reason" [title]="item.reason">{{ item.reason }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </section>
+
+          <footer>
+            @if (store.hasPermission('task.edit')) {
+              <button class="button" type="button" (click)="openEdit(task)">Chỉnh sửa</button>
+              <button class="button button--danger button--icon" type="button" (click)="deleteTask(task)" aria-label="Xóa công việc">
+                <svg lucideTrash2></svg>
+              </button>
+            }
+            <span></span>
+
+            @if (task.status === 'Submitted' && reviewSubmission() && store.hasPermission('task.review')) {
+              <button class="button" type="button" [disabled]="reviewing()" (click)="requestRework(task)">
+                Yêu cầu làm lại
+              </button>
+              <button class="button button--primary" type="button" [disabled]="reviewing()" (click)="approveSubmission(task)">
+                Duyệt hoàn thành
+              </button>
+            } @else if (canSubmitTask(task) && task.status === 'Rework') {
+              <button class="button button--primary" type="button" (click)="openSubmission(task)">
+                <svg lucideRotateCcw></svg>
+                <span>Nộp lại bài</span>
+              </button>
+            } @else {
+              @if (canSubmitTask(task) && (task.status === 'Todo' || task.status === 'Rework')) {
+                <button class="button" type="button" (click)="startTask(task)">Bắt đầu</button>
+              }
+              @if (canSubmitTask(task)) {
+                <button class="button button--primary" type="button" (click)="openSubmission(task)">
+                  Nộp kết quả
+                </button>
+              }
+            }
+          </footer>
+        </aside>
+      }
+
+      @if (editorOpen()) {
+        <div class="dialog-layer" (click)="closeEditor()">
+          <form class="dialog dialog--task dialog--large" (ngSubmit)="saveTask()" #form="ngForm" (click)="$event.stopPropagation()">
+            <header>
+              <div>
+                <p class="eyebrow">{{ editingTaskId() ? 'Cập nhật' : 'Công việc mới' }}</p>
+                <h2>{{ editingTaskId() ? 'Chỉnh sửa công việc' : 'Tạo công việc' }}</h2>
+              </div>
+              <button class="icon-button" type="button" (click)="closeEditor()"><svg lucideX></svg></button>
+            </header>
+
+            <div class="form-grid task-form-grid">
+              <label class="field form-span-2">
+                <span>Tiêu đề</span>
+                <input name="title" [(ngModel)]="draft.title" maxlength="180" required />
+              </label>
+
+              <label class="field">
+                <span>Sprint</span>
+                <select name="sprintId" [(ngModel)]="draft.sprintId">
+                  <option value="">Product backlog</option>
+                  @for (sprint of store.sprints(); track sprint.id) {
+                    <option [value]="sprint.id">{{ sprint.name }}</option>
+                  }
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Ưu tiên</span>
+                <select name="priority" [(ngModel)]="draft.priority">
+                  <option value="Urgent">Khẩn</option>
+                  <option value="High">Cao</option>
+                  <option value="Medium">Trung bình</option>
+                  <option value="Low">Thấp</option>
+                </select>
+              </label>
+
+              <div class="form-span-2">
+                <label class="field-label"><span>Mô tả công việc (Hỗ trợ Markdown &amp; Dán ảnh)</span></label>
+                <app-markdown-editor [(value)]="draft.description" [rows]="6"></app-markdown-editor>
+              </div>
+
+              <section class="task-type-field">
+                <div class="field-label">
+                  <span>Loại công việc</span>
+                  <button type="button" (click)="addingTaskType.set(!addingTaskType())">
+                    {{ addingTaskType() ? 'Đóng' : 'Tạo loại mới' }}
+                  </button>
+                </div>
+                <select name="type" [(ngModel)]="draft.type" aria-label="Loại công việc">
+                  @for (type of taskTypes(); track type) {
+                    <option [value]="type">{{ taskTypeLabel(type) }}</option>
+                  }
+                </select>
+                @if (addingTaskType()) {
+                  <div class="inline-create">
+                    <input name="customTaskType" [(ngModel)]="customTaskType" maxlength="40" placeholder="Ví dụ: Phát hành nội bộ" aria-label="Tên loại công việc mới" />
+                    <button class="button" type="button" [disabled]="!customTaskType.trim()" (click)="useCustomTaskType()">Dùng loại này</button>
+                  </div>
+                }
+                <small>Loại mới chỉ được lưu cùng công việc trong project này.</small>
+              </section>
+
+              <label class="field">
+                <span>Yêu cầu nộp</span>
+                <select name="submissionRequirement" aria-label="Yêu cầu nộp" [ngModel]="draft.submissionRequirement" (ngModelChange)="setSubmissionRequirement($event)">
+                  <option value="Any">Link hoặc tệp đều được</option>
+                  <option value="LinkOnly">Chỉ nhận đường dẫn</option>
+                  <option value="FileOnly">Tự chọn định dạng tệp</option>
+                  <option value="Word">Tài liệu Word</option>
+                  <option value="Excel">Bảng tính Excel</option>
+                  <option value="Pdf">Tệp PDF</option>
+                  <option value="PowerPoint">Bản trình chiếu PowerPoint</option>
+                  <option value="Image">Hình ảnh</option>
+                </select>
+                <small>{{ submissionHint() }}</small>
+              </label>
+
+              <label class="field">
+                <span>Deadline</span>
+                <input name="dueAt" type="date" [(ngModel)]="draft.dueAt" />
+              </label>
+
+              <section class="format-picker">
+                <div class="field-label">
+                  <span>Định dạng được phép</span>
+                  <small>{{ draft.extensions.length ? draft.extensions.length + ' đuôi tệp' : 'Không giới hạn' }}</small>
+                </div>
+                @if (draft.submissionRequirement === 'FileOnly') {
+                  <div class="format-options">
+                    @for (group of formatGroups; track group.label) {
+                      <button type="button" [class.active]="formatSelected(group.extensions)" [attr.aria-pressed]="formatSelected(group.extensions)" (click)="toggleFormat(group.extensions)">
+                        {{ group.label }}
+                      </button>
+                    }
+                  </div>
+                  @if (draft.extensions.length) {
+                    <div class="extension-list">
+                      @for (extension of draft.extensions; track extension) {
+                        <span>.{{ extension }}</span>
+                      }
+                    </div>
+                  }
+                } @else {
+                  <p>{{ submissionHint() }}</p>
+                }
+              </section>
+
+              <label class="field form-span-2">
+                <span>Tiêu chí hoàn thành</span>
+                <textarea name="criteria" [(ngModel)]="draft.criteria" rows="3" placeholder="Email được gửi thành công&#10;Có log rõ ràng khi gửi thất bại"></textarea>
+                <small>Mỗi dòng là một điều kiện để Leader đối chiếu khi duyệt bài nộp.</small>
+              </label>
+            </div>
+
+            <label class="milestone-option">
+              <input name="milestone" type="checkbox" [(ngModel)]="draft.isMilestone" />
+              <span>
+                <b>Mốc quan trọng của project</b>
+                <small>Dùng cho phát hành, bàn giao hoặc chốt một giai đoạn. Mốc này sẽ được làm nổi bật ở Timeline.</small>
+              </span>
+            </label>
+
+            @if (message()) { <p class="form-alert">{{ message() }}</p> }
+
+            <footer>
+              <button class="button" type="button" (click)="closeEditor()">Hủy</button>
+              <button class="button button--primary" [disabled]="form.invalid || saving()">
+                {{ saving() ? 'Đang lưu…' : 'Lưu công việc' }}
+              </button>
+            </footer>
+          </form>
+        </div>
+      }
+
+      @if (submissionTask(); as task) {
+        <div class="dialog-layer" (click)="closeSubmission()">
+          <form class="dialog dialog--submission dialog--wide" (ngSubmit)="submitTask(task)" (click)="$event.stopPropagation()">
+            <header>
+              <div>
+                <p class="eyebrow">Bài nộp công việc</p>
+                <h2>{{ task.title }}</h2>
+              </div>
+              <button class="icon-button" type="button" (click)="closeSubmission()"><svg lucideX></svg></button>
+            </header>
+
+            <p class="submission-requirement">
+              <b>Yêu cầu:</b> {{ submissionRequirementLabel(task.submissionRequirement ?? 'Any') }}
+              @if (task.allowedExtensions?.length) { · {{ extensionLabel(task.allowedExtensions ?? []) }} }
+            </p>
+
+            @if (task.submissionRequirement !== 'LinkOnly') {
+              <label class="submission-upload">
+                <input type="file" multiple [accept]="submissionAccept(task)" (change)="uploadSubmissionFiles(task, $event)" [disabled]="uploadingSubmission()" />
+                <svg lucideUpload></svg>
+                <span>
+                  <b>{{ uploadingSubmission() ? 'Đang tải tệp lên kho…' : 'Chọn tệp hoặc hình ảnh để nộp' }}</b>
+                  <small>Hỗ trợ xem trước ảnh trực tiếp ngay khi chọn.</small>
+                </span>
+              </label>
+
+              @if (submissionFiles().length) {
+                <div class="submission-preview-section">
+                  <div class="submission-preview-title">
+                    <span>Tệp đã tải lên ({{ submissionFiles().length }})</span>
+                  </div>
+                  <div class="submission-cards-grid">
+                    @for (file of submissionFiles(); track file.currentVersionId) {
+                      <div class="submission-thumb-card" [class.submission-thumb-card--img]="isImageFile(file.name, file.mimeType)">
+                        @if (isImageFile(file.name, file.mimeType)) {
+                          <div class="submission-thumb-img" (click)="previewSubmissionItem(file)">
+                            @if (thumbnailUrl(file.id, file.currentVersionId); as thumbnailUrl) {
+                              <img [src]="thumbnailUrl" [alt]="file.name" />
+                            } @else {
+                              <span class="submission-thumb-placeholder" [class.submission-thumb-placeholder--unavailable]="thumbnailUnavailable(file.id, file.currentVersionId)">
+                                <svg lucideFileText></svg>
+                                <span>{{ thumbnailUnavailable(file.id, file.currentVersionId) ? 'Không tải được ảnh' : 'Đang tải ảnh…' }}</span>
+                              </span>
+                            }
+                            <span class="preview-tag"><svg lucideEye></svg> Xem</span>
+                          </div>
+                        } @else {
+                          <div class="submission-thumb-file" (click)="previewSubmissionItem(file)">
+                            <svg lucideFileText></svg>
+                          </div>
+                        }
+                        <div class="submission-thumb-meta">
+                          <span class="name" [title]="file.name">{{ file.name }}</span>
+                          <small>{{ fileSize(file.sizeBytes) }}</small>
+                        </div>
+                        <button type="button" class="submission-thumb-remove" title="Xóa tệp" (click)="removeSubmissionFile(file.currentVersionId)">
+                          <svg lucideX></svg>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            }
+
+            @if (task.submissionRequirement === 'Any' || task.submissionRequirement === 'LinkOnly') {
+              <label class="field">
+                <span>Đường dẫn kết quả</span>
+                <input name="submissionLink" type="url" [(ngModel)]="submissionLink" placeholder="https://…" />
+              </label>
+            }
+
+            <label class="field">
+              <span>Ghi chú bài nộp</span>
+              <textarea name="submissionNote" [(ngModel)]="submissionNote" rows="3" placeholder="Mô tả những gì đã hoàn thành hoặc lưu ý cho người duyệt…"></textarea>
+            </label>
+
+            @if (submissionError()) { <p class="form-alert">{{ submissionError() }}</p> }
+
+            <footer>
+              <button class="button" type="button" (click)="closeSubmission()">Hủy</button>
+              <button class="button button--primary" [disabled]="!canSendSubmission(task) || submitting() || uploadingSubmission()">
+                {{ submitting() ? 'Đang gửi…' : 'Gửi để Leader duyệt' }}
+              </button>
+            </footer>
+          </form>
+        </div>
+      }
+
+      <!-- Extension Request Modal -->
+      @if (showExtensionModal(); as task) {
+        <div class="dialog-layer" (click)="showExtensionModal.set(null)">
+          <form class="dialog" (ngSubmit)="sendExtensionRequest(task)" (click)="$event.stopPropagation()">
+            <header>
+              <div>
+                <p class="eyebrow">Yêu cầu gia hạn hạn chót</p>
+                <h2>Gia hạn: {{ task.title }}</h2>
+              </div>
+              <button class="icon-button" type="button" (click)="showExtensionModal.set(null)"><svg lucideX></svg></button>
+            </header>
+
+            <label class="field">
+              <span>Hạn chót mới mong muốn</span>
+              <input name="requestedDueAt" type="datetime-local" [(ngModel)]="requestedExtensionDueAt" required />
+            </label>
+
+            <label class="field">
+              <span>Lý do xin gia hạn</span>
+              <textarea name="extensionReason" [(ngModel)]="requestedExtensionReason" rows="3" placeholder="Giải thích lý do cần thêm thời gian để Leader xem xét…" required></textarea>
+            </label>
+
+            @if (extensionError()) { <p class="form-alert">{{ extensionError() }}</p> }
+
+            <footer>
+              <button class="button" type="button" (click)="showExtensionModal.set(null)">Hủy</button>
+              <button class="button button--primary" [disabled]="!requestedExtensionDueAt || !requestedExtensionReason.trim() || extensionBusy()">
+                {{ extensionBusy() ? 'Đang gửi…' : 'Gửi yêu cầu gia hạn' }}
+              </button>
+            </footer>
+          </form>
+        </div>
+      }
+
+      <!-- Direct Extend Modal for Leader -->
+      @if (showDirectExtendModal(); as task) {
+        <div class="dialog-layer" (click)="showDirectExtendModal.set(null)">
+          <form class="dialog" (ngSubmit)="sendDirectExtend(task)" (click)="$event.stopPropagation()">
+            <header>
+              <div>
+                <p class="eyebrow">Điều chỉnh hạn chót trực tiếp</p>
+                <h2>Cập nhật deadline: {{ task.title }}</h2>
+              </div>
+              <button class="icon-button" type="button" (click)="showDirectExtendModal.set(null)"><svg lucideX></svg></button>
+            </header>
+
+            <label class="field">
+              <span>Hạn chót mới</span>
+              <input name="directDueAt" type="datetime-local" [(ngModel)]="directExtendDueAt" required />
+            </label>
+
+            <label class="field">
+              <span>Lý do điều chỉnh</span>
+              <textarea name="directReason" [(ngModel)]="directExtendReason" rows="3" placeholder="Ghi chú lý do thay đổi hạn chót (lưu vào lịch sử)…" required></textarea>
+            </label>
+
+            @if (extensionError()) { <p class="form-alert">{{ extensionError() }}</p> }
+
+            <footer>
+              <button class="button" type="button" (click)="showDirectExtendModal.set(null)">Hủy</button>
+              <button class="button button--primary" [disabled]="!directExtendDueAt || !directExtendReason.trim() || extensionBusy()">
+                {{ extensionBusy() ? 'Đang lưu…' : 'Áp dụng hạn chót mới' }}
+              </button>
+            </footer>
+          </form>
+        </div>
+      }
+
+      @if (previewModalFile(); as modalFile) {
+        <app-file-preview-modal [file]="modalFile" (close)="previewModalFile.set(null)"></app-file-preview-modal>
+      }
+
+      @if (toast()) { <div class="toast">{{ toast() }}</div> }
+    </section>

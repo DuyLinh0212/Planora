@@ -1,0 +1,58 @@
+    <main class="auth-stage">
+      <section class="auth-story">
+        <a class="auth-brand" routerLink="/login" aria-label="Planora">
+          <app-planora-logo tone="light" />
+        </a>
+        <div><p class="eyebrow">Bắt đầu bằng một cam kết rõ ràng</p><h1>Lập kế hoạch cùng nhau.<br />Hoàn thành có kiểm chứng.</h1><p>Tạo tài khoản để kết nối sprint, công việc, bài nộp và tài liệu trong một nhịp làm việc.</p></div>
+        <div class="auth-board" aria-hidden="true">
+          <span><b>Project</b><i></i></span>
+          <span><b>Sprint</b><i></i><i></i></span>
+          <span><b>Submit</b><i></i></span>
+          <span><b>Verify</b><i></i></span>
+        </div>
+        <div class="story-ribbon"><i></i><i></i><i></i><i></i></div>
+      </section>
+
+      <section class="auth-form-stage">
+        <article class="auth-card auth-card--register">
+          <header>
+            <app-planora-logo tone="dark" [compact]="true" />
+            <div><p>Tài khoản workspace mới</p><h2>Tạo tài khoản</h2></div>
+          </header>
+          <form (ngSubmit)="submit()" #form="ngForm" novalidate>
+            <div class="field-pair">
+              <label class="field"><span>Tên hiển thị</span><input name="displayName" [(ngModel)]="displayName" autocomplete="name" required /></label>
+              <label class="field"><span>Tên đăng nhập</span><input name="username" [(ngModel)]="username" minlength="3" maxlength="30" autocomplete="username" placeholder="3–30 ký tự: chữ, số, dấu chấm hoặc gạch dưới." required /></label>
+            </div>
+            <label class="field"><span>Email</span><input name="email" [(ngModel)]="email" type="email" autocomplete="email" placeholder="you@gmail.com" required /></label>
+            <label class="field">
+              <span>Mật khẩu</span>
+              <span class="password-field">
+                <input name="password" [(ngModel)]="password" [type]="showPassword() ? 'text' : 'password'" autocomplete="new-password" (blur)="passwordBlurred.set(true)" required />
+                <button type="button" [attr.aria-label]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'" (click)="togglePassword()">@if (showPassword()) { <svg lucideEyeOff></svg> } @else { <svg lucideEye></svg> }</button>
+              </span>
+            </label>
+            @if (password.length) {
+              <div class="password-strength" [attr.data-score]="passwordScore()">
+                <span><i></i><i></i><i></i><i></i></span><b>{{ passwordLabel() }}</b>
+              </div>
+            }
+            @if (passwordBlurred() && !passwordValid()) {
+              <p class="field-error">Mật khẩu cần ít nhất 9 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt.</p>
+            }
+            <label class="field">
+              <span>Xác nhận mật khẩu</span>
+              <span class="password-field">
+                <input name="confirmPassword" [(ngModel)]="confirmPassword" [type]="showConfirmPassword() ? 'text' : 'password'" autocomplete="new-password" (blur)="confirmBlurred.set(true)" required />
+                <button type="button" [attr.aria-label]="showConfirmPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'" (click)="toggleConfirmPassword()">@if (showConfirmPassword()) { <svg lucideEyeOff></svg> } @else { <svg lucideEye></svg> }</button>
+              </span>
+            </label>
+            @if (confirmBlurred() && password !== confirmPassword) { <p class="field-error">Hai mật khẩu chưa trùng khớp.</p> }
+            <label class="terms-check"><input name="terms" type="checkbox" [(ngModel)]="acceptedTerms" /><span><svg lucideCheck></svg></span><small>Tôi đồng ý với <a routerLink="/terms">điều khoản sử dụng</a> và chính sách dữ liệu.</small></label>
+            @if (error()) { <p class="form-alert" role="alert">{{ error() }}</p> }
+            <button class="button button--primary button--wide" [disabled]="form.invalid || !canSubmit() || busy()">@if (busy()) { <svg class="spin" lucideLoaderCircle></svg> }<span>{{ busy() ? 'Đang tạo…' : 'Tạo tài khoản' }}</span></button>
+          </form>
+          <p class="auth-switch">Đã có tài khoản? <a routerLink="/login">Đăng nhập</a></p>
+        </article>
+      </section>
+    </main>

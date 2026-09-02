@@ -1,0 +1,313 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy global stylesheet: File Previewer Modal & Lightbox. */
+/* ==========================================================================
+   File Previewer Modal & Lightbox
+   ========================================================================== */
+.file-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.file-preview-dialog {
+  background: var(--surface);
+  width: 92vw;
+  max-width: 1100px;
+  height: 88vh;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.file-preview-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.file-preview-dialog__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-preview-dialog__meta h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--ink);
+  max-width: 480px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-preview-dialog__meta small {
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+.file-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: "IBM Plex Mono", monospace;
+  background: var(--line);
+  color: var(--ink-soft);
+}
+
+.file-badge[data-type=image] {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.file-badge[data-type=pdf] {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.file-badge[data-type=docx] {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.file-badge[data-type=spreadsheet] {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.file-badge[data-type=text] {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.file-preview-dialog__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-preview-dialog__body {
+  flex: 1;
+  min-height: 0;
+  background: #0f172a;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.file-preview-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #94a3b8;
+  padding: 32px;
+  text-align: center;
+}
+
+.file-preview-state svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.5;
+}
+
+.file-preview-state h4 {
+  color: #f8fafc;
+  margin: 0;
+  font-size: 16px;
+}
+
+.file-preview-state p {
+  margin: 0;
+  font-size: 13px;
+  max-width: 400px;
+}
+
+.preview-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.image-preview-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 24px;
+}
+
+.image-preview-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  border-radius: 4px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.pdf-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+}
+
+.docx-preview-content {
+  width: 100%;
+  max-width: 850px;
+  height: 100%;
+  background: #ffffff;
+  color: #1e293b;
+  padding: 40px 48px;
+  overflow-y: auto;
+  font-family: "Manrope", sans-serif;
+  line-height: 1.7;
+  font-size: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.docx-preview-content h1, .docx-preview-content h2, .docx-preview-content h3, .docx-preview-content h4 {
+  color: #0f172a;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.docx-preview-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.docx-preview-content th, .docx-preview-content td {
+  border: 1px solid #cbd5e1;
+  padding: 8px 12px;
+}
+
+.docx-preview-content th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+
+.spreadsheet-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.spreadsheet-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 6px 12px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #cbd5e1;
+  overflow-x: auto;
+}
+
+.spreadsheet-tab {
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.spreadsheet-tab.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.spreadsheet-table-wrapper {
+  flex: 1;
+  overflow: auto;
+}
+
+.spreadsheet-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.spreadsheet-table th, .spreadsheet-table td {
+  border: 1px solid #e2e8f0;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.spreadsheet-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.spreadsheet-table .col-index, .spreadsheet-table .row-index {
+  background: #f1f5f9;
+  color: #64748b;
+  text-align: center;
+  font-size: 11px;
+  width: 40px;
+}
+
+.text-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+.text-preview__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #0f172a;
+  border-bottom: 1px solid #334155;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.text-preview__code {
+  flex: 1;
+  margin: 0;
+  padding: 16px;
+  overflow: auto;
+  font: 400 12.5px/1.6 "IBM Plex Mono", monospace;
+}

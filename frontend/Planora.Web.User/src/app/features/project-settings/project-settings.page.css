@@ -1,0 +1,712 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.project-settings-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 8px 18px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 1. Breadcrumb */
+.settings-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.settings-breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.settings-breadcrumb a:hover {
+  color: var(--blue);
+}
+
+.settings-breadcrumb .sep {
+  color: var(--line-strong);
+  font-size: 10px;
+}
+
+.settings-breadcrumb .current {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* 2. Project Header Banner Card */
+.project-header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.project-header-card__info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.project-avatar-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.project-avatar-box svg {
+  width: 20px;
+  height: 20px;
+}
+
+.project-header-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.project-header-details h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.project-header-details .subtitle {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.meta-chips-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 2px;
+  font-size: 11px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink-soft);
+}
+
+.meta-item svg {
+  width: 12px;
+  height: 12px;
+  color: var(--muted);
+}
+
+.status-indicator-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--green) 12%, var(--surface-soft));
+  color: var(--green);
+}
+
+.status-indicator-chip .status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-indicator-chip[data-status='planning'] {
+  background: color-mix(in srgb, var(--blue) 12%, var(--surface-soft));
+  color: var(--blue);
+}
+
+.status-indicator-chip[data-status='paused'] {
+  background: color-mix(in srgb, var(--amber) 12%, var(--surface-soft));
+  color: var(--amber);
+}
+
+.status-indicator-chip[data-status='active'] {
+  background: color-mix(in srgb, var(--green) 12%, var(--surface-soft));
+  color: var(--green);
+}
+
+.status-indicator-chip[data-status='completed'] {
+  background: color-mix(in srgb, #8b5cf6 12%, var(--surface-soft));
+  color: #8b5cf6;
+}
+
+.status-indicator-chip[data-status='cancelled'] {
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface-soft));
+  color: var(--danger);
+}
+
+.button--back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.button--back svg {
+  width: 13px;
+  height: 13px;
+}
+
+.button--back:hover {
+  background: var(--surface-soft);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+/* 3. Main 2-column Grid */
+.settings-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.settings-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-icon-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon-badge--blue {
+  background: color-mix(in srgb, var(--blue) 12%, var(--surface-soft));
+  color: var(--blue);
+}
+
+.card-icon-badge svg {
+  width: 13px;
+  height: 13px;
+}
+
+.settings-card__header h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.card-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.card-header-sub {
+  margin: 0;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.settings-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Form inputs */
+.field-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.field-label .required {
+  color: var(--danger);
+  font-style: normal;
+}
+
+.date-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.input-control,
+.textarea-control {
+  width: 100%;
+  padding: 5px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 12px;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.input-control {
+  height: 32px;
+}
+
+.textarea-control {
+  resize: vertical;
+  line-height: 1.4;
+  min-height: 52px;
+}
+
+.input-control:focus,
+.textarea-control:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--blue) 14%, transparent);
+}
+
+.input-control:disabled,
+.textarea-control:disabled {
+  background: var(--surface-soft);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.input-with-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-left {
+  position: absolute;
+  left: 9px;
+  width: 13px;
+  height: 13px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.input-control--date {
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+.input-clear-btn {
+  position: absolute;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.input-clear-btn:hover {
+  background: var(--surface-soft);
+  color: var(--ink);
+}
+
+.input-clear-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.form-alert {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  font-size: 11px;
+}
+
+/* 4. Status Option List */
+.status-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.status-card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 9px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  cursor: pointer;
+  min-height: 40px;
+  transition: all 0.15s ease;
+}
+
+.status-card-row:hover {
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--surface-soft) 40%, var(--surface));
+}
+
+.status-card-row.is-selected {
+  border-color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 4%, var(--surface));
+}
+
+.status-card-row.is-selected[data-status='active'] {
+  border-color: #22c55e;
+  background: color-mix(in srgb, #22c55e 5%, var(--surface));
+}
+
+.status-card-row.is-selected[data-status='planning'] {
+  border-color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 5%, var(--surface));
+}
+
+.status-card-row.is-selected[data-status='paused'] {
+  border-color: var(--amber);
+  background: color-mix(in srgb, var(--amber) 5%, var(--surface));
+}
+
+.status-card-row.is-selected[data-status='completed'] {
+  border-color: #8b5cf6;
+  background: color-mix(in srgb, #8b5cf6 5%, var(--surface));
+}
+
+.status-card-row.is-selected[data-status='cancelled'] {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 5%, var(--surface));
+}
+
+/* Radio circle */
+.radio-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radio-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  background: transparent;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s ease;
+}
+
+.status-card-row:hover .radio-circle {
+  border-color: var(--muted);
+}
+
+.status-card-row.is-selected .radio-circle {
+  border-color: var(--blue);
+  background: var(--blue);
+  box-shadow: inset 0 0 0 2.5px var(--surface);
+}
+
+.status-card-row.is-selected[data-status='active'] .radio-circle {
+  border-color: #22c55e;
+  background: #22c55e;
+  box-shadow: inset 0 0 0 2.5px var(--surface);
+}
+
+.status-card-row.is-selected[data-status='paused'] .radio-circle {
+  border-color: var(--amber);
+  background: var(--amber);
+  box-shadow: inset 0 0 0 2.5px var(--surface);
+}
+
+.status-card-row.is-selected[data-status='completed'] .radio-circle {
+  border-color: #8b5cf6;
+  background: #8b5cf6;
+  box-shadow: inset 0 0 0 2.5px var(--surface);
+}
+
+.status-card-row.is-selected[data-status='cancelled'] .radio-circle {
+  border-color: var(--danger);
+  background: var(--danger);
+  box-shadow: inset 0 0 0 2.5px var(--surface);
+}
+
+/* Status Icon circle */
+.status-icon-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.status-icon-circle svg {
+  width: 13px;
+  height: 13px;
+}
+
+.status-icon-circle[data-status='planning'] {
+  background: color-mix(in srgb, var(--blue) 14%, var(--surface-soft));
+  color: var(--blue);
+}
+
+.status-icon-circle[data-status='paused'] {
+  background: color-mix(in srgb, var(--amber) 14%, var(--surface-soft));
+  color: var(--amber);
+}
+
+.status-icon-circle[data-status='active'] {
+  background: color-mix(in srgb, var(--green) 14%, var(--surface-soft));
+  color: var(--green);
+}
+
+.status-icon-circle[data-status='completed'] {
+  background: color-mix(in srgb, #8b5cf6 14%, var(--surface-soft));
+  color: #8b5cf6;
+}
+
+.status-icon-circle[data-status='cancelled'] {
+  background: color-mix(in srgb, var(--danger) 14%, var(--surface-soft));
+  color: var(--danger);
+}
+
+.status-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.status-title {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.status-desc {
+  margin: 0;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.25;
+}
+
+/* 5. Danger Zone Card */
+.danger-zone-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--danger) 4%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--danger) 24%, var(--line));
+  border-radius: 10px;
+}
+
+.danger-zone-card__info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.danger-icon-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--danger) 14%, var(--surface-soft));
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.danger-icon-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+.danger-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.danger-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--danger);
+}
+
+.danger-desc {
+  margin: 0;
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.btn-danger-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1.5px solid var(--danger);
+  background: transparent;
+  color: var(--danger);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-danger-outline svg {
+  width: 13px;
+  height: 13px;
+}
+
+.btn-danger-outline:hover {
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+
+/* 6. Bottom Actions Bar */
+.settings-actions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.settings-actions-footer .button {
+  min-height: 32px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.button--ghost {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.button--ghost:hover:not(:disabled) {
+  background: var(--surface-soft);
+  color: var(--ink);
+}
+
+.button--primary {
+  border: 1px solid var(--blue);
+  background: var(--blue);
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.button--primary svg {
+  width: 13px;
+  height: 13px;
+}
+
+.button--primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .settings-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-header-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .button--back {
+    align-self: flex-start;
+  }
+
+  .danger-zone-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-danger-outline {
+    align-self: flex-start;
+  }
+}

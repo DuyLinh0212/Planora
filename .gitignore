@@ -26,6 +26,8 @@ secrets/
 **/bin/
 **/obj/
 *.user
+!frontend/Planora.Web.User/
+!frontend/Planora.Web.User/**
 *.suo
 .vs/
 

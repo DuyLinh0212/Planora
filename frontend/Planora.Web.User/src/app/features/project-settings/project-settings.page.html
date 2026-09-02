@@ -1,0 +1,204 @@
+<section class="page project-settings-page">
+  <!-- Top Breadcrumb -->
+  <nav class="settings-breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/projects">Dự án</a>
+    <span class="sep">/</span>
+    <a [routerLink]="['/projects', store.project().id, 'overview']">{{ store.project().name }}</a>
+    <span class="sep">/</span>
+    <span class="current">Cài đặt dự án</span>
+  </nav>
+
+  <!-- Project Header Banner Card -->
+  <header class="project-header-card">
+    <div class="project-header-card__info">
+      <div class="project-avatar-box">
+        <svg lucideShoppingBag></svg>
+      </div>
+      <div class="project-header-details">
+        <h2>{{ store.project().name }}</h2>
+        <p class="subtitle">Cài đặt và thông tin dự án</p>
+        <div class="meta-chips-row">
+          <span class="meta-item">
+            <svg lucideUsers></svg>
+            {{ store.members().length }} thành viên
+          </span>
+          <span class="meta-item">
+            <svg lucideCalendar></svg>
+            Bắt đầu: {{ formatDisplayDate(store.project().startAt) }}
+          </span>
+          <span class="status-indicator-chip" [attr.data-status]="statusKey(store.project().status)">
+            <i class="status-dot"></i>
+            {{ statusLabel(store.project().status) }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <a class="button button--back" [routerLink]="['/projects', store.project().id, 'overview']">
+      <svg lucideArrowLeft></svg>
+      <span>Quay lại dự án</span>
+    </a>
+  </header>
+
+  <!-- Main 2-column Grid -->
+  <div class="settings-content-grid">
+    <!-- Left Column: Thông tin cơ bản -->
+    <article class="settings-card">
+      <div class="settings-card__header">
+        <div class="card-icon-badge card-icon-badge--blue">
+          <svg lucideFileText></svg>
+        </div>
+        <h3>Thông tin cơ bản</h3>
+      </div>
+
+      <div class="settings-card__body">
+        <label class="field-item">
+          <span class="field-label">Tên dự án <em class="required">*</em></span>
+          <input
+            type="text"
+            name="name"
+            class="input-control"
+            [(ngModel)]="name"
+            maxlength="120"
+            required
+            [disabled]="!store.hasPermission('project.edit')"
+            placeholder="Nhập tên dự án"
+          />
+        </label>
+
+        <label class="field-item">
+          <span class="field-label">Mô tả</span>
+          <textarea
+            name="description"
+            class="textarea-control"
+            [(ngModel)]="description"
+            rows="2"
+            [disabled]="!store.hasPermission('project.edit')"
+            placeholder="Mô tả mục tiêu, phạm vi và kế hoạch dự án..."
+          ></textarea>
+        </label>
+
+        <div class="date-fields-grid">
+          <div class="field-item">
+            <span class="field-label">Ngày bắt đầu <em class="required">*</em></span>
+            <div class="input-with-actions">
+              <svg lucideCalendar class="input-icon-left"></svg>
+              <input
+                type="date"
+                name="startAt"
+                class="input-control input-control--date"
+                [(ngModel)]="startAt"
+                [disabled]="!store.hasPermission('project.edit')"
+              />
+              @if (startAt && store.hasPermission('project.edit')) {
+                <button type="button" class="input-clear-btn" (click)="clearDate('startAt')" title="Xóa ngày">
+                  <svg lucideX></svg>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="field-item">
+            <span class="field-label">Ngày kết thúc</span>
+            <div class="input-with-actions">
+              <svg lucideCalendar class="input-icon-left"></svg>
+              <input
+                type="date"
+                name="endAt"
+                class="input-control input-control--date"
+                [(ngModel)]="endAt"
+                [disabled]="!store.hasPermission('project.edit')"
+              />
+              @if (endAt && store.hasPermission('project.edit')) {
+                <button type="button" class="input-clear-btn" (click)="clearDate('endAt')" title="Xóa ngày">
+                  <svg lucideX></svg>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (error()) {
+          <p class="form-alert">{{ error() }}</p>
+        }
+      </div>
+    </article>
+
+    <!-- Right Column: Trạng thái dự án -->
+    <article class="settings-card">
+      <div class="settings-card__header">
+        <div class="card-icon-badge card-icon-badge--blue">
+          <svg lucideFlag></svg>
+        </div>
+        <div class="card-header-text">
+          <h3>Trạng thái dự án</h3>
+          <p class="card-header-sub">Chọn trạng thái hiện tại của dự án</p>
+        </div>
+      </div>
+
+      <div class="status-option-list">
+        @for (opt of statusOptions; track opt.value) {
+          <div
+            class="status-card-row"
+            [class.is-selected]="status === opt.value"
+            [attr.data-status]="opt.iconKey"
+            (click)="setStatus(opt.value)"
+          >
+            <div class="radio-indicator">
+              <span class="radio-circle"></span>
+            </div>
+            <div class="status-icon-circle" [attr.data-status]="opt.iconKey">
+              @if (opt.iconKey === 'planning') { <svg lucideClock></svg> }
+              @if (opt.iconKey === 'paused') { <svg lucidePause></svg> }
+              @if (opt.iconKey === 'active') { <svg lucidePlay></svg> }
+              @if (opt.iconKey === 'completed') { <svg lucideCheck></svg> }
+              @if (opt.iconKey === 'cancelled') { <svg lucideX></svg> }
+            </div>
+            <div class="status-text-block">
+              <b class="status-title">{{ opt.label }}</b>
+              <p class="status-desc">{{ opt.desc }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </article>
+  </div>
+
+  <!-- Danger Zone Card -->
+  @if (store.hasPermission('project.delete')) {
+    <article class="danger-zone-card">
+      <div class="danger-zone-card__info">
+        <div class="danger-icon-badge">
+          <svg lucideAlertTriangle></svg>
+        </div>
+        <div class="danger-text-block">
+          <h4 class="danger-title">Vùng nguy hiểm</h4>
+          <p class="danger-desc">
+            Xóa dự án là hành động không thể hoàn tác. Tất cả dữ liệu liên quan đến dự án sẽ bị xóa vĩnh viễn.
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn-danger-outline" (click)="deleteProject()">
+        <svg lucideTrash2></svg>
+        <span>Xóa dự án</span>
+      </button>
+    </article>
+  }
+
+  <!-- Bottom Actions Bar -->
+  <footer class="settings-actions-footer">
+    <button type="button" class="button button--ghost" (click)="cancelEdit()" [disabled]="saving()">
+      Hủy
+    </button>
+    @if (store.hasPermission('project.edit')) {
+      <button type="button" class="button button--primary" (click)="save()" [disabled]="saving()">
+        <svg lucideSave></svg>
+        <span>{{ saving() ? 'Đang lưu…' : 'Cập nhật dự án' }}</span>
+      </button>
+    }
+  </footer>
+
+  @if (toast()) {
+    <div class="toast">{{ toast() }}</div>
+  }
+</section>
+

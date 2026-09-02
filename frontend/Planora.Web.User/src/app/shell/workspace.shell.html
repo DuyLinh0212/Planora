@@ -1,0 +1,147 @@
+    <div class="workspace-frame">
+      <aside class="global-rail" [class.is-open]="menuOpen()">
+        <div class="brand-row">
+          <a class="brand" routerLink="/projects" aria-label="Planora home">
+            <app-planora-logo tone="light" />
+          </a>
+          <button class="icon-button rail-close" type="button" (click)="menuOpen.set(false)">
+            <svg lucideX></svg>
+          </button>
+        </div>
+
+        <div class="rail-label">Workspace</div>
+        <nav class="global-nav" aria-label="Điều hướng workspace">
+          <a routerLink="/projects" routerLinkActive="active">
+            <svg lucideBriefcaseBusiness></svg><span>{{ 'nav.projects' | t }}</span>
+          </a>
+        </nav>
+
+        <div class="rail-label">Tài khoản</div>
+        <nav class="global-nav" aria-label="Điều hướng tài khoản">
+          <a routerLink="/account" routerLinkActive="active">
+            <svg lucideSettings></svg><span>{{ 'nav.account' | t }}</span>
+          </a>
+          <a routerLink="/billing" routerLinkActive="active">
+            <svg lucideCreditCard></svg><span>{{ 'nav.billing' | t }}</span>
+          </a>
+          <a routerLink="/support" routerLinkActive="active">
+            <svg lucideLifeBuoy></svg><span>{{ 'nav.support' | t }}</span>
+          </a>
+          <a routerLink="/guide" routerLinkActive="active">
+            <svg lucideBookOpen></svg><span>{{ 'nav.guide' | t }}</span>
+          </a>
+        </nav>
+
+        <div class="rail-profile">
+          <a routerLink="/account" class="profile-link">
+            <span class="avatar">@if (store.profile().avatarUrl; as avatarUrl) { <img [src]="avatarUrl" alt="Ảnh đại diện" /> } @else { {{ initials() }} }</span>
+            <span><b>{{ store.profile().displayName }}</b><small>{{ store.profile().quota.planName }} · {{ store.profile().username }}</small></span>
+          </a>
+        </div>
+      </aside>
+
+      @if (menuOpen()) {
+        <button class="rail-scrim" aria-label="Đóng menu" (click)="menuOpen.set(false)"></button>
+      }
+
+      <section class="workspace-stage">
+        <header class="workspace-bar">
+          <div class="workspace-bar__title">
+            <button class="icon-button menu-trigger" type="button" (click)="menuOpen.set(true)">
+              <svg lucideMenu></svg>
+            </button>
+            <div>
+              <p>{{ eyebrow() }}</p>
+              <h1>{{ title() }}</h1>
+            </div>
+          </div>
+          <div class="workspace-bar__actions">
+            @if (isProjectsPage()) {
+              <a class="button button--primary" routerLink="/projects" [queryParams]="{ create: 1 }">
+                <svg lucidePlus></svg><span>{{ 'action.createProject' | t }}</span>
+              </a>
+            }
+            <button
+              class="icon-button notification-button"
+              type="button"
+              aria-label="Thông báo"
+              (click)="toggleNotifications()"
+            >
+              <svg lucideBell></svg>
+              @if (store.unreadCount()) { <span>{{ store.unreadCount() }}</span> }
+            </button>
+            <a class="avatar avatar--button" routerLink="/account">@if (store.profile().avatarUrl; as avatarUrl) { <img [src]="avatarUrl" alt="Ảnh đại diện" /> } @else { {{ initials() }} }</a>
+          </div>
+        </header>
+
+        @if (store.error()) {
+          <div class="system-banner" role="alert">
+            <span>{{ store.error() }}</span>
+            <button type="button" (click)="store.loadAccount(true)">{{ 'action.retry' | t }}</button>
+          </div>
+        }
+
+        <main class="workspace-content" [class.is-project]="isProjectRoute()">
+          <router-outlet />
+        </main>
+      </section>
+
+      @if (notificationsOpen()) {
+        <aside class="notification-panel">
+          <header>
+            <div><p>{{ 'notifications.label' | t }}</p><h2>{{ 'notifications.title' | t }}</h2></div>
+            <button class="icon-button" type="button" (click)="notificationsOpen.set(false)">
+              <svg lucideX></svg>
+            </button>
+          </header>
+          @if (notificationFeedback()) {
+            <p class="notification-feedback" role="status">{{ notificationFeedback() }}</p>
+          }
+          <div class="notification-list">
+            @for (notification of compactNotifications(); track notification.id) {
+              @if (isPendingProjectInvitation(notification)) {
+                <article class="invitation-notification">
+                  <button class="notification-delete" type="button" aria-label="Xóa thông báo" [disabled]="notificationActionBusy() === notification.id" (click)="deleteNotification(notification)">
+                    <svg lucideTrash2></svg>
+                  </button>
+                  <div class="notification-summary">
+                    <i></i>
+                    <span><b>{{ notification.title }}</b><small>{{ notification.message }}</small></span>
+                  </div>
+                  <div class="notification-actions">
+                    <button
+                      class="button button--quiet"
+                      type="button"
+                      [disabled]="notificationActionBusy() === notification.id"
+                      (click)="respondToInvitation(notification, false)"
+                    >{{ 'action.reject' | t }}</button>
+                    <button
+                      class="button button--primary"
+                      type="button"
+                      [disabled]="notificationActionBusy() === notification.id"
+                      (click)="respondToInvitation(notification, true)"
+                    >{{ notificationActionBusy() === notification.id ? ('common.loading' | t) : ('action.accept' | t) }}</button>
+                  </div>
+                </article>
+              } @else {
+                <article class="notification-entry" [class.is-read]="notification.readAt">
+                  <button class="notification-entry__body" type="button" (click)="markRead(notification.id)">
+                    <i></i>
+                    <span><b>{{ notification.title }}</b><small>{{ notification.message }}</small></span>
+                  </button>
+                  <button class="notification-delete" type="button" aria-label="Xóa thông báo" [disabled]="notificationActionBusy() === notification.id" (click)="deleteNotification(notification)">
+                    <svg lucideTrash2></svg>
+                  </button>
+                </article>
+              }
+            } @empty {
+              <div class="compact-empty"><b>{{ 'notifications.empty' | t }}</b><span>{{ 'notifications.emptyHint' | t }}</span></div>
+            }
+          </div>
+          <footer class="notification-footer">
+            <a routerLink="/notifications" (click)="notificationsOpen.set(false)">{{ 'notifications.all' | t }}</a>
+          </footer>
+        </aside>
+      }
+
+    </div>

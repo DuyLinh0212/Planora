@@ -1,0 +1,327 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy global stylesheet: Projects. */
+/* Projects */
+.page--projects {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.portfolio-strip {
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 160px 170px 170px minmax(220px, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.portfolio-strip > article,
+.portfolio-capacity {
+  min-height: 66px;
+  padding: 11px 15px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-right: 1px solid var(--line);
+}
+
+.portfolio-strip svg {
+  width: 17px;
+  height: 17px;
+  color: var(--blue);
+}
+
+.portfolio-strip span {
+  display: grid;
+}
+
+.portfolio-strip small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.portfolio-strip b {
+  font: 650 18px/1.2 "IBM Plex Mono", monospace;
+}
+
+.portfolio-capacity {
+  border: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.portfolio-capacity > i,
+.sprint-gauge > i,
+.sprint-progress > i,
+.workload i,
+.bar-chart i {
+  height: 6px;
+  display: block;
+  border-radius: 4px;
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+.portfolio-capacity > i b,
+.sprint-gauge > i b,
+.sprint-progress > i b,
+.workload i b,
+.bar-chart i b {
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: var(--blue);
+}
+
+.project-toolbar,
+.task-toolbar,
+.file-toolbar {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.project-toolbar .search-control {
+  width: min(390px, 100%);
+}
+
+.segmented,
+.view-switcher {
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.segmented button,
+.view-switcher button {
+  min-height: 30px;
+  padding: 0 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 680;
+}
+
+.segmented button.active,
+.view-switcher button.active {
+  color: #fff;
+  background: var(--blue);
+}
+
+.project-area {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.project-collection {
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.workspace-aside {
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.workspace-card {
+  padding: 15px;
+}
+
+.workspace-card > header {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.workspace-card > header > span {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #ffffff;
+  background: var(--blue);
+}
+
+.workspace-card h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.workspace-card dl {
+  margin: 14px 0 0;
+  display: grid;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.workspace-card dl > div {
+  min-height: 43px;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.workspace-card dl > div:last-child {
+  border-bottom: 0;
+}
+
+.workspace-card dt {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.workspace-card dd {
+  margin: 0;
+  font: 650 10px "IBM Plex Mono", monospace;
+  text-align: right;
+}
+
+.workspace-card--open {
+  display: grid;
+  gap: 10px;
+  border-color: var(--line);
+  background: var(--surface-soft);
+}
+
+.workspace-card--open p:not(.eyebrow) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.workspace-card--open .button {
+  justify-self: start;
+}
+
+.project-row {
+  position: relative;
+  min-height: 86px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 46px minmax(240px, 1.4fr) minmax(220px, 0.7fr) 126px;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  transition: border-color 150ms ease, transform 150ms ease;
+  overflow: hidden;
+}
+
+.project-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--teal);
+}
+
+.project-row:hover {
+  border-color: #9fb2dc;
+  transform: translateY(-1px);
+}
+
+.project-row .project-mark {
+  width: 44px;
+  height: 44px;
+  background: #1f8f86;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+}
+
+.project-row__identity {
+  min-width: 0;
+}
+
+.project-row__identity > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.project-row h3 {
+  max-width: 420px;
+  overflow: hidden;
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-row p {
+  max-width: 620px;
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-row dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.project-row dl > div,
+.project-row dt,
+.project-row dd {
+  margin: 0;
+}
+
+.project-row dt {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.project-row dd {
+  margin-top: 3px;
+  font: 600 11px "IBM Plex Mono", monospace;
+}
+
+.project-open {
+  min-height: 36px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 720;
+}
+
+.project-open:hover {
+  border-color: var(--blue);
+  background: var(--surface-soft);
+}

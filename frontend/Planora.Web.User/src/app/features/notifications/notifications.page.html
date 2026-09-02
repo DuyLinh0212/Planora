@@ -1,0 +1,29 @@
+    <section class="page notification-history-page">
+      <header class="page-intro">
+        <div><p class="eyebrow">Lịch sử 7 ngày</p><h2>Tất cả thông báo</h2><p>Thông báo đã ẩn khỏi hộp thư vẫn xuất hiện ở đây cho tới khi hết hạn.</p></div>
+        <span class="notification-history-count"><svg lucideInbox></svg>{{ notifications().length }}</span>
+      </header>
+
+      @if (feedback()) { <p class="form-alert" role="status">{{ feedback() }}</p> }
+      <section class="notification-history-list">
+        @for (notification of notifications(); track notification.id) {
+          <article class="panel notification-history-item" [class.is-read]="notification.readAt" [class.is-dismissed]="notification.dismissedAt">
+            <span class="notification-history-icon"><svg lucideBell></svg></span>
+            <div class="notification-history-copy">
+              <header><div><h3>{{ notification.title }}</h3><span>{{ notification.createdAt | date:'dd/MM/yyyy HH:mm' }}</span></div>@if (notification.dismissedAt) {<em>Đã ẩn khỏi hộp thư</em>} @else if (!notification.readAt) {<em>Chưa đọc</em>}</header>
+              <p>{{ notification.message }}</p>
+              @if (notification.isActionable && notification.entityId) {
+                <div class="notification-history-actions">
+                  <button class="button button--quiet" type="button" [disabled]="busyId() === notification.id" (click)="respond(notification, false)"><svg lucideX></svg>Từ chối</button>
+                  <button class="button button--primary" type="button" [disabled]="busyId() === notification.id" (click)="respond(notification, true)"><svg lucideCheck></svg>{{ busyId() === notification.id ? 'Đang xử lý…' : 'Chấp nhận' }}</button>
+                </div>
+              } @else if (!notification.readAt) {
+                <button class="notification-mark-read" type="button" (click)="markRead(notification)">Đánh dấu đã đọc</button>
+              }
+            </div>
+          </article>
+        } @empty {
+          <div class="panel empty-workspace"><span><svg lucideInbox></svg></span><div><h3>{{ loading() ? 'Đang tải thông báo…' : 'Không có thông báo trong 7 ngày qua' }}</h3><p>Các cập nhật mới sẽ xuất hiện tại đây.</p></div></div>
+        }
+      </section>
+    </section>

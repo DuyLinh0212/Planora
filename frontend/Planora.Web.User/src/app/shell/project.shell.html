@@ -1,0 +1,36 @@
+    <section class="project-shell">
+      @if (store.projectLoading()) {
+        <div class="project-loading"><span class="spinner"></span><p>Đang mở project…</p></div>
+      } @else if (store.hasProject()) {
+        <header class="project-context">
+          <a class="project-back" routerLink="/projects" aria-label="Quay lại danh sách dự án">
+            <svg lucideArrowLeft></svg>
+          </a>
+          <span class="project-mark">{{ projectInitials() }}</span>
+          <div class="project-identity">
+            <p>Dự án đang mở</p>
+            <div><h2>{{ store.project().name }}</h2><span class="status-chip" [attr.data-status]="statusKey(store.project().status)">{{ statusLabel(store.project().status) }}</span></div>
+          </div>
+          <p class="project-description">{{ store.project().description || 'Chưa có mô tả dự án.' }}</p>
+        </header>
+
+        <nav class="project-tabs" aria-label="Điều hướng trong project">
+          <a [routerLink]="projectLink('overview')" routerLinkActive="active"><svg lucideLayoutDashboard></svg><span>{{ 'project.overview' | t }}</span></a>
+          @if (store.hasPermission('task.view')) {<a [routerLink]="projectLink('tasks')" routerLinkActive="active"><svg lucideListChecks></svg><span>{{ 'project.tasks' | t }}</span></a>}
+          @if (store.hasPermission('sprint.view')) {<a [routerLink]="projectLink('sprints')" routerLinkActive="active"><svg lucideCalendarRange></svg><span>{{ 'project.sprints' | t }}</span></a>}
+          @if (store.hasPermission('task.view')) {<a [routerLink]="projectLink('views')" routerLinkActive="active"><svg lucideWaypoints></svg><span>{{ 'project.views' | t }}</span></a>}
+          @if (store.hasPermission('file.view') || store.hasPermission('document.view')) {<a [routerLink]="projectLink('files')" routerLinkActive="active"><svg lucideFolderKanban></svg><span>{{ 'project.files' | t }}</span></a>}
+          <a [routerLink]="projectLink('members')" routerLinkActive="active"><svg lucideUsersRound></svg><span>{{ 'project.members' | t }}</span></a>
+          @if (store.hasPermission('project.view_analytics')) {<a [routerLink]="projectLink('analytics')" routerLinkActive="active"><svg lucideChartNoAxesCombined></svg><span>{{ 'project.analytics' | t }}</span></a>}
+          @if (store.hasPermission('project.edit') || store.hasPermission('project.delete')) {<a [routerLink]="projectLink('settings')" routerLinkActive="active"><svg lucideSettings></svg><span>{{ 'project.settings' | t }}</span></a>}
+        </nav>
+
+        <div class="project-page"><router-outlet /></div>
+      } @else {
+        <div class="project-missing">
+          <span>404</span><h2>Không thể mở project</h2>
+          <p>{{ store.error() ?? 'Project không tồn tại hoặc bạn không có quyền truy cập.' }}</p>
+          <a class="button button--primary" routerLink="/projects">Về danh sách dự án</a>
+        </div>
+      }
+    </section>

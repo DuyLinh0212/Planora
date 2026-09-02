@@ -1,0 +1,182 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy global stylesheet: Maintenance Mode Overlay. */
+/* ==========================================================================
+   Maintenance Mode Overlay
+   ========================================================================== */
+.maintenance-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--bg-root, #0b1329);
+  color: var(--ink, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.maintenance-screen .maintenance-card {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  padding: 40px 32px;
+  background: var(--surface, #131f3f);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.maintenance-screen .maintenance-card .maintenance-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(54, 87, 215, 0.2);
+  color: var(--blue, #3b82f6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.maintenance-screen .maintenance-card .maintenance-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.maintenance-screen .maintenance-card h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.maintenance-screen .maintenance-card p {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted, #94a3b8);
+}
+
+.maintenance-screen .maintenance-card .maintenance-status-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--teal, #10b981);
+}
+
+.maintenance-screen .maintenance-card .maintenance-status-dot i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 2s infinite;
+}
+
+/* Migrated from the legacy global stylesheet: Maintenance is an application state, not a route, so it sits above every shell.. */
+/* Maintenance is an application state, not a route, so it sits above every shell. */
+.maintenance-screen {
+  position: fixed;
+  z-index: 110;
+  inset: 0;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.maintenance-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 6px;
+  background: linear-gradient(90deg, var(--teal) 0 26%, var(--blue) 26% 58%, var(--coral) 58% 78%, var(--brand-sun) 78%);
+}
+
+.maintenance-screen > article {
+  width: min(100%, 560px);
+  padding: clamp(28px, 6vw, 52px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.maintenance-screen .planora-logo {
+  margin-bottom: 36px;
+}
+
+.maintenance-screen h1 {
+  margin: 0 0 14px;
+  font-size: clamp(30px, 6vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.maintenance-screen article > p:not(.eyebrow) {
+  max-width: 62ch;
+  margin: 0 0 24px;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.maintenance-screen__signal {
+  position: absolute;
+  inset: auto 28px 28px auto;
+  display: flex;
+  gap: 5px;
+}
+
+.maintenance-screen__signal i {
+  width: 28px;
+  height: 5px;
+  border-radius: 5px;
+  background: var(--line-strong);
+}
+
+.maintenance-screen__signal i:nth-child(1) {
+  background: var(--teal);
+}
+
+.maintenance-screen__signal i:nth-child(2) {
+  background: var(--blue);
+}
+
+.maintenance-screen__signal i:nth-child(3) {
+  background: var(--coral);
+}
+
+.maintenance-screen__signal i:nth-child(4) {
+  background: var(--brand-sun);
+}
+
+.maintenance-screen__status {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.maintenance-screen__status > span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+}
+
+.maintenance-screen__status > span.is-checking {
+  animation: maintenance-pulse 900ms ease-in-out infinite alternate;
+}
+
+@keyframes maintenance-pulse {
+  to {
+    opacity: 0.3;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .maintenance-screen__status > span.is-checking {
+    animation: none;
+  }
+}

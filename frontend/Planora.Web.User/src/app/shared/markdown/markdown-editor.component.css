@@ -1,0 +1,171 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy global stylesheet: Markdown Editor Component. */
+/* ==========================================================================
+   Markdown Editor Component
+   ========================================================================== */
+.md-editor {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.md-editor:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.12);
+}
+
+.md-editor__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 8px;
+  background: var(--surface-soft);
+  border-bottom: 1px solid var(--line);
+}
+
+.md-editor__group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.md-editor__divider {
+  width: 1px;
+  height: 20px;
+  background: var(--line);
+  margin: 0 4px;
+}
+
+.md-editor__spacer {
+  flex: 1;
+}
+
+.md-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 30px;
+  min-width: 30px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 550;
+  transition: all 0.15s ease;
+}
+
+.md-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.md-btn:hover {
+  background: var(--surface-hover, rgba(0, 0, 0, 0.06));
+  color: var(--ink);
+}
+
+.md-btn--highlight {
+  background: rgba(45, 108, 223, 0.08);
+  color: var(--blue);
+}
+
+.md-btn--highlight:hover {
+  background: rgba(45, 108, 223, 0.16);
+  color: var(--blue-dark, #1c52b0);
+}
+
+.md-btn--mode {
+  font-size: 11px;
+  padding: 0 8px;
+}
+
+.md-btn--mode.active {
+  background: var(--surface);
+  color: var(--blue);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-weight: 650;
+}
+
+.md-editor__body {
+  display: flex;
+  min-height: 140px;
+  position: relative;
+}
+
+.md-editor--split .md-editor__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.md-editor__pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.md-editor__pane--input textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: vertical;
+  padding: 10px 12px;
+  font: 400 13px/1.6 "IBM Plex Mono", monospace;
+  color: var(--ink);
+  background: transparent;
+}
+
+.md-editor__pane--preview {
+  padding: 12px;
+  background: var(--surface-soft);
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+.md-editor__pane--preview .md-editor__preview-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.md-editor__uploading {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.md-editor__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-soft);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.md-editor__word-count {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+}

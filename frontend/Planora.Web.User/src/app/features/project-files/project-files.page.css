@@ -1,0 +1,917 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy global stylesheet: Files. */
+/* Files */
+.file-workspace {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.folder-pane {
+  min-height: 0;
+  padding: 11px;
+  overflow-y: auto;
+}
+
+.folder-pane > header {
+  padding: 4px 5px 10px;
+}
+
+.folder-pane h3 {
+  font-size: 14px;
+}
+
+.folder-pane > button {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 8px;
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  border: 0;
+  border-radius: 7px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 9px;
+  text-align: left;
+}
+
+.folder-pane > button:hover,
+.folder-pane > button.active {
+  color: var(--blue);
+  background: var(--surface-soft);
+}
+
+.folder-pane > button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.folder-pane > button b {
+  font: 600 8px "IBM Plex Mono", monospace;
+}
+
+.file-pane {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.file-toolbar {
+  margin: 0;
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.file-toolbar .search-control {
+  flex: 1;
+}
+
+.file-toolbar .button {
+  min-height: 38px;
+}
+
+.file-grid .data-grid__head,
+.file-grid .data-grid__row {
+  grid-template-columns: minmax(220px, 1fr) 130px 90px 90px 76px;
+}
+
+.file-grid button.data-grid__row {
+  width: 100%;
+  border-width: 0 0 1px;
+  color: var(--ink);
+  background: transparent;
+  text-align: left;
+}
+
+.file-grid .data-grid__row > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.file-grid .data-grid__row svg {
+  width: 14px;
+  height: 14px;
+  color: var(--blue);
+}
+
+.version-history {
+  max-height: 170px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  overflow-y: auto;
+}
+
+.version-history > header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 9px 11px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.version-history h3 {
+  font-size: 12px;
+}
+
+.version-history > header > b {
+  color: var(--blue);
+  font: 650 10px "IBM Plex Mono", monospace;
+}
+
+.version-history article {
+  padding: 9px 11px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1fr;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.version-history article:last-child {
+  border-bottom: 0;
+}
+
+.version-history article span {
+  display: grid;
+  gap: 2px;
+}
+
+.version-history article b {
+  font-size: 9px;
+}
+
+.version-history article small,
+.version-history article p {
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.version-history article p {
+  margin: 0;
+  text-align: right;
+}
+
+/* Migrated from the legacy global stylesheet: Hierarchical Tree Navigation in Sidebar. */
+/* ==========================================================================
+   Hierarchical Tree Navigation in Sidebar
+   ========================================================================== */
+.tree-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 4px;
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  font-weight: 550;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tree-node svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tree-node__label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-node__count {
+  font-size: 11px;
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--muted);
+  padding: 1px 6px;
+  background: var(--surface-hover, rgba(0, 0, 0, 0.05));
+  border-radius: 10px;
+}
+
+.tree-node:hover {
+  background: var(--surface-hover, rgba(0, 0, 0, 0.05));
+  color: var(--ink);
+}
+
+.tree-node.active {
+  background: rgba(45, 108, 223, 0.1);
+  color: var(--blue);
+  font-weight: 650;
+}
+
+.tree-node.active .tree-node__count {
+  background: var(--blue);
+  color: #ffffff;
+}
+
+.tree-node--task {
+  padding-left: 24px;
+  font-size: 12px;
+}
+
+.tree-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.tree-section__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.tree-section__header:hover {
+  background: var(--surface-hover, rgba(0, 0, 0, 0.03));
+  color: var(--ink-soft);
+}
+
+.tree-section__header svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tree-section__children {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 4px;
+}
+
+.tree-branch {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tree-subbranch {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+  margin-left: 14px;
+}
+
+.tree-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.tree-toggle svg {
+  width: 12px;
+  height: 12px;
+}
+
+.tree-toggle:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.tree-empty {
+  padding: 6px 12px;
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Migrated from the legacy global stylesheet: Account and Explorer polish: quiet, utility-first surfaces with a clear next action.. */
+/* Account and Explorer polish: quiet, utility-first surfaces with a clear next action. */
+.account-intro {
+  align-items: flex-end;
+}
+
+.account-intro > div {
+  max-width: 66ch;
+}
+
+.account-page .account-grid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+  gap: 14px;
+}
+
+.account-page .account-grid > article {
+  padding: 22px;
+}
+
+.account-page .account-identity {
+  min-height: 360px;
+  grid-row: span 2;
+  align-content: start;
+}
+
+.account-page .profile-panel > header {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.account-page .profile-panel > header h3 {
+  font-size: 22px;
+}
+
+.account-page .profile-panel header span:not(.avatar) {
+  font-size: 12px;
+}
+
+.account-page .avatar-upload-row {
+  padding: 14px;
+  background: var(--surface-soft);
+}
+
+.account-page .avatar-upload-row b {
+  font-size: 12px;
+}
+
+.account-page .avatar-upload-row small {
+  font-size: 11px;
+}
+
+.account-page .profile-panel dl {
+  margin-top: auto;
+}
+
+.account-page .profile-panel dl > div {
+  min-height: 76px;
+  padding: 14px;
+}
+
+.account-page .profile-panel dt {
+  font-size: 10px;
+}
+
+.account-page .profile-panel dd {
+  font-size: 12px;
+}
+
+.account-page .preference-panel, .account-page .security-panel {
+  align-content: start;
+}
+
+.account-page .preference-panel h3, .account-page .security-panel h3 {
+  font-size: 17px;
+}
+
+.account-page .theme-choice button {
+  min-height: 90px;
+  padding: 9px;
+  font-size: 11px;
+}
+
+.account-page .theme-choice i {
+  height: 50px;
+}
+
+.account-page .notification-option {
+  padding: 13px;
+}
+
+.account-page .notification-option b {
+  font-size: 11px;
+}
+
+.account-page .notification-option small {
+  font-size: 10px;
+}
+
+.account-page .gmail-link-card {
+  padding: 13px;
+}
+
+.account-page .gmail-link-card__summary b {
+  font-size: 11px;
+}
+
+.account-page .gmail-link-card__summary small, .account-page .gmail-link-card__warning {
+  font-size: 10px;
+}
+
+.account-page .account-links {
+  grid-template-columns: 1fr;
+}
+
+.account-page .account-links a {
+  min-height: 52px;
+  font-size: 12px;
+}
+
+.account-session {
+  min-height: 120px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 22px;
+  border-color: color-mix(in srgb, var(--danger) 38%, var(--line));
+}
+
+.account-session > div {
+  display: grid;
+  gap: 4px;
+}
+
+.account-session h3 {
+  font-size: 17px;
+}
+
+.account-session p:not(.eyebrow) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.logout-dialog > p {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.files-page .page-intro {
+  align-items: flex-end;
+}
+
+.file-workspace {
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.folder-pane {
+  padding: 14px 10px;
+  background: var(--surface-raised);
+}
+
+.folder-pane > header {
+  padding: 6px 10px 14px;
+}
+
+.tree-section {
+  margin-top: 16px;
+}
+
+.tree-section__header {
+  min-height: 34px;
+  padding-inline: 8px;
+}
+
+.tree-node {
+  min-height: 34px;
+  font-size: 12px;
+}
+
+.tree-node__count {
+  min-width: 20px;
+  height: 20px;
+  font-size: 10px;
+}
+
+.file-pane {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.file-toolbar {
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.explorer-pathbar {
+  min-height: 46px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: var(--muted);
+  background: var(--surface-soft);
+  border-bottom: 1px solid var(--line);
+}
+
+.explorer-breadcrumb {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow: auto hidden;
+  white-space: nowrap;
+}
+
+.explorer-breadcrumb button {
+  padding: 0;
+  border: 0;
+  color: var(--ink-soft);
+  background: transparent;
+  font-size: 12px;
+}
+
+.explorer-breadcrumb button:not(:disabled):hover {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.explorer-breadcrumb button:disabled {
+  color: var(--ink);
+  opacity: 1;
+}
+
+.explorer-folder-row {
+  background: color-mix(in srgb, var(--surface-soft) 48%, var(--surface));
+}
+
+.file-cell__icon.folder-icon {
+  color: var(--amber);
+  background: color-mix(in srgb, var(--amber) 16%, var(--surface-soft));
+}
+
+.file-cell__icon.doc-icon {
+  color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 16%, var(--surface-soft));
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2.5px 7px;
+  border-radius: 5px;
+  font: 700 9.5px "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.badge--folder {
+  color: var(--amber);
+  background: color-mix(in srgb, var(--amber) 16%, var(--surface-soft));
+  border-color: color-mix(in srgb, var(--amber) 35%, var(--line));
+}
+
+.badge--doc {
+  color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 16%, var(--surface-soft));
+  border-color: color-mix(in srgb, var(--teal) 35%, var(--line));
+}
+
+.badge[data-ext=PNG],
+.badge[data-ext=JPG],
+.badge[data-ext=JPEG],
+.badge[data-ext=WEBP],
+.badge[data-ext=SVG],
+.badge[data-ext=GIF] {
+  color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 14%, var(--surface-soft));
+  border-color: color-mix(in srgb, var(--blue) 30%, var(--line));
+}
+
+.badge[data-ext=PDF] {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 14%, var(--surface-soft));
+  border-color: color-mix(in srgb, var(--danger) 30%, var(--line));
+}
+
+.badge[data-ext=DOC],
+.badge[data-ext=DOCX] {
+  color: var(--blue-dark);
+  background: color-mix(in srgb, var(--blue-dark) 14%, var(--surface-soft));
+  border-color: color-mix(in srgb, var(--blue-dark) 30%, var(--line));
+}
+
+.badge[data-ext=XLS],
+.badge[data-ext=XLSX],
+.badge[data-ext=CSV] {
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 14%, var(--surface-soft));
+  border-color: color-mix(in srgb, var(--green) 30%, var(--line));
+}
+
+.badge[data-ext=JSON],
+.badge[data-ext=JS],
+.badge[data-ext=TS],
+.badge[data-ext=HTML],
+.badge[data-ext=CSS],
+.badge[data-ext=SCSS],
+.badge[data-ext=SQL] {
+  color: var(--coral);
+  background: color-mix(in srgb, var(--coral) 14%, var(--surface-soft));
+  border-color: color-mix(in srgb, var(--coral) 30%, var(--line));
+}
+
+.btn-action--danger:hover {
+  color: var(--danger) !important;
+  border-color: var(--danger) !important;
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface)) !important;
+}
+
+.views-page .view-surface {
+  overflow: auto;
+}
+
+.mini-kanban-view, .sprint-board-view, .backlog-view, .calendar-view, .activity-view {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.mini-kanban-view > header, .sprint-board-view > header, .backlog-view > header, .calendar-view > header, .activity-view > header {
+  min-height: 62px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mini-kanban-view > header > span, .backlog-view > header > div > span, .sprint-board-view > header > div > span, .calendar-view > header span, .activity-view > header > div > span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.mini-kanban {
+  height: auto;
+  grid-template-columns: repeat(5, minmax(210px, 1fr));
+}
+
+.segmented-tabs {
+  display: flex;
+  max-width: 52%;
+  gap: 5px;
+  overflow: auto hidden;
+}
+
+.segmented-tabs button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--ink-soft);
+  background: var(--surface);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.segmented-tabs button.active {
+  color: #fff;
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+.backlog-list {
+  padding: 8px 16px;
+  overflow: auto;
+}
+
+.backlog-list article {
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  gap: 12px;
+  min-height: 62px;
+  padding: 10px 0;
+}
+
+.backlog-list article > div {
+  display: grid;
+  gap: 3px;
+}
+
+.backlog-list article b {
+  font-size: 12px;
+}
+
+.backlog-list article small {
+  font-size: 10px;
+}
+
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.priority-dot[data-priority=Urgent] {
+  background: var(--danger);
+}
+
+.priority-dot[data-priority=High] {
+  background: var(--amber);
+}
+
+.priority-dot[data-priority=Low] {
+  background: var(--teal);
+}
+
+.calendar-view > header {
+  justify-content: center;
+}
+
+.calendar-view > header > div {
+  min-width: 210px;
+  text-align: center;
+}
+
+.calendar-view > header b {
+  font-size: 16px;
+  text-transform: capitalize;
+}
+
+.calendar {
+  min-height: 540px;
+  height: auto;
+  grid-template-rows: 38px minmax(0, 1fr);
+}
+
+.calendar__week, .calendar__days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(112px, 1fr));
+}
+
+.calendar__week span {
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font: 700 10px/1 "IBM Plex Mono", monospace;
+}
+
+.calendar__days article {
+  min-height: 96px;
+  padding: 9px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.calendar__days article.is-muted {
+  color: var(--muted);
+  background: var(--surface-soft);
+}
+
+.calendar__days article.is-today > b {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--blue);
+}
+
+.calendar__days article > b {
+  display: inline-grid;
+  margin-bottom: 6px;
+  font: 700 10px/1 "IBM Plex Mono", monospace;
+}
+
+.calendar__days article > span {
+  margin-bottom: 4px;
+  padding: 3px 5px;
+  display: block;
+  overflow: hidden;
+  border-radius: 4px;
+  color: var(--ink-soft);
+  background: var(--surface-soft);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-view ol {
+  margin: 0;
+  padding: 14px 22px 22px 42px;
+  list-style: none;
+  overflow: auto;
+}
+
+.activity-view li {
+  position: relative;
+  min-height: 56px;
+  padding: 0 0 18px 20px;
+  border-left: 1px solid var(--line-strong);
+}
+
+.activity-view li > i {
+  position: absolute;
+  left: -5px;
+  top: 3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--teal);
+}
+
+.activity-view li > div {
+  display: grid;
+  gap: 3px;
+}
+
+.activity-view li span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 980px) {
+  .account-page .account-grid {
+    grid-template-columns: 1fr;
+  }
+  .account-page .account-identity {
+    grid-row: auto;
+  }
+  .file-workspace {
+    grid-template-columns: 1fr;
+  }
+  .folder-pane {
+    max-height: 300px;
+  }
+  .files-page .page-intro {
+    align-items: flex-start;
+  }
+  .segmented-tabs {
+    max-width: 100%;
+  }
+  .sprint-board-view > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+/* Migrated from the legacy global stylesheet: Final explorer and view overrides stay last so legacy component rules cannot collapse the new layouts.. */
+/* Final explorer and view overrides stay last so legacy component rules cannot collapse the new layouts. */
+.views-page .backlog-list {
+  padding: 8px 16px;
+  display: block;
+  overflow: auto;
+}
+
+.views-page .backlog-list article {
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.views-page .backlog-list article:last-child {
+  border-bottom: 0;
+}
+
+.views-page .backlog-list article > div {
+  display: grid;
+  gap: 3px;
+}
+
+.views-page .backlog-list article b {
+  font-size: 12px;
+}
+
+.views-page .backlog-list article small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.files-page .explorer-pathbar {
+  min-height: 46px;
+}
+
+.files-page .explorer-folder-row {
+  min-height: 56px;
+}

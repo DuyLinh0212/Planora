@@ -1,0 +1,72 @@
+    <section class="page guide-page">
+      <header class="guide-header">
+        <div>
+          <p class="eyebrow">Bắt đầu với Planora</p>
+          <h2>Từ project đến kết quả được duyệt</h2>
+          <p>Xem trọn quy trình qua một video ngắn, có lời hướng dẫn và phụ đề tiếng Việt.</p>
+        </div>
+        <a class="button button--primary" routerLink="/projects">
+          Mở danh sách project <svg lucideArrowRight></svg>
+        </a>
+      </header>
+
+      <section class="guide-video-section" aria-labelledby="guide-video-title">
+        <article class="guide-video-card">
+          <header>
+            <div>
+              <span class="guide-kicker"><i></i> Video thao tác</span>
+              <h3 id="guide-video-title">Làm quen với quy trình Planora</h3>
+            </div>
+            <div class="guide-media-meta" aria-label="Thông tin video">
+              <span><svg lucideVolume2></svg> Tiếng Việt</span>
+              <span><svg lucideCaptions></svg> Có phụ đề</span>
+              <b>01:25</b>
+            </div>
+          </header>
+
+          <div class="guide-player-shell">
+            <video
+              #tutorialVideo
+              controls
+              playsinline
+              preload="metadata"
+              poster="/media/planora-guide-vi-poster.jpg"
+              aria-label="Video hướng dẫn sử dụng Planora bằng tiếng Việt"
+            >
+              <source src="/media/planora-guide-vi.mp4" type="video/mp4" />
+              <track
+                kind="captions"
+                src="/media/planora-guide-vi.vtt"
+                srclang="vi"
+                label="Tiếng Việt"
+                default
+              />
+              Trình duyệt của bạn chưa hỗ trợ phát video. Bạn có thể xem các bước hướng dẫn bên dưới.
+            </video>
+          </div>
+        </article>
+
+        <aside class="guide-chapters" aria-label="Các chương trong video">
+          <header>
+            <span><svg lucideBookOpenText></svg></span>
+            <div><p class="eyebrow">Mục lục video</p><h3>Chọn nội dung cần xem</h3></div>
+          </header>
+          @for (chapter of chapters; track chapter.time) {
+            <button type="button" (click)="seekTo(chapter.time)">
+              <span>{{ chapter.label }}</span>
+              <div><b>{{ chapter.title }}</b><small>{{ chapter.description }}</small></div>
+              <svg lucidePlay></svg>
+            </button>
+          }
+          <p class="guide-audio-note"><svg lucideVolume2></svg><span>Bật âm thanh để nghe giọng hướng dẫn tiếng Việt với nhịp đọc chậm. Phụ đề được bật sẵn.</span></p>
+        </aside>
+      </section>
+
+      <section class="guide-steps" aria-label="Tóm tắt bốn bước sử dụng Planora">
+        <article><span>01</span><svg lucideBriefcaseBusiness></svg><div><h3>Tạo project</h3><p>Đặt tên, phạm vi và thời gian để mở không gian làm việc cho cả nhóm.</p></div></article>
+        <article><span>02</span><svg lucideCalendarRange></svg><div><h3>Lập sprint</h3><p>Chọn ngày bắt đầu, kết thúc và một mục tiêu cụ thể cho nhịp làm việc.</p></div></article>
+        <article><span>03</span><svg lucideListChecks></svg><div><h3>Giao công việc</h3><p>Xác định deadline, ưu tiên, tiêu chí hoàn thành và loại kết quả cần nộp.</p></div></article>
+        <article><span>04</span><svg lucideCircleCheckBig></svg><div><h3>Nộp và duyệt</h3><p>Kết quả chỉ hoàn tất sau khi được duyệt; yêu cầu làm lại vẫn giữ lịch sử.</p></div></article>
+      </section>
+
+    </section>
