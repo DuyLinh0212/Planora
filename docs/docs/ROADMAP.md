@@ -28,14 +28,14 @@ Roadmap này phản ánh trạng thái của code hiện tại, không phải ch
 ### Realtime, billing và admin
 - SignalR notification hub và persisted notifications.
 - Subscription plans, payment history.
-- MoMo IPN và SePay bank-transfer webhook với signature/amount validation và idempotency.
+- SePay bank-transfer webhook với API-key/amount validation và idempotency.
 - Admin overview, accounts, plans, payments, feedback, support và maintenance.
 
 ## Đang hoàn thiện trước production
 
 - Điền secrets trên Render/Vercel/GitHub Environment.
 - Bật branch protection và required `CI success` check.
-- Chạy smoke test callback MoMo/SePay ở sandbox.
+- Chạy smoke test callback SePay ở sandbox.
 - Thiết lập monitoring, backup/PITR Neon và quy trình rollback.
 - Thay `xlsx` trước hạn allowlist 2026-12-01.
 

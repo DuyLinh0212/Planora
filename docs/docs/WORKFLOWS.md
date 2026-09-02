@@ -187,7 +187,7 @@ flowchart TD
 ```mermaid
 flowchart TD
   A[User chooses Plan] --> B[Backend creates Transaction]
-  B --> C{MoMo hoặc chuyển khoản SePay}
+  B --> C[Chuyển khoản ngân hàng qua SePay]
   C --> D[Provider Webhook]
   D --> E[Verify Signature]
   E --> F{Valid + Success?}

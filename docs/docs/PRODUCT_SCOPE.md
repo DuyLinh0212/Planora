@@ -63,7 +63,7 @@
 - Giới hạn số Project.
 - Storage quota.
 - Upgrade account.
-- MoMo và chuyển khoản ngân hàng tự động qua SePay webhook.
+- Chuyển khoản ngân hàng tự động qua SePay webhook.
 - Payment callback được xác minh và xử lý idempotent; không chờ admin duyệt.
 - Payment history.
 

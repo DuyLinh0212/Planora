@@ -14,7 +14,7 @@ Planora hỗ trợ toàn bộ vòng đời công việc của một dự án:
 - Quản lý folder, document, file và phiên bản tài liệu theo từng project.
 - Cập nhật thông báo, hoạt động và trạng thái theo thời gian thực.
 - Theo dõi tiến độ, mức đóng góp và các chỉ số tổng hợp.
-- Quản lý gói dịch vụ và thanh toán qua MoMo hoặc chuyển khoản ngân hàng tự động qua SePay.
+- Quản lý gói dịch vụ và thanh toán chuyển khoản ngân hàng tự động qua SePay.
 - Cung cấp khu vực quản trị để quản lý tài khoản, gói dịch vụ, giao dịch, phản hồi và số liệu tổng hợp.
 
 Các callback thanh toán được xác thực và xử lý idempotent, giúp một giao dịch không bị ghi nhận nhiều lần khi mạng chập chờn hoặc nhà cung cấp gửi lại webhook.
@@ -95,7 +95,7 @@ Frontend User, Admin và Mobile được tách riêng theo mục đích sử d�
 ### Billing và quản trị
 
 - Subscription plans và payment transactions.
-- MoMo IPN và SePay bank-transfer webhook.
+- SePay bank-transfer webhook.
 - Signature verification, idempotency key và trạng thái giao dịch nhất quán.
 - Admin overview, analytics, account management, payment metadata và feedback workflow.
 

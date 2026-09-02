@@ -35,7 +35,7 @@ Rebuild Planora against `docs/docs/FEATURE_DESCRIPTION.MD` across the .NET API, 
 | Tasks | Create/list/start/assign/submit/review | Markdown, task type, submission policy, edit/delete, dependency/milestone metadata, complete mutation history |
 | Storage | Browse/create/upload/version/permission | Owner quota, rename/delete/restore policy, preview/download metadata, document-task provenance |
 | Project views | Overview/Kanban/sprint/basic analytics | List, Kanban, sprint, backlog, calendar, roadmap, Gantt, workload, analytics, activity, milestone, dependency |
-| Billing | Admin-side models only | Free/Pro/VIP quota matrix, MoMo/bank transfer workflow, user subscription view/cancel, payment history |
+| Billing | Admin-side models only | Free/Pro/VIP quota matrix, bank-transfer workflow, user subscription view/cancel, payment history |
 | Support | Admin feedback only | User feedback/refund request and realtime-style conversation lifecycle with soft close |
 | Administration | Accounts/plans/payments/feedback/analytics | Restore log, maintenance switch, richer system/security/storage/subscription metrics |
 | Preferences | Device theme only | Light/dark/calm themes, Vietnamese/English, terms and independent illustrated guide |
@@ -118,5 +118,5 @@ Feature rebuild implemented and verified. The generated EF Core migration must b
 
 1. Apply `20260830120351_FeatureRebuildFoundation` to the target database.
 2. Configure SMTP and the Google OAuth client ID/secret before enabling email delivery and Google login in production.
-3. Configure the real MoMo callback/signature exchange and bank-transfer reconciliation worker; the current workflow safely creates idempotent pending transactions but does not impersonate an external payment confirmation.
+3. Configure the real SePay webhook and run production reconciliation checks; the current workflow safely creates idempotent pending transactions but does not impersonate an external payment confirmation.
 4. Replace preview mode with authenticated API sessions and run the same Playwright suite against the deployed environment.

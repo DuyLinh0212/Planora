@@ -27,7 +27,7 @@
 - Unique constraints, transactions, authorization và API errors.
 
 ## External Service
-Unit test không gọi Cloudinary/MoMo/SePay thật.
+Unit test không gọi Cloudinary/SePay thật.
 Dùng abstraction/fake. Sandbox test riêng.
 
 ## Security Tests

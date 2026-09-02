@@ -59,8 +59,7 @@ Mô tả chức năng hệ thống
     - Xây dựng giới hạn theo bảng mô tả phía dưới
     - Lưu ý về việc Collab, 1 user đã đạt hạn mức vẫn có thể join vào dự án của người khác được, mọi thao tác upload hay gì đó của bất kì thành viên nào chỉ ảnh hưởng đến quota của người tạo Project
 - Về cơ chế Thanh toán
-    - Dùng Momo
-    - Chuyển khoản
+    - Chuyển khoản ngân hàng tự động qua SePay webhook
 - Profile của mỗi user
     - Avatar cho phép upload hoặc lấy từ Avatar khi login google
     - Đổi tên hiển thị
@@ -95,7 +94,7 @@ Mô tả chức năng hệ thống
 | **Task & Sprint**      | Tổng task, task Done/In Progress/Expired, tổng sprint đang Active, completion rate toàn hệ thống                  |
 | **Storage**            | Tổng dung lượng Cloudinary đang dùng, tăng trưởng storage, top account/project dùng nhiều storage, số file upload |
 | **Subscription**       | Số Free/Pro/VIP, tỷ lệ chuyển Free → Pro/VIP, subscription sắp hết hạn, subscription bị hủy                       |
-| **Payment**            | Doanh thu hôm nay/tháng, giao dịch Success/Pending/Failed, doanh thu MoMo/BankTransfer, refund nếu sau này có     |
+| **Payment**            | Doanh thu hôm nay/tháng, giao dịch Success/Pending/Failed, doanh thu BankTransfer, refund nếu sau này có     |
 | **System Health**      | API requests, error rate, response time, failed background jobs, notification failures                            |
 | **Feedback / Support** | Feedback mới, đang xử lý, đã giải quyết, category phổ biến                                                        |
 | **Security / Abuse**   | login fail, rate-limit hit, upload bị từ chối, account/project bị flag, webhook payment lỗi                       |

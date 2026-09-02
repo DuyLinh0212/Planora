@@ -29,7 +29,7 @@
 Điều này giữ MVP khả thi nhưng vẫn đáp ứng “lưu người chỉnh sửa”.
 
 ## ADR-009: Automatic payment reconciliation
-**Accepted.** Chỉ MoMo IPN và SePay bank-transfer webhook được phép kích hoạt subscription. Backend xác minh chữ ký, provider order/reference, amount và trạng thái; callback/request lặp lại phải idempotent. Redirect của trình duyệt không được xem là bằng chứng thanh toán.
+**Accepted.** Chỉ SePay bank-transfer webhook được phép kích hoạt subscription. Backend xác minh API key, tài khoản nhận, mã nội dung, amount và trạng thái; callback/request lặp lại phải idempotent. Redirect của trình duyệt không được xem là bằng chứng thanh toán.
 
 ## ADR-010: API-hosted background services
 **Accepted.** Deadline expiration, email delivery và notification retention chạy trong `Planora.Api/BackgroundServices`. Chỉ tách worker riêng khi cần scale hoặc triển khai độc lập; hiện Render chỉ deploy một API web service.

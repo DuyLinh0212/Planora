@@ -1,6 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { LucideCheck, LucideChevronDown, LucideCreditCard, LucideDatabase, LucideReceiptText, LucideSparkles, LucideX } from '@lucide/angular';
+import { LucideCheck, LucideChevronDown, LucideDatabase, LucideReceiptText, LucideSparkles, LucideX } from '@lucide/angular';
 import { finalize, Subscription, switchMap, take, timer } from 'rxjs';
 import { AvailablePlan, BankTransferInstructions, UserPayment } from '../../core/api/api.models';
 import { PlanoraApiService } from '../../core/api/planora-api.service';
@@ -8,7 +8,7 @@ import { WorkspaceStore } from '../../core/workspace/workspace.store';
 
 @Component({
   selector: 'app-billing-page',
-  imports: [DatePipe, DecimalPipe, LucideCheck, LucideChevronDown, LucideCreditCard, LucideDatabase, LucideReceiptText, LucideSparkles, LucideX],
+  imports: [DatePipe, DecimalPipe, LucideCheck, LucideChevronDown, LucideDatabase, LucideReceiptText, LucideSparkles, LucideX],
   templateUrl: './billing.page.html',
   styleUrl: './billing.page.css',
 })
@@ -78,7 +78,7 @@ export class BillingPage implements OnInit, OnDestroy {
     return quota.maxStorageBytes ? Math.min(100, Math.round(quota.storageBytes / quota.maxStorageBytes * 100)) : 0;
   }
 
-  createPayment(provider: 'Momo' | 'BankTransfer'): void {
+  createPayment(provider: 'BankTransfer'): void {
     const plan = this.checkoutPlan();
     if (!plan || this.busy()) return;
     const idempotencyKey = this.getIdempotencyKey(plan.id, provider);
@@ -105,7 +105,7 @@ export class BillingPage implements OnInit, OnDestroy {
     });
   }
 
-  private getIdempotencyKey(planId: string, provider: 'Momo' | 'BankTransfer'): string {
+  private getIdempotencyKey(planId: string, provider: 'BankTransfer'): string {
     const key = this.paymentStorageKey(planId, provider);
     const existing = sessionStorage.getItem(key);
     if (existing) return existing;
@@ -114,11 +114,11 @@ export class BillingPage implements OnInit, OnDestroy {
     return value;
   }
 
-  private clearIdempotencyKey(planId: string, provider: 'Momo' | 'BankTransfer'): void {
+  private clearIdempotencyKey(planId: string, provider: 'BankTransfer'): void {
     sessionStorage.removeItem(this.paymentStorageKey(planId, provider));
   }
 
-  private paymentStorageKey(planId: string, provider: 'Momo' | 'BankTransfer'): string {
+  private paymentStorageKey(planId: string, provider: 'BankTransfer'): string {
     return `planora.billing.payment.${planId}.${provider}`;
   }
 

@@ -510,7 +510,7 @@ export class PlanoraApiService {
       }))));
   }
 
-  createPayment(planId: string, provider: 'Momo' | 'BankTransfer', idempotencyKey: string) {
+  createPayment(planId: string, provider: 'BankTransfer', idempotencyKey: string) {
     return this.http
       .post<PaymentCheckout>(`${this.api}/billing/payments`, { planId, provider, idempotencyKey })
       .pipe(map((checkout) => ({

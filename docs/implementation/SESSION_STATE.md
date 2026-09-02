@@ -29,7 +29,7 @@ Build Planora Phase 0–3 from the approved documentation set under `docs/docs/`
 - External Google/Facebook/Cloudinary integration requires credentials; code must remain testable without real secrets.
 - Docker is not installed in the current environment. The PostgreSQL baseline was applied and verified against Neon; CI uses PostgreSQL 17 for repeatable integration tests.
 - Google, Facebook, and Cloudinary live calls require credentials. Without Cloudinary credentials, local development storage is selected intentionally.
-- Billing checkout and automatic payment reconciliation are implemented for MoMo and SePay bank-transfer webhooks. Subscription quota enforcement remains a production-hardening item.
+- Billing checkout and automatic payment reconciliation are implemented for SePay bank-transfer webhooks. Subscription quota enforcement remains a production-hardening item.
 
 ## Next actions
 

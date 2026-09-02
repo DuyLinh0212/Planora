@@ -8,7 +8,7 @@ Mobile ────────────────┘          │
                                   ├── Cloudinary
                                   ├── SignalR
                                   ├── Google/Facebook
-                                  └── MoMo + SePay
+                                  └── SePay bank-transfer webhook
 ```
 
 ## Environments
@@ -29,9 +29,8 @@ Repository có sẵn `render.yaml` và `backend/Dockerfile`. Tạo Blueprint t�
 
 `ConnectionStrings__DefaultConnection` chấp nhận trực tiếp Neon URI dạng `postgresql://...` hoặc chuỗi Npgsql dạng `Host=...`; luôn lưu biến này dưới dạng secret.
 
-Với payment webhook, dùng web service luôn hoạt động; không dùng instance sleep được vì MoMo/SePay có thể gửi callback lúc service đang ngủ. Sau deploy, cập nhật hai callback public HTTPS:
+Với payment webhook, dùng web service luôn hoạt động; không dùng instance sleep được vì SePay có thể gửi callback lúc service đang ngủ. Sau deploy, cấu hình callback public HTTPS trên SePay:
 
-- `Payment__Momo__IpnUrl=https://YOUR-API.onrender.com/api/payments/momo/ipn`
 - SePay webhook URL: `https://YOUR-API.onrender.com/api/payments/bank-transfer/sepay/ipn`
 
 ## Background services
@@ -54,6 +53,8 @@ Render hiện chỉ deploy một API web service. Chỉ tách worker/scheduler r
 
 ## Vercel
 Không đưa DB/Cloudinary/Payment secret vào client/public env.
+
+Đặt Root Directory tương ứng (`frontend/Planora.Web.User` hoặc `frontend/Planora.Web.Admin`). Mỗi frontend có `vercel.json` tự sinh cấu hình production từ các biến public `PLANORA_API_URL` (và `PLANORA_GOOGLE_CLIENT_ID` cho User Web). Không import `.env.example` ở repository root vào Vercel.
 
 ## SignalR
 1 backend instance: SignalR trực tiếp.

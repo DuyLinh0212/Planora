@@ -11,7 +11,7 @@
 7. System Administrator
 8. API-hosted Background Services/System
 9. Google/Facebook
-10. MoMo/SePay (bank-transfer webhook)
+10. SePay (bank-transfer webhook)
 
 ## Role mặc định
 

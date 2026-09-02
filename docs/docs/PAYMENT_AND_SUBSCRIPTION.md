@@ -11,7 +11,6 @@ Plan chứa:
 Không hard-code quota ở nhiều chỗ.
 
 ## Providers
-- MoMo.
 - Chuyển khoản ngân hàng tự động qua SePay webhook.
 
 Abstraction gợi ý:
@@ -24,26 +23,19 @@ IPaymentGateway
 ```
 
 Infrastructure:
-- `MomoPaymentGateway`
 - `BankTransferPaymentDetailsProvider`
 
 ## Flow
 1. User chọn Plan.
 2. Backend đọc Plan/Price từ DB.
 3. Tạo PaymentTransaction PENDING.
-4. Tạo request provider.
-5. Provider nhận payment.
-6. Webhook tới Backend.
-7. Verify signature.
+4. Backend trả về số tài khoản và mã nội dung duy nhất.
+5. User chuyển khoản.
+6. SePay gọi webhook tới Backend.
+7. Verify API key, tài khoản nhận, amount và mã nội dung.
 8. Idempotency.
 9. Mark SUCCESS.
 10. Activate/extend subscription.
-
-### MoMo
-
-- Backend tạo `PaymentTransaction` và một `orderId` duy nhất, rồi ký request HMAC-SHA256 với `SecretKey`.
-- Client chỉ nhận `payUrl`; kết quả redirect không được dùng để kích hoạt gói.
-- MoMo gọi `POST /api/payments/momo/ipn`; backend kiểm chữ ký, đối chiếu `orderId` và chính xác amount trước khi kích hoạt.
 
 ### Chuyển khoản ngân hàng
 
@@ -56,7 +48,7 @@ Infrastructure:
 
 - Client giữ cùng `idempotencyKey` trong `sessionStorage` khi retry một lần thanh toán bị mất kết nối.
 - `ProviderOrderId`, `ProviderTransactionId` và `UserSubscription.PaymentTransactionId` đều có unique index. Do đó callback retry từ provider hoặc request retry từ browser không thể tạo hai subscription cho cùng một giao dịch.
-- Link MoMo được lưu server-side sau khi tạo, nên retry cùng idempotency key trả lại đúng checkout cũ thay vì tạo đơn mới.
+- Mã nội dung chuyển khoản được lưu server-side, nên retry cùng idempotency key trả lại đúng giao dịch cũ thay vì tạo đơn mới.
 
 ## Không làm
 - Tin amount từ frontend.

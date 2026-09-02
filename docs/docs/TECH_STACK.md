@@ -62,7 +62,6 @@
 
 ## Payment
 
-- MoMo.
 - Chuyển khoản ngân hàng qua SePay webhook.
 - Backend verify webhook/signature, amount và provider reference.
 - Có idempotency cho request/callback retry.
