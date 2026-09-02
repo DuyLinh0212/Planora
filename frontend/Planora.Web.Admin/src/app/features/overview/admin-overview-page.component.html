@@ -1,0 +1,111 @@
+<section>
+    <header class="page-heading">
+      <div>
+        <p class="eyebrow">System pulse</p>
+        <h1>Overview</h1>
+        <p>Aggregate operating health without exposing private project content.</p>
+      </div>
+      <span class="date-filter">Live system metadata</span>
+    </header>
+    <section class="metric-grid">
+      <article>
+        <small>Total users</small><b>{{ context.overview().totalUsers | number }}</b
+        ><span class="up">↑ 6.3%</span>
+      </article>
+      <article>
+        <small>Active users</small><b>{{ context.overview().activeUsers | number }}</b
+        ><span class="up">↑ 8.9%</span>
+      </article>
+      <article>
+        <small>Total projects</small><b>{{ context.overview().totalProjects | number }}</b
+        ><span class="up">↑ 4.1%</span>
+      </article>
+      <article>
+        <small>Active projects</small><b>{{ context.overview().activeProjects | number }}</b
+        ><span>Live</span>
+      </article>
+      <article>
+        <small>Completed projects</small><b>{{ context.overview().completedProjects | number }}</b
+        ><span class="up">↑ 7.2%</span>
+      </article>
+      <article>
+        <small>Subscription revenue</small>
+        <b>{{ formatRevenue(context.overview().subscriptionRevenue) }}</b>
+        <span class="up">↑ 11.4%</span>
+      </article>
+      <article>
+        <small>Payment success</small><b>{{ context.overview().paymentSuccessRate }}%</b
+        ><span>Provider verified</span>
+      </article>
+      <article>
+        <small>Aggregate storage</small><b>{{ storageTb() }} TB</b><span class="up">↑ 5.6%</span>
+      </article>
+    </section>
+    <section class="overview-grid">
+      <article class="panel chart">
+        <div class="panel-head">
+          <h3>User activation trend</h3>
+          <span>7 days</span>
+        </div>
+        <div class="line-plot"><i></i><i></i></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><h3>Projects by status</h3></div>
+        <div class="donut-row">
+          <div class="donut">
+            <b>{{ context.overview().totalProjects }}</b>
+          </div>
+          <div class="legend">
+            @for (item of context.overview().projectStatusDistribution; track item.label) {
+              <span
+                ><i class="lagoon"></i>{{ item.label }}<b>{{ item.value }}</b></span
+              >
+            }
+          </div>
+        </div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><h3>Subscriptions</h3></div>
+        <div class="donut-row">
+          <div class="donut plans">
+            <b>{{ context.overview().totalUsers }}</b>
+          </div>
+          <div class="legend">
+            @for (item of context.overview().subscriptionDistribution; track item.label) {
+              <span
+                ><i class="blue"></i>{{ item.label }}<b>{{ item.value }}</b></span
+              >
+            }
+          </div>
+        </div>
+      </article>
+      <article class="panel attention">
+        <div class="panel-head">
+          <h3>Needs attention</h3>
+          <a class="text" routerLink="/payments">View queues</a>
+        </div>
+        @for (item of context.overview().needsAttention; track item.code) {
+          <p>
+            <i class="amber">!</i><span>{{ item.label }}</span
+            ><b>{{ item.count }}</b>
+          </p>
+        }
+      </article>
+      <article class="panel recent">
+        <div class="panel-head">
+          <h3>Recent admin activity</h3>
+          <a class="text" routerLink="/activity">Full activity</a>
+        </div>
+        @for (item of context.activity().slice(0, 5); track item.id) {
+          <div>
+            <time>{{ item.createdAt | date: 'MMM d, HH:mm' }}</time
+            ><span>{{ item.actorDisplayName }}</span
+            ><b>{{ item.action }}</b
+            ><code>{{ item.entityId }}</code>
+          </div>
+        } @empty {
+          <p class="empty-state">No persisted admin activity in preview mode.</p>
+        }
+      </article>
+    </section>
+  </section>

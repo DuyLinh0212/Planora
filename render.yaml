@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: planora-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: off
+    healthCheckPath: /health/live
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Database__ApplyMigrationsOnStartup
+        value: "true"
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: Jwt__Issuer
+        value: Planora.Api
+      - key: Jwt__Audience
+        value: Planora.Frontends
+      - key: Jwt__Secret
+        sync: false
+      - key: Cors__AllowedOrigins__0
+        sync: false
+      - key: Payment__Momo__PartnerCode
+        sync: false
+      - key: Payment__Momo__AccessKey
+        sync: false
+      - key: Payment__Momo__SecretKey
+        sync: false
+      - key: Payment__Momo__Endpoint
+        sync: false
+      - key: Payment__Momo__ReturnUrl
+        sync: false
+      - key: Payment__Momo__IpnUrl
+        sync: false
+      - key: Payment__BankTransfer__BankName
+        sync: false
+      - key: Payment__BankTransfer__AccountName
+        sync: false
+      - key: Payment__BankTransfer__AccountNumber
+        sync: false
+      - key: Payment__BankTransfer__SePayWebhookApiKey
+        sync: false

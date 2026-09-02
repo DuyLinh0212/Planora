@@ -1,0 +1,71 @@
+# Secrets
+.env
+.env.*
+!.env.example
+**/appsettings.Local.json
+client_secret*.json
+docs/KeyDB.md
+docs/KeyCloudinary.md
+/backend_backup/
+/backend/artifacts/
+DESIGN.md
+PRODUCT.md
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+*.keystore
+*.mobileprovision
+key.properties
+google-services.json
+.secrets/
+secrets/
+
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+
+# Node / Next.js
+**/node_modules/
+**/.next/
+**/out/
+**/.turbo/
+**/.angular/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Flutter
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/build/
+*.iml
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local database and test artifacts
+*.mdf
+*.ldf
+TestResults/
+coverage/
+/artifacts/
+/outputs/
+.vercel/
+/.impeccable/
+
+# Temporary validation and test output
+/backend/.buildcheck*/
+/backend/.objcheck/
+/tests/e2e/artifacts/
+/frontend/Planora.Web.User/tests/artifacts/*.png
+/frontend/Planora.Web.User/tests/artifacts/e2e/
+*.tmp

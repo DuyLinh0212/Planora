@@ -1,0 +1,229 @@
+.admin-support-page .page-heading select {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink) !important;
+  font-size: 12px;
+}
+
+.support-console {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 600px;
+}
+
+.support-inbox {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.support-inbox .panel-head {
+  padding: 14px 16px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.support-inbox > button {
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.support-inbox > button:hover {
+  background: var(--surface-soft);
+}
+
+.support-inbox > button.active {
+  background: color-mix(in srgb, var(--blue) 8%, var(--surface));
+  border-left: 3px solid var(--blue);
+}
+
+.support-inbox > button i {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: #fff;
+  background: var(--blue);
+  font-style: normal;
+  font-weight: 750;
+  font-size: 13px;
+}
+
+.support-inbox > button i[data-kind=Refund] {
+  background: var(--amber);
+}
+
+.support-inbox > button span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.support-inbox > button b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.support-inbox > button small {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.support-inbox > button em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.support-thread {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+}
+
+.support-thread > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.support-thread > header h2 {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.refund-context {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  border: 1px solid color-mix(in srgb, var(--amber) 40%, var(--line));
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--amber) 8%, var(--surface));
+  font-size: 12.5px;
+}
+
+.refund-context span {
+  grid-column: 1/-1;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+.message-stream {
+  flex: 1;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.support-message {
+  display: flex;
+  gap: 10px;
+}
+
+.support-message p {
+  max-width: 75%;
+  margin: 0;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 4px 12px 12px 12px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-size: 13px;
+  border: 1px solid var(--line);
+}
+
+.support-message p span {
+  line-height: 1.5;
+}
+
+.support-message p small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.support-message.admin-message {
+  flex-direction: row-reverse;
+}
+
+.support-message.admin-message p {
+  border-radius: 12px 4px 12px 12px;
+  color: #ffffff;
+  background: var(--blue);
+  border-color: var(--blue-dark);
+}
+
+.support-message.admin-message p b {
+  color: #ffffff;
+}
+
+.support-message.admin-message p small {
+  color: #bfdbfe;
+}
+
+.support-composer {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.support-composer textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink) !important;
+  resize: vertical;
+}
+
+.support-composer > div {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.thread-empty {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .support-console {
+    grid-template-columns: 1fr;
+  }
+}

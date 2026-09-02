@@ -1,0 +1,118 @@
+<section>
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Subscription catalog</p>
+      <h1>Plans</h1>
+      <p>Configure limits and entitlements used by billing enforcement.</p>
+    </div>
+    <button class="button primary" (click)="createDraft()">+ Create plan</button>
+  </header>
+
+  <section class="plans-layout">
+    <article class="panel plan-list">
+      <div class="panel-head">
+        <h3>All Plans ({{ context.plans().length }})</h3>
+      </div>
+      <div class="data-row table-head plan-row">
+        <span>Plan</span>
+        <span>Price</span>
+        <span>Billing</span>
+        <span>Projects</span>
+        <span>Subscribers</span>
+      </div>
+      @for (plan of context.plans(); track plan.id) {
+        <button
+          type="button"
+          class="data-row plan-row plan-item-btn"
+          [class.selected]="selectedPlan()?.id === plan.id"
+          (click)="editPlan(plan)"
+        >
+          <div class="plan-name-cell">
+            <b>{{ plan.name }}</b>
+            <small>{{ plan.code }}</small>
+          </div>
+          <span class="plan-price">{{ formatPrice(plan.price, plan.currency) }}</span>
+          <span class="badge badge-billing">{{ formatBillingPeriod(plan.billingPeriod) }}</span>
+          <span class="plan-metric">{{ plan.maxOwnedProjects }}</span>
+          <span class="plan-subscribers">{{ plan.activeSubscriberCount }}</span>
+        </button>
+      }
+    </article>
+
+    <form class="panel plan-editor" (ngSubmit)="savePlan()">
+      <div class="panel-head">
+        <h3>{{ selectedPlan() ? 'Edit plan: ' + selectedPlan()?.name : 'Create new plan' }}</h3>
+        <span class="badge" [class.badge-success]="draft.isActive" [class.badge-danger]="!draft.isActive">
+          {{ draft.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          Plan name
+          <input name="name" [(ngModel)]="draft.name" placeholder="e.g. Pro, VIP" required />
+        </label>
+        <label>
+          Plan code
+          <input
+            name="code"
+            [(ngModel)]="draft.code"
+            placeholder="e.g. pro-monthly"
+            [disabled]="!!selectedPlan()"
+            required
+          />
+        </label>
+        <label>
+          Price
+          <div class="price-input-group">
+            <input name="price" type="number" [(ngModel)]="draft.price" min="0" required />
+            <select name="currency" [(ngModel)]="draft.currency" class="currency-select">
+              <option value="VND">₫ VND</option>
+              <option value="USD">$ USD</option>
+            </select>
+          </div>
+        </label>
+        <label>
+          Billing period
+          <select name="billing" [(ngModel)]="draft.billingPeriod">
+            <option value="Monthly">Monthly</option>
+            <option value="Yearly">Yearly</option>
+            <option value="Forever">Forever</option>
+          </select>
+        </label>
+        <label>
+          Max projects
+          <input name="projects" type="number" [(ngModel)]="draft.maxOwnedProjects" min="1" required />
+        </label>
+        <label>
+          Max storage (GB)
+          <input name="storage" type="number" [(ngModel)]="draft.maxStorageGb" min="1" required />
+        </label>
+      </div>
+
+      <label class="form-field">
+        Entitlements
+        <textarea
+          name="entitlements"
+          rows="3"
+          [(ngModel)]="draft.entitlements"
+          placeholder="One entitlement per line"
+        ></textarea>
+      </label>
+
+      <label class="check-line">
+        <input name="active" type="checkbox" [(ngModel)]="draft.isActive" />
+        <span>Active and available for subscriptions</span>
+      </label>
+
+      <footer>
+        <button class="button" type="button" (click)="createDraft()">Reset</button>
+        <button class="button primary" type="submit">Save changes</button>
+      </footer>
+    </form>
+  </section>
+
+  @if (message()) {
+    <div class="toast">{{ message() }}</div>
+  }
+</section>

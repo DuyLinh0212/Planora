@@ -1,0 +1,58 @@
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.analytics-grid .wide {
+  grid-column: span 2;
+}
+
+.large-chart .line-plot {
+  height: 220px;
+}
+
+.bar-list p {
+  display: grid;
+  grid-template-columns: 80px 1fr 40px;
+  gap: 10px;
+  align-items: center;
+  font-size: 12.5px;
+  color: var(--ink);
+  margin: 6px 0;
+}
+
+.bar-list i {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--blue) var(--w), var(--soft) var(--w));
+}
+
+.bar-list b {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.heatmap > div:last-child {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 5px;
+  padding-top: 8px;
+}
+
+.heatmap i {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: var(--blue);
+  opacity: 0.3;
+}
+
+@media (max-width: 900px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+  .analytics-grid .wide {
+    grid-column: span 1;
+  }
+}

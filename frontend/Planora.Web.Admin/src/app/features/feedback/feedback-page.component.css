@@ -1,0 +1,5 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy administrator styles: feedback. */
+.feedback-row {
+  grid-template-columns: 75px minmax(130px, 1fr) 100px minmax(170px, 1.5fr) 75px 60px 60px;
+}

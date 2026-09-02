@@ -1,0 +1,22 @@
+<section class="admin-support-page">
+    <header class="page-heading"><div><p class="eyebrow">Human support queue</p><h1>Hỗ trợ & hoàn tiền</h1><p>Phản hồi theo hội thoại, giữ đủ ngữ cảnh nhưng không đọc nội dung riêng tư của dự án.</p></div><select [(ngModel)]="filter" (ngModelChange)="load()"><option value="">Tất cả trạng thái</option><option>Open</option><option>WaitingForUser</option><option>Closed</option></select></header>
+    <div class="support-console">
+      <aside class="panel support-inbox">
+        <div class="panel-head"><h3>Hộp thư</h3><span class="badge">{{ conversations().length }}</span></div>
+        @for (item of conversations(); track item.id) {
+          <button [class.active]="selected()?.id === item.id" (click)="selected.set(item)"><i [attr.data-kind]="item.kind">{{ item.kind === 'Refund' ? '₫' : '?' }}</i><span><b>{{ item.subject }}</b><small>{{ item.kind }} · {{ item.createdAt | date:'dd/MM HH:mm' }}</small></span><em>{{ statusLabel(item.status) }}</em></button>
+        } @empty { <div class="empty-state">Không có yêu cầu trong hàng đợi.</div> }
+      </aside>
+      <article class="panel support-thread">
+        @if (selected(); as conversation) {
+          <header><div><p class="eyebrow">{{ conversation.kind }} · {{ conversation.id.slice(0, 8) }}</p><h2>{{ conversation.subject }}</h2></div><button class="button" [disabled]="conversation.status === 'Closed'" (click)="close()">Đóng yêu cầu</button></header>
+          @if (conversation.paymentTransactionId) { <div class="refund-context"><b>Giao dịch liên quan</b><code>{{ conversation.paymentTransactionId }}</code><span>Hãy đối chiếu trạng thái thanh toán trước khi hoàn tiền.</span></div> }
+          <div class="message-stream">
+            @for (message of conversation.messages; track message.id) { <div class="support-message" [class.admin-message]="message.senderDisplayName.toLowerCase().includes('admin') || message.senderDisplayName.toLowerCase().includes('support')"><span class="avatar">{{ initials(message.senderDisplayName) }}</span><p><b>{{ message.senderDisplayName }}</b><span>{{ message.content }}</span><small>{{ message.createdAt | date:'dd/MM/yyyy HH:mm' }}</small></p></div> }
+          </div>
+          <form class="support-composer" (ngSubmit)="reply()"><textarea name="reply" [(ngModel)]="replyText" required placeholder="Nhập câu trả lời rõ ràng, có bước tiếp theo…"></textarea><div><small>Người dùng sẽ nhận thông báo ngay.</small><button class="button primary" [disabled]="!replyText.trim() || conversation.status === 'Closed'">Gửi phản hồi</button></div></form>
+        } @else { <div class="empty-state thread-empty"><strong>Chọn một yêu cầu</strong><span>Lịch sử trao đổi sẽ xuất hiện ở đây.</span></div> }
+      </article>
+    </div>
+    @if (message()) { <div class="toast">{{ message() }}</div> }
+  </section>

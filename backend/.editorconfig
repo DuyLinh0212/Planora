@@ -1,0 +1,6 @@
+root = true
+
+# EF Core owns these generated migration files; application style analyzers
+# should not rewrite or block their standard generated structure.
+[src/Planora.Infrastructure/Persistence/PostgresMigrations/*.cs]
+generated_code = true

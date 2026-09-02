@@ -1,0 +1,88 @@
+<section>
+    <header class="page-heading">
+      <div>
+        <p class="eyebrow">Customer signal</p>
+        <h1>Feedback</h1>
+        <p>Triage, assign and resolve support items.</p>
+      </div>
+    </header>
+    <article class="panel data-panel">
+      <div class="filters">
+        <select class="button" [(ngModel)]="status">
+          <option value="">All statuses</option>
+          <option>New</option>
+          <option>InReview</option>
+          <option>Resolved</option></select
+        ><select class="button" [(ngModel)]="priority">
+          <option value="">All priorities</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option></select
+        ><input class="search" [(ngModel)]="search" placeholder="Search feedback" /><button
+          class="button"
+          (click)="reloadFeedback()"
+        >
+          Refresh
+        </button>
+      </div>
+      <div class="data-row table-head feedback-row">
+        <span>ID</span><span>User</span><span>Category</span><span>Subject</span><span>Status</span><span>Priority</span><span></span>
+      </div>
+      @for (item of filteredFeedback(); track item.id) {
+        <div class="data-row feedback-row">
+          <code>{{ item.id.slice(0, 8) }}…</code>
+          <span>{{ item.userEmail }}</span>
+          <span>{{ item.category }}</span>
+          <b>{{ item.subject }}</b>
+          <span class="badge" [class.badge-success]="formatFeedbackStatus(item.status) === 'Resolved'">
+            {{ formatFeedbackStatus(item.status) }}
+          </span>
+          <span [class.high]="formatFeedbackPriority(item.priority) === 'High'">
+            {{ formatFeedbackPriority(item.priority) }}
+          </span>
+          <button class="text" (click)="selectedFeedback.set(item)">Review →</button>
+        </div>
+      }
+    </article>
+    @if (selectedFeedback(); as item) {
+      <aside class="detail-drawer">
+        <header>
+          <div>
+            <p class="eyebrow">Feedback details</p>
+            <h2>{{ item.subject }}</h2>
+            <span>{{ item.userEmail }}</span>
+          </div>
+          <button class="icon" (click)="selectedFeedback.set(null)">×</button>
+        </header>
+        <div class="detail-stats">
+          <p>
+            <small>Status</small>
+            <span class="badge" [class.badge-success]="formatFeedbackStatus(item.status) === 'Resolved'">
+              {{ formatFeedbackStatus(item.status) }}
+            </span>
+          </p>
+          <p>
+            <small>Priority</small><b>{{ formatFeedbackPriority(item.priority) }}</b>
+          </p>
+          <p>
+            <small>Category</small><b>{{ item.category }}</b>
+          </p>
+          <p>
+            <small>Created</small><time>{{ item.createdAt | date: 'medium' }}</time>
+          </p>
+        </div>
+        <section>
+          <h3>User message</h3>
+          <p class="message">{{ item.content }}</p>
+          <label>Internal note<textarea [(ngModel)]="internalNote"></textarea></label>
+        </section>
+        <footer>
+          <button class="button" (click)="assignToMe(item)">Assign to me</button
+          ><button class="button primary" (click)="resolveFeedback(item)">Resolve feedback</button>
+        </footer>
+      </aside>
+    }
+    @if (message()) {
+      <div class="toast">{{ message() }}</div>
+    }
+  </section>

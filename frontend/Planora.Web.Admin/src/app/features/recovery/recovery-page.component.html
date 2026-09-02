@@ -1,0 +1,16 @@
+    <section class="admin-recovery-page">
+      <header class="page-heading">
+        <div><p class="eyebrow">Retention & recovery</p><h1>Deleted workspace items</h1><p>Projects and sprints are recoverable here. Tasks, files and documents are permanently deleted by policy.</p></div>
+        <button class="button" type="button" (click)="load()" [disabled]="loading()"><svg lucideRefreshCw></svg>{{ loading() ? 'Loading…' : 'Refresh' }}</button>
+      </header>
+      <article class="panel data-panel recovery-panel">
+        <div class="recovery-policy"><svg lucideArchiveRestore></svg><span><b>Soft-delete policy</b><small>Items remain recoverable until a system retention policy is introduced.</small></span></div>
+        <div class="recovery-head"><span>Item</span><span>Parent project</span><span>Deleted at</span><span>Action</span></div>
+        @for (item of items(); track item.kind + item.id) {
+          <div class="recovery-row"><span><b>{{ item.name }}</b><small>{{ item.kind }}</small></span><span>{{ item.kind === 'Project' ? 'Workspace root' : 'Parent project' }}</span><time>{{ item.deletedAt | date:'dd/MM/yyyy HH:mm' }}</time><span><button class="button" type="button" (click)="restore(item)" [disabled]="restoringId() === item.id">{{ restoringId() === item.id ? 'Restoring…' : 'Restore' }}</button></span></div>
+        } @empty {
+          <div class="recovery-empty">{{ loading() ? 'Loading deleted items…' : 'There are no recoverable workspace items.' }}</div>
+        }
+      </article>
+      @if (error()) { <p class="form-error">{{ error() }}</p> }
+    </section>

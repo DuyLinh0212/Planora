@@ -1,0 +1,69 @@
+    <div class="admin-app" [attr.data-theme]="theme()">
+      <aside class="admin-sidebar" [class.open]="sidebarOpen()">
+        <header>
+          <a class="wordmark" routerLink="/overview">
+            Planora <span>Admin</span>
+          </a>
+          <button class="icon sidebar-close" (click)="sidebarOpen.set(false)"><svg lucideX></svg></button>
+        </header>
+        <nav>
+          <a routerLink="/overview" routerLinkActive="active"><svg lucideLayoutDashboard></svg>Overview</a>
+          <a routerLink="/accounts" routerLinkActive="active"><svg lucideUsersRound></svg>Accounts</a>
+          <a routerLink="/plans" routerLinkActive="active"><svg lucideNotebookTabs></svg>Plans</a>
+          <a routerLink="/payments" routerLinkActive="active"><svg lucideCreditCard></svg>Payments</a>
+          <a routerLink="/feedback" routerLinkActive="active"><svg lucideMessageCircleMore></svg>Feedback</a>
+          <a routerLink="/support" routerLinkActive="active"><svg lucideMessageCircleMore></svg>Support & refunds</a>
+          <a routerLink="/analytics" routerLinkActive="active"><svg lucideChartNoAxesCombined></svg>Analytics</a>
+          <a routerLink="/activity" routerLinkActive="active"><svg lucideReceiptText></svg>Admin activity</a>
+          <a routerLink="/recovery" routerLinkActive="active"><svg lucideArchiveRestore></svg>Recovery</a>
+          <a routerLink="/settings" routerLinkActive="active"><svg lucideSettings></svg>Settings</a>
+        </nav>
+        <div class="sidebar-foot">
+          <button type="button" (click)="cycleTheme()"><svg lucideSettings></svg>Theme: {{ theme() }}</button>
+          <div class="admin-mini">
+            <span class="avatar">{{ initials }}</span>
+            <div>
+              <b>{{ adminName() }}</b>
+              <small>{{ adminEmail() }}</small>
+            </div>
+          </div>
+          <button type="button" (click)="logoutCurrentAdministrator()"><svg lucideLogOut></svg>Sign out</button>
+        </div>
+      </aside>
+      <section class="admin-page">
+        <header class="topbar">
+          <button class="icon menu" (click)="sidebarOpen.set(true)"><svg lucideMenu></svg></button>
+          <div>
+            <p class="eyebrow">System console</p>
+            <h2>{{ pageTitle() }}</h2>
+          </div>
+          <div class="top-actions">
+            <label class="search">
+              <svg lucideSearch></svg>
+              <input placeholder="Search accounts, payments…">
+            </label>
+            <button class="icon" title="Đổi giao diện" (click)="cycleTheme()"><svg lucideSettings></svg></button>
+            <button class="icon" (click)="toggleNotifications()"><svg lucideBell></svg><span class="alert-dot"></span></button>
+            <span class="avatar">{{ initials }}</span>
+          </div>
+        </header>
+        @if (context.usingDemoData()) {
+          <div class="admin-demo-banner">
+            <span>⚠️ Bạn đang ở chế độ xem trước (Dữ liệu mẫu).</span>
+            <a routerLink="/login" style="color: inherit; text-decoration: underline; font-weight: 700; margin-left: 6px;">
+              Đăng nhập với tài khoản Administrator để kết nối API trực tiếp →
+            </a>
+          </div>
+        }
+        <main><router-outlet /></main>
+        <footer class="trust-boundary"><svg lucideShieldCheck></svg><b>Aggregate metadata only</b><span>·</span>Private project content is inaccessible</footer>
+      </section>
+      @if (notificationsOpen()) {
+        <aside class="popover">
+          <div class="panel-head"><h3>System notifications</h3><button class="icon" (click)="notificationsOpen.set(false)">×</button></div>
+          @for (item of context.overview().needsAttention; track item.code) {
+            <p><i class="amber">!</i><span><b>{{ item.count }} {{ item.label }}</b><small>Review the operations queue.</small></span></p>
+          }
+        </aside>
+      }
+    </div>

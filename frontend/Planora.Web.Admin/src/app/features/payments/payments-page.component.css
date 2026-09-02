@@ -1,0 +1,5 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy administrator styles: payments. */
+.payment-row {
+  grid-template-columns: 85px minmax(145px, 1.2fr) 75px 70px 75px 110px 60px;
+}

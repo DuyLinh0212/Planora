@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Planora.Api/Planora.Api.csproj" />
+    <Project Path="src/Planora.Application/Planora.Application.csproj" />
+    <Project Path="src/Planora.Domain/Planora.Domain.csproj" />
+    <Project Path="src/Planora.Infrastructure/Planora.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Planora.IntegrationTests/Planora.IntegrationTests.csproj" />
+    <Project Path="tests/Planora.UnitTests/Planora.UnitTests.csproj" />
+  </Folder>
+</Solution>

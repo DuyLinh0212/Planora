@@ -1,0 +1,292 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-policy:
+    name: Repository policy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Reject tracked local secrets, signing keys, and backups
+        shell: bash
+        run: |
+          set -euo pipefail
+          forbidden=(
+            "docs/KeyDB.md"
+            "docs/KeyCloudinary.md"
+            "backend_backup"
+            "backend/artifacts"
+          )
+
+          failed=0
+          for path in "${forbidden[@]}"; do
+            if git ls-files --error-unmatch "$path" >/dev/null 2>&1 || git ls-files "$path/**" | grep -q .; then
+              echo "::error file=$path::Local secret or backup path must not be committed."
+              failed=1
+            fi
+          done
+
+          if git ls-files | grep -E '(^|/)client_secret[^/]*\.json$' >/dev/null; then
+            echo "::error::Google client secret JSON must not be committed."
+            failed=1
+          fi
+
+          forbidden_patterns=(
+            '(^|/)(key\.properties|google-services\.json)$'
+            '(^|/)[^/]+\.(pem|key|pfx|p12|jks|keystore|mobileprovision)$'
+            '(^|/)(\.secrets|secrets)/'
+          )
+          for pattern in "${forbidden_patterns[@]}"; do
+            if git ls-files | grep -Eiq "$pattern"; then
+              echo "::error::A signing key, certificate, or secret directory is tracked."
+              failed=1
+            fi
+          done
+
+          if git ls-files | grep -E '(^|/)\.env($|\.[^/]+$)' | grep -Ev '(^|/)\.env\.example$' >/dev/null; then
+            echo "::error::A real .env file is tracked. Use .env.example with placeholders instead."
+            failed=1
+          fi
+
+          exit "$failed"
+
+  backend:
+    name: Backend (.NET 10 + PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: planora_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: planora_ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d planora_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=planora_ci;Username=postgres;Password=planora_ci_password;SSL Mode=Disable
+      Jwt__Secret: planora-ci-only-secret-with-at-least-32-characters
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore tools and packages
+        run: |
+          dotnet tool restore
+          dotnet restore Planora.slnx
+
+      - name: Build
+        run: dotnet build Planora.slnx --configuration Release --no-restore
+
+      - name: Verify EF model is represented by a migration
+        run: >-
+          dotnet tool run dotnet-ef migrations has-pending-model-changes
+          --project src/Planora.Infrastructure
+          --startup-project src/Planora.Api
+          --configuration Release
+          --no-build
+
+      - name: Apply migrations to disposable PostgreSQL
+        run: >-
+          dotnet tool run dotnet-ef database update
+          --project src/Planora.Infrastructure
+          --startup-project src/Planora.Api
+          --configuration Release
+          --no-build
+
+      - name: Test
+        run: >-
+          dotnet test Planora.slnx
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=planora-tests.trx"
+          --collect "XPlat Code Coverage"
+          --results-directory ../artifacts/test-results/backend
+
+      - name: Publish API
+        run: >-
+          dotnet publish src/Planora.Api/Planora.Api.csproj
+          --configuration Release
+          --no-build
+          --output ../artifacts/publish/backend
+
+      - name: Upload backend test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: artifacts/test-results/backend
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload backend publish output
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-publish
+          path: artifacts/publish/backend
+          if-no-files-found: error
+          retention-days: 7
+
+  web:
+    name: Web (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: user
+            directory: frontend/Planora.Web.User
+            artifact: web-user
+            output: frontend/Planora.Web.User/dist/Planora.Web.User/browser
+          - name: admin
+            directory: frontend/Planora.Web.Admin
+            artifact: web-admin
+            output: frontend/Planora.Web.Admin/dist/Planora.Web.Admin/browser
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: ${{ matrix.directory }}/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Audit production dependencies
+        working-directory: .
+        run: >-
+          node tools/ci/npm-audit.mjs
+          "${{ matrix.directory }}"
+          .github/security/npm-audit-allowlist.json
+
+      - name: Test in headless Chrome
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+        run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      - name: Build production bundle
+        run: npm run build -- --configuration production
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}-coverage
+          path: ${{ matrix.directory }}/coverage
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload web bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.output }}
+          if-no-files-found: error
+          retention-days: 7
+
+  mobile:
+    name: Mobile (Flutter)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile/user-app
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.7
+          channel: stable
+          cache: true
+
+      - name: Restore packages
+        run: flutter pub get --enforce-lockfile
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      - name: Test
+        run: flutter test --coverage
+
+      - name: Build debug APK
+        run: flutter build apk --debug
+
+      - name: Upload mobile coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-coverage
+          path: mobile/user-app/coverage/lcov.info
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-debug-apk
+          path: mobile/user-app/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+
+  docker:
+    name: Backend container
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build production image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: backend/Dockerfile
+          push: false
+          tags: planora-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  ci-success:
+    name: CI success
+    if: always()
+    needs: [repository-policy, backend, web, mobile, docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce required jobs
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Job results: $RESULTS"
+          test "$RESULTS" = "success success success success success"

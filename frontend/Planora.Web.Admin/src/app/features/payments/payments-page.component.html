@@ -1,0 +1,96 @@
+<section>
+    <header class="page-heading">
+      <div>
+        <p class="eyebrow">Billing operations</p>
+        <h1>Payments</h1>
+        <p>Trace provider state, idempotency and manual review.</p>
+      </div>
+      <button class="button" (click)="exportPayments()">Export CSV</button>
+    </header>
+    <article class="panel data-panel">
+      <div class="filters">
+        <select class="button" [(ngModel)]="provider">
+          <option value="">All providers</option>
+          <option>MoMo</option>
+          <option>ZaloPay</option></select
+        ><select class="button" [(ngModel)]="status">
+          <option value="">All statuses</option>
+          <option>Success</option>
+          <option>Pending</option>
+          <option>Failed</option></select
+        ><button class="button" (click)="reloadPayments()">Refresh</button>
+      </div>
+      <div class="data-row table-head payment-row">
+        <span>ID</span><span>User</span><span>Amount</span><span>Provider</span><span>Status</span><span>Created</span><span></span>
+      </div>
+      @for (payment of filteredPayments(); track payment.id) {
+        <div class="data-row payment-row">
+          <code>{{ payment.id.slice(0, 8) }}…</code>
+          <span>{{ payment.userEmail }}</span>
+          <b>{{ formatAmount(payment.amount, payment.currency) }}</b>
+          <span>{{ formatProvider(payment.provider) }}</span>
+          <span
+            class="badge"
+            [class.badge-danger]="formatPaymentStatus(payment.status) === 'Failed'"
+            [class.badge-warn]="formatPaymentStatus(payment.status) === 'Pending'"
+            [class.badge-success]="formatPaymentStatus(payment.status) === 'Success'"
+          >
+            {{ formatPaymentStatus(payment.status) }}
+          </span>
+          <time>{{ payment.createdAt | date: 'MMM d, HH:mm' }}</time>
+          <button class="text" (click)="selectedPayment.set(payment)">Inspect →</button>
+        </div>
+      }
+    </article>
+    @if (selectedPayment(); as payment) {
+      <aside class="detail-drawer">
+        <header>
+          <div>
+            <p class="eyebrow">Payment details</p>
+            <h2>{{ payment.id }}</h2>
+            <span class="badge" [class.badge-success]="formatPaymentStatus(payment.status) === 'Success'">{{ formatPaymentStatus(payment.status) }}</span>
+          </div>
+          <button class="icon" (click)="selectedPayment.set(null)">×</button>
+        </header>
+        <div class="detail-stats">
+          <p>
+            <small>User</small><b>{{ payment.userEmail }}</b>
+          </p>
+          <p>
+            <small>Amount</small><b>{{ formatAmount(payment.amount, payment.currency) }}</b>
+          </p>
+          <p>
+            <small>Provider</small><b>{{ formatProvider(payment.provider) }}</b>
+          </p>
+          <p>
+            <small>Provider reference</small>
+            <code>{{ payment.providerTransactionId ?? 'Pending' }}</code>
+          </p>
+          <p>
+            <small>Idempotency key</small><code>{{ payment.idempotencyKey }}</code>
+          </p>
+          <p>
+            <small>Reviewed</small><b>{{ payment.reviewedAt ? 'Yes' : 'No' }}</b>
+          </p>
+        </div>
+        <section>
+          <h3>Verification trail</h3>
+          <p class="timeline">Transaction created</p>
+          <p class="timeline">Provider callback recorded</p>
+          <p class="timeline">Idempotency checked</p>
+        </section>
+        <footer>
+          <button
+            class="button primary"
+            [disabled]="!!payment.reviewedAt"
+            (click)="markReviewed(payment)"
+          >
+            Mark reviewed
+          </button>
+        </footer>
+      </aside>
+    }
+    @if (message()) {
+      <div class="toast">{{ message() }}</div>
+    }
+  </section>

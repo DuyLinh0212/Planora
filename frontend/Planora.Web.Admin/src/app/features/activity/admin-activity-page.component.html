@@ -1,0 +1,31 @@
+<section>
+    <header class="page-heading">
+      <div>
+        <p class="eyebrow">Immutable trail</p>
+        <h1>Admin activity</h1>
+        <p>Review privileged actions across system metadata.</p>
+      </div>
+      <button class="button" (click)="reloadActivity()">Refresh</button>
+    </header>
+    <article class="panel data-panel">
+      <div class="data-row table-head audit-row">
+        <span>Time</span><span>Actor</span><span>Action</span><span>Target type</span
+        ><span>Target ID</span><span>Source</span>
+      </div>
+      @for (entry of context.activity(); track entry.id) {
+        <div class="data-row audit-row">
+          <time>{{ entry.createdAt | date: 'MMM d, HH:mm' }}</time
+          ><span>{{ entry.actorDisplayName }}</span
+          ><b>{{ entry.action }}</b
+          ><span>{{ entry.entityType }}</span
+          ><code>{{ entry.entityId }}</code
+          ><span>Authenticated API</span>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <h3>No activity in preview mode</h3>
+          <p>Authenticated admin actions will appear here after the API is running.</p>
+        </div>
+      }
+    </article>
+  </section>

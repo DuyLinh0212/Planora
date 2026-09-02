@@ -1,0 +1,5 @@
+/* Component-scoped styles. */
+/* Migrated from the legacy administrator styles: activity. */
+.audit-row {
+  grid-template-columns: 120px minmax(150px, 1fr) minmax(130px, 1fr) 90px 110px 100px;
+}

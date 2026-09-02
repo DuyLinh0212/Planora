@@ -1,0 +1,94 @@
+<section>
+    <header class="page-heading">
+      <div>
+        <p class="eyebrow">Identity operations</p>
+        <h1>User accounts</h1>
+        <p>Search, inspect, suspend and restore access.</p>
+      </div>
+    </header>
+    <article class="panel data-panel">
+      <div class="filters">
+        <input class="search" [(ngModel)]="search" placeholder="Search email, name or ID" /><select
+          class="button"
+          [(ngModel)]="status"
+        >
+          <option value="">All statuses</option>
+          <option>Active</option>
+          <option>Suspended</option></select
+        ><button class="button" (click)="reloadAccounts()">Refresh</button>
+      </div>
+      <div class="data-row table-head accounts-row">
+        <span>Account</span><span>Status</span><span>Plan</span><span>Projects</span
+        ><span>Storage</span><span></span>
+      </div>
+      @for (account of filteredAccounts(); track account.id) {
+        <div class="data-row accounts-row">
+          <div>
+            <b>{{ account.displayName }}</b
+            ><small>{{ account.email }}</small>
+          </div>
+          <span class="badge" [class.badge-danger]="formatStatus(account.status) === 'Suspended'" [class.badge-success]="formatStatus(account.status) === 'Active'">
+            {{ formatStatus(account.status) }}
+          </span>
+          <span>{{ account.planName ?? 'Free' }}</span>
+          <b>{{ account.ownedProjectCount }}</b>
+          <span>{{ formatBytes(account.storageBytes) }}</span>
+          <button class="text" (click)="selectedAccount.set(account)">View →</button>
+        </div>
+      }
+    </article>
+    @if (selectedAccount(); as account) {
+      <aside class="detail-drawer">
+        <header>
+          <div>
+            <p class="eyebrow">Account details</p>
+            <h2>{{ account.displayName }}</h2>
+            <span>{{ account.email }}</span>
+          </div>
+          <button class="icon" (click)="selectedAccount.set(null)">×</button>
+        </header>
+        <div class="detail-stats">
+          <p>
+            <small>Account ID</small><code>{{ account.id }}</code>
+          </p>
+          <p>
+            <small>Status</small>
+            <span class="badge" [class.badge-danger]="formatStatus(account.status) === 'Suspended'" [class.badge-success]="formatStatus(account.status) === 'Active'">
+              {{ formatStatus(account.status) }}
+            </span>
+          </p>
+          <p>
+            <small>Plan</small><b>{{ account.planName ?? 'Free' }}</b>
+          </p>
+          <p>
+            <small>Owned projects</small><b>{{ account.ownedProjectCount }}</b>
+          </p>
+          <p>
+            <small>Last active</small><time>{{ account.lastActiveAt | date: 'medium' }}</time>
+          </p>
+          <p>
+            <small>Storage</small><b>{{ formatBytes(account.storageBytes) }}</b>
+          </p>
+        </div>
+        <section>
+          <h3>Trust boundary</h3>
+          <p class="message">
+            Only account and aggregate subscription metadata is available. Private project content
+            remains inaccessible.
+          </p>
+        </section>
+        <footer>
+          @if (account.status === 'Suspended') {
+            <button class="button primary" (click)="restoreAccount(account)">
+              Restore account
+            </button>
+          } @else {
+            <button class="button danger" (click)="suspendAccount(account)">Suspend account</button>
+          }
+        </footer>
+      </aside>
+    }
+    @if (message()) {
+      <div class="toast">{{ message() }}</div>
+    }
+  </section>
